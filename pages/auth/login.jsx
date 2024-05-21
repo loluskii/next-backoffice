@@ -1,5 +1,5 @@
 import React from "react";
-import Auth from "layouts/Auth.js";
+import Auth from "layouts/Auth.jsx";
 import { useRouter } from "next/router";
 
 export default function Login() {
