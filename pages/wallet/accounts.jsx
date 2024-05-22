@@ -16,7 +16,7 @@ import UserDetails from "components/Cards/UserDetails";
 export default function Dashboard() {
   return (
     <>
-      <div className="flex">
+      <div className="flex h-screen">
         <div className="w-full xl:w-1/4 mb-12 xl:mb-0 px-4 bg-rose-200">
           <NestedAccordion />
         </div>
