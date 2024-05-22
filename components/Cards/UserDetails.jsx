@@ -71,7 +71,14 @@ export default function UserDetails() {
             </div>
           </TabPanel>
           <TabPanel>
-            <p>two!</p>
+            <FormControl className="form-group mr-3">
+              <FormLabel htmlFor="">Reset Password</FormLabel>
+              <Input
+                type="text"
+                placeholder="Small Input"
+                className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+              />
+            </FormControl>
           </TabPanel>
           <TabPanel>
             <p>three!</p>
