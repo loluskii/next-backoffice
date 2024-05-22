@@ -36,7 +36,7 @@ const NestedAccordion = () => {
   ];
 
   return (
-    <div className="nested-accordion">
+    <div className="nested-accordion w-1/2">
       <AccordionItem title="Admin">
         {managers.map((manager, index) => (
           <AccordionItem key={index} title={manager.name}>

@@ -29,7 +29,7 @@ const TicketSearch = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
               <FormControl className="form-group mr-3">

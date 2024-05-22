@@ -15,20 +15,11 @@ import Admin from "layouts/Admin.jsx";
 export default function Dashboard() {
   return (
     <>
-      <div className="flex flex-wrap">
-        <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+      <div className="h-screen">
+        <div className="flex flex-row gap-x-3 w-full">
           <NestedAccordion />
-        </div>
-        <div className="w-full xl:w-4/12 px-4">
+          {/* <div className="p-1"></div> */}
           <CardPageVisits />
-        </div>
-      </div>
-      <div className="flex flex-wrap mt-4">
-        <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
-          {/* <CardPageVisits /> */}
-        </div>
-        <div className="w-full xl:w-4/12 px-4">
-          {/* <CardSocialTraffic /> */}
         </div>
       </div>
     </>
