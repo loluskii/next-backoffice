@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "next/app";
 import Head from "next/head";
+import { ChakraProvider } from "@chakra-ui/react";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "styles/tailwind.css";
-
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -38,7 +38,9 @@ export default class MyApp extends App {
           <title>Index</title>
         </Head>
         <Layout>
-          <Component {...pageProps} />
+          <ChakraProvider>
+            <Component {...pageProps} />
+          </ChakraProvider>
         </Layout>
       </React.Fragment>
     );
