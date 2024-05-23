@@ -2,9 +2,11 @@ import React from "react";
 import App from "next/app";
 import Head from "next/head";
 import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "styles/tailwind.css";
+import "../styles/tailwind.css";
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -23,25 +25,32 @@ export default class MyApp extends App {
     return { pageProps };
   }
   render() {
-    const { Component, pageProps } = this.props;
+    const {
+      Component,
+      pageProps: { session, ...pageProps },
+    } = this.props;
 
     const Layout = Component.layout || (({ children }) => <>{children}</>);
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: 1,
+        },
+      },
+    });
 
     return (
-      <React.Fragment>
-        <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-          />
-          <title>Index</title>
-        </Head>
-        <Layout>
-          <ChakraProvider>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </Layout>
-      </React.Fragment>
+      <>
+        <SessionProvider session={session}>
+          <QueryClientProvider client={queryClient}>
+            <Layout>
+              <ChakraProvider>
+                <Component {...pageProps} />
+              </ChakraProvider>
+            </Layout>
+          </QueryClientProvider>
+        </SessionProvider>
+      </>
     );
   }
 }
