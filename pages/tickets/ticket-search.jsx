@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Admin from "layouts/Admin.jsx";
 import {
   FormControl,
@@ -12,9 +12,30 @@ import {
   Td,
   Select,
   TableContainer,
+  Button,
 } from "@chakra-ui/react";
+import { getTicketsHistory } from "services/tickets.service";
 
 const TicketSearch = () => {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [betType, setBetType] = useState("");
+  const [payout, setPayout] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  async function getFilteredData() {
+    let payload = {
+      startDate: startDate,
+      endDate: endDate,
+      betType: betType,
+      payout: payout,
+    };
+    setLoading(true);
+    const res = await getTicketsHistory(payload);
+    setLoading(false);
+    setResults(res.results);
+  }
   return (
     <>
       <div className="h-screen">
@@ -23,12 +44,13 @@ const TicketSearch = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex bg-white rounded p-4 gap-x-3 w-full">
+            <div className="flex bg-white rounded p-4 gap-x-3 w-full items-end">
               <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Start</FormLabel>
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  onChange={(e) => setStartDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
@@ -37,20 +59,18 @@ const TicketSearch = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  onChange={(e) => setEndDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
               <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Ticket ID</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Small Input"
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                />
-              </FormControl>
-              <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Bet Type</FormLabel>
-                <Select name="bet-type" className="w-full" id="">
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setBetType(e.target.value)}
+                >
                   <option value="">All</option>
                   <option value="multiple">Multiple</option>
                   <option value="single">Single</option>
@@ -58,12 +78,23 @@ const TicketSearch = () => {
               </FormControl>
               <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Payout Status</FormLabel>
-                <Select name="bet-type" className="w-full" id="">
-                  <option value="paid">Paid Out</option>
-                  <option value="pending">Pending</option>
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setPayout(e.target.value)}
+                >
+                  <option value="true">Paid Out</option>
+                  <option value="false">Pending</option>
                 </Select>
               </FormControl>
-              <button></button>
+              <button
+                type="button"
+                className="bg-black text-white rounded px-3 py-2"
+                onClick={() => getFilteredData()}
+              >
+                Submit
+              </button>
             </div>
           </form>
         </div>
@@ -72,9 +103,9 @@ const TicketSearch = () => {
             <Table className="table table-striped table-bordered">
               <Thead className="bg-gray-500">
                 <Tr>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                  {/* <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     ID
-                  </Th>
+                  </Th> */}
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Ticket ID
                   </Th>
@@ -108,18 +139,55 @@ const TicketSearch = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {/* <tr>
-            <td colspan="10" className="text-center">
-              <div className="spinner-border text-light" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </td>
-          </tr> */}
-                <Tr>
-                  <Td className="text-center" colspan="10">
-                    No Data Available.
-                  </Td>
-                </Tr>
+                {loading ? (
+                  <tr>
+                    <td colspan="10" className="text-center">
+                      <div className="spinner-border text-light" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  <>
+                    {results.length ? (
+                      <>
+                        {results.map((res, index) => (
+                          <Tr key={index}>
+                            {/* <Td className="text-center">{res.id}</Td> */}
+                            <Td className="text-center">{res.ticketId}</Td>
+                            <Td className="text-center">{res.betType}</Td>
+                            <Td className="text-center">
+                              {res.selections.length}
+                            </Td>
+                            <Td className="text-center">
+                              {res.stake.toLocaleString("en")}
+                            </Td>
+                            <Td className="text-center">{res.result}</Td>
+                            <Td className="text-center">
+                              {res.potentialWinnings.toLocaleString("en")}
+                            </Td>
+                            <Td className="text-center">{res.gameOutcome}</Td>
+                            <Td className="text-center">
+                              {res.winnings.toLocaleString("en")}
+                            </Td>
+                            <Td className="text-center">
+                              {res.roundHasEnded ? "Ended" : "Ongoing"}
+                            </Td>
+                            <Td className="text-center">
+                              {res.payout ? "Paid Out" : "Awaiting Payout"}
+                            </Td>
+                          </Tr>
+                        ))}
+                      </>
+                    ) : (
+                      <Tr>
+                        <Td className="text-center" colSpan="10">
+                          No Data Available.
+                        </Td>
+                      </Tr>
+                    )}
+                  </>
+                )}
               </Tbody>
             </Table>
           </TableContainer>

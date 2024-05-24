@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import Admin from "layouts/Admin.jsx";
 import {
   FormControl,
@@ -15,6 +15,12 @@ import {
 } from "@chakra-ui/react";
 
 const Index = () => {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [agentId, setAgentId] = useState("");
+  const [agentList, setAgentList] = useState([]);
+  const [loading, setLoading] = useState(false);
   return (
     <>
       <div className="h-screen">
@@ -23,12 +29,37 @@ const Index = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex bg-white rounded p-4 gap-x-3 w-full">
+            <div className="flex bg-white rounded p-4 gap-x-3 w-full items-end">
+              <FormControl className="form-group mr-3">
+                <FormLabel htmlFor="">Agent</FormLabel>
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setAgentId(e.target.value)}
+                >
+                  <option value="">All</option>
+                </Select>
+              </FormControl>
+              <FormControl className="form-group mr-3">
+                <FormLabel htmlFor="">Platform</FormLabel>
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setPlatform(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="">Shop</option>
+                  <option value="">Web</option>
+                </Select>
+              </FormControl>
               <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Start</FormLabel>
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  onChange={(e) => setStartDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
@@ -37,33 +68,17 @@ const Index = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  onChange={(e) => setEndDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Ticket ID</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Small Input"
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                />
-              </FormControl>
-              <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Bet Type</FormLabel>
-                <Select name="bet-type" className="w-full" id="">
-                  <option value="">All</option>
-                  <option value="multiple">Multiple</option>
-                  <option value="single">Single</option>
-                </Select>
-              </FormControl>
-              <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Payout Status</FormLabel>
-                <Select name="bet-type" className="w-full" id="">
-                  <option value="paid">Paid Out</option>
-                  <option value="pending">Pending</option>
-                </Select>
-              </FormControl>
-              <button></button>
+              <button
+                type="button"
+                className="bg-black text-white rounded px-3 py-2"
+                // onClick={}
+              >
+                Submit
+              </button>
             </div>
           </form>
         </div>
@@ -73,50 +88,58 @@ const Index = () => {
               <Thead className="bg-gray-500">
                 <Tr>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    ID
+                    Username
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Ticket ID
+                    Name
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Bet Type
+                    Ticket Count
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Selections
+                    Total In
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Stake
+                    Total Out
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Result
+                    Open Payouts
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Potential Winnings
+                    Jackpot 1 Payout
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Outcome
+                    Jackpot 2 Payout
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Winnings
+                    Jackpot 3 Payout
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Round Status
+                    Jackpot 1 Commission
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Payout
+                    Jackpot 2 Commission
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Jackpot 3 Commission
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Reversal
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Commission
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Taxes
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Profit
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {/* <tr>
-            <td colspan="10" className="text-center">
-              <div className="spinner-border text-light" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </td>
-          </tr> */}
                 <Tr>
-                  <Td className="text-center" colspan="10">
+                  <Td className="text-center" colSpan="16">
                     No Data Available.
                   </Td>
                 </Tr>

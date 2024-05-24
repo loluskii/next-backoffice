@@ -1,25 +1,22 @@
-import {apiClient} from "./base"
+import { apiClient } from "./base";
 
 // Login function
 export const loginUser = async (email, password) => {
-    try {
-        const response = await apiClient.post('/auth/login/', { email, password });
-        localStorage.setItem('token', response.data.token); // Save the token
-        return response.data; // Return any additional data needed
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-};
-
-// Signup function
-export const signUpUser = async (email, password) => {
-    try {
-        const response = await apiClient.post('/signup', { email, password });
-        localStorage.setItem('token', response.data.token); // Save the token
-        return response.data; // Return any additional data needed
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
+  try {
+    const response = await apiClient.post("/v1/auth/login/", { email, password });
+    localStorage.setItem(
+      "token",
+      JSON.stringify(response.data.tokens.access.token)
+    ); // Save the token
+    localStorage.setItem(
+      "refreshToken",
+      JSON.stringify(response.data.tokens.refresh.token)
+    ); // Save the token
+    localStorage.setItem("currentUser", JSON.stringify(response.data.user)); // Save the token
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+    // throw error;
+  }
 };

@@ -1,28 +1,26 @@
 import Auth from "layouts/Auth.jsx";
 import { useRouter } from "next/router";
-import { FormEvent, React, useState } from "react";
+import { React, useState } from "react";
 import { loginUser } from "services/auth.service";
 
-
 export default function Login() {
+  const [email, setEmail] = useState("betteragent36@gmail.com");
+  const [password, setPassword] = useState("JoRwO1Au");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const response = await fetch("https://aviata.sportsbookengine.com/v1/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      router.push("/profile");
+  async function doLogin(e) {
+    e.preventDefault();
+    setIsLoading(true);
+    const response = await loginUser(email, password);
+    setIsLoading(false);
+    if (response) {
+      return router.push("/wallet/accounts");
     } else {
-      // Handle errors
+      console.error(response);
     }
   }
+
   return (
     <>
       <div className="container mx-auto px-4 h-full">
@@ -30,7 +28,7 @@ export default function Login() {
           <div className="w-full lg:w-4/12 px-4">
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
               <div className="flex-auto px-4 lg:px-10 py-10">
-                <form onSubmit={handleSubmit}>
+                <form>
                   <div className="relative w-full mb-3">
                     <label
                       className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -78,10 +76,11 @@ export default function Login() {
                   <div className="text-center mt-6">
                     <button
                       className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                      type="submit"
-                      onClick={() => loginUser(email, password)}
+                      type="button"
+                      onClick={(e) => doLogin(e)}
+                      disabled={isLoading}
                     >
-                      Sign In
+                      {isLoading ? "Please Wait..." : "Continue"}
                     </button>
                   </div>
                 </form>
