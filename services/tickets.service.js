@@ -35,3 +35,25 @@ export const getTicketsHistory = async (data) => {
     // throw error;
   }
 };
+
+export const createCurrency = async (data) => {
+  try {
+    let url = `cashier/v1/currency/`;
+    const response = await apiClient.post(url, data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const getCurrencies = async (data) => {
+  try {
+    let url = `cashier/v1/currency/`;
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
