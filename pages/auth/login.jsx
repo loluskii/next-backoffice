@@ -1,16 +1,16 @@
 import Auth from "layouts/Auth.jsx";
 import { useRouter } from "next/router";
-import { FormEvent, React } from "react";
+import { FormEvent, React, useState } from "react";
+import { loginUser } from "services/auth.service";
+
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   async function handleSubmit(event) {
     event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-
     const response = await fetch("https://aviata.sportsbookengine.com/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -43,6 +43,7 @@ export default function Login() {
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
                       name="email"
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
@@ -58,6 +59,7 @@ export default function Login() {
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Password"
                       name="password"
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
                   <div>
@@ -77,7 +79,7 @@ export default function Login() {
                     <button
                       className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                       type="submit"
-                      
+                      onClick={() => loginUser(email, password)}
                     >
                       Sign In
                     </button>

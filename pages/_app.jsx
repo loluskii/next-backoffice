@@ -2,8 +2,8 @@ import React from "react";
 import App from "next/app";
 import Head from "next/head";
 import { ChakraProvider } from "@chakra-ui/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SessionProvider } from "next-auth/react";
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { SessionProvider } from "next-auth/react";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../styles/tailwind.css";
@@ -31,25 +31,25 @@ export default class MyApp extends App {
     } = this.props;
 
     const Layout = Component.layout || (({ children }) => <>{children}</>);
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: 1,
-        },
-      },
-    });
+    // const queryClient = new QueryClient({
+    //   defaultOptions: {
+    //     queries: {
+    //       retry: 1,
+    //     },
+    //   },
+    // });
 
     return (
       <>
-        <SessionProvider session={session}>
-          <QueryClientProvider client={queryClient}>
+        {/* <SessionProvider session={session}> */}
+          {/* <QueryClientProvider client={queryClient}> */}
             <Layout>
               <ChakraProvider>
                 <Component {...pageProps} />
               </ChakraProvider>
             </Layout>
-          </QueryClientProvider>
-        </SessionProvider>
+          {/* </QueryClientProvider> */}
+        {/* </SessionProvider> */}
       </>
     );
   }

@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 // components
 
@@ -8,6 +10,16 @@ import HeaderStats from "components/Headers/HeaderStats.jsx";
 import FooterAdmin from "components/Footers/FooterAdmin.jsx";
 
 export default function Admin({ children }) {
+  const router = useRouter();
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const auth = localStorage.getItem("token");
+
+  if (!auth) {
+    router.push("auth");
+    return;
+  }
   return (
     <>
       <Sidebar />
