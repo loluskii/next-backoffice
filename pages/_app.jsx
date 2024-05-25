@@ -7,6 +7,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../styles/tailwind.css";
+import "../styles/style.css";
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -42,13 +43,13 @@ export default class MyApp extends App {
     return (
       <>
         {/* <SessionProvider session={session}> */}
-          {/* <QueryClientProvider client={queryClient}> */}
-            <Layout>
-              <ChakraProvider>
-                <Component {...pageProps} />
-              </ChakraProvider>
-            </Layout>
-          {/* </QueryClientProvider> */}
+        {/* <QueryClientProvider client={queryClient}> */}
+        <Layout>
+          <ChakraProvider>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </Layout>
+        {/* </QueryClientProvider> */}
         {/* </SessionProvider> */}
       </>
     );

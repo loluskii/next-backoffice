@@ -38,7 +38,10 @@ const Currency = () => {
       <div className="h-screen">
         <CreateCurrency
           isOpen={showCreateCurrency}
-          onClose={() => setShowCreateCurrency(false)}
+          onClose={() => {
+            setShowCreateCurrency(false);
+            getCurrencyData();
+          }}
         />
 
         <div className="title flex flex-row justify-between items-center mb-8">
@@ -71,7 +74,7 @@ const Currency = () => {
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Status
                   </Th>
-                  <Th>Action</Th>
+                  {/* <Th>Action</Th> */}
                 </Tr>
               </Thead>
               <Tbody>
@@ -97,11 +100,11 @@ const Currency = () => {
                             <Td className="text-center">{res.exchangeRate}</Td>
                             <Td className="text-center">{res.decimals}</Td>
                             <Td className="text-center">{res.status}</Td>
-                            <Td className="text-center">
+                            {/* <Td className="text-center">
                               <button className="px-2  text-white py-1 bg-black rounded">
                                 Edit
                               </button>
-                            </Td>
+                            </Td> */}
                           </Tr>
                         ))}
                       </>

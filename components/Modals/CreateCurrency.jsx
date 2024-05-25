@@ -42,6 +42,7 @@ const CreateCurrency = ({ onClose, isOpen }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const res = await createCurrency(formData);
+    onClose();
     // Handle form submission here
     console.log("Form submitted with data:", res);
   };
@@ -84,6 +85,7 @@ const CreateCurrency = ({ onClose, isOpen }) => {
                 className="w-full"
                 value={formData.countryId}
                 onChange={handleCurrencyChange}
+                placeholder={formData.countryId}
               >
                 {currency_list.map((c, index) => (
                   <option value={c.id} key={index}>

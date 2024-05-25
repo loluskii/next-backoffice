@@ -17,7 +17,7 @@ export default function Admin({ children }) {
   const auth = localStorage.getItem("token");
 
   if (!auth) {
-    router.push("auth");
+    router.push("/auth/login");
     return;
   }
   return (

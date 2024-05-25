@@ -4,8 +4,8 @@ import { React, useState } from "react";
 import { loginUser } from "services/auth.service";
 
 export default function Login() {
-  const [email, setEmail] = useState("betteragent36@gmail.com");
-  const [password, setPassword] = useState("JoRwO1Au");
+  const [email, setEmail] = useState("lorem@gmail.com");
+  const [password, setPassword] = useState("Password123");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
