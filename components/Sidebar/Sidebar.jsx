@@ -76,7 +76,7 @@ export default function Sidebar() {
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
             {/* Heading */}
-            <h6 className="md:min-w-full text-trueGray-400 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+            <h6 className="md:min-w-full text-blueGray-100 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Wallet System
             </h6>
             {/* Navigation */}

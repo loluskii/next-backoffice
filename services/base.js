@@ -28,15 +28,16 @@ apiClient.interceptors.response.use(
       try {
         if (!refreshToken) throw new Error("No refresh token available");
 
-        const { data } = await apiClient.post("/auth/refresh-token", {
-          refreshToken,
+        const { data } = await apiClient.post("/auth/refresh-tokens", {
+          refreshToken: refreshToken,
         });
         localStorage.setItem("token", data.token);
         return apiClient(originalRequest);
       } catch (err) {
         console.error(err);
         localStorage.removeItem("token");
-        // window.location.reload();
+        localStorage.removeItem("currentUser");
+        window.location.reload();
       }
     }
     return Promise.reject(error);

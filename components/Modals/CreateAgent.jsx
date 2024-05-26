@@ -32,6 +32,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [accountType, setAccountType] = useState(type);
 
   async function getCurrencyData() {
     const res = await getCurrencies();
@@ -109,12 +110,28 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
               <ModalCloseButton bg="unset" />
             </ModalHeader>
             <ModalBody>
+              {accountType === "" && (
+                <FormControl mb={4}>
+                  <FormLabel>Account Type</FormLabel>
+                  <Select
+                    name="type"
+                    className="w-full pb-2"
+                    value={formData.currencyId}
+                    onChange={(e) => setAccountType(e.target.value)}
+                    placeholder={"select a type"}
+                  >
+                    <option value="agent">Agent</option>
+                    <option value="cashier">Cashier</option>
+                  </Select>
+                </FormControl>
+              )}
+
               <FormControl>
                 <FormLabel>Name</FormLabel>
                 <Input
                   name="name"
                   type="text"
-                  placeholder="Agent Name"
+                  placeholder="Name"
                   value={formData.name}
                   onChange={handleChange}
                 />

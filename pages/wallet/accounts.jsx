@@ -20,6 +20,8 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { getStructuredUsers } from "services/account.service";
+import { MdAddBox } from "react-icons/md";
+import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 
 // components
 
@@ -32,6 +34,9 @@ import UserDetails from "components/Cards/UserDetails";
 export default function Dashboard() {
   const [selectedUser, setSelectedUser] = useState("");
   const [data, setData] = useState({});
+  const [authUser, setAuthUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser"))
+  );
   async function getUsers() {
     const res = await getStructuredUsers();
     setData(res.data);
@@ -63,7 +68,7 @@ export default function Dashboard() {
                     borderStart="2px solid"
                   >
                     <p>Account Type</p>
-                    <p className="text-2xl font-bold">Agent</p>
+                    <p className="text-2xl font-bold">{authUser.role}</p>
                   </GridItem>
                   <GridItem
                     w="100%"
@@ -72,7 +77,7 @@ export default function Dashboard() {
                     borderStart="2px solid"
                   >
                     <p>Sub Agents</p>
-                    <p className="text-2xl font-bold">0</p>
+                    <p className="text-2xl font-bold">{data?.agents?.length}</p>
                   </GridItem>
                   <GridItem
                     w="100%"
@@ -81,47 +86,81 @@ export default function Dashboard() {
                     borderStart="2px solid"
                   >
                     <p>Cashiers</p>
-                    <p className="text-2xl font-bold">0</p>
+                    <p className="text-2xl font-bold">
+                      {data?.cashiers?.length}
+                    </p>
                   </GridItem>
                 </Grid>
               </div>
               <Tabs>
                 <TabList>
-                  <Tab>Summary</Tab>
-                  <Tab>Password</Tab>
-                  <Tab>Settings</Tab>
+                  <Tab className="focus:outline-none focus:border-none focus:ring-0">
+                    Summary
+                  </Tab>
+                  <Tab className="focus:outline-none focus:border-none focus:ring-0">
+                    Password
+                  </Tab>
+                  <Tab className="focus:outline-none focus:border-none focus:ring-0">
+                    Settings
+                  </Tab>
                 </TabList>
 
                 <TabPanels>
                   <TabPanel px="0px">
-                    <div className="bg-white mt-3 w-full">
-                      <TableContainer>
-                        <Table className="table table-striped table-bordered">
-                          <Thead className="bg-gray-500">
+                    <div className="bg-white mt-3">
+                      {/* <TableContainer> */}
+                      <Table className="table table-striped table-bordered">
+                        <Thead className="bg-gray-500">
+                          <Tr>
+                            <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                              Currency
+                            </Th>
+                            <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                              Balance
+                            </Th>
+                            <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                              Action
+                            </Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {authUser && authUser.wallets.length ? (
+                            authUser?.wallets.map((wallet, index) => (
+                              <Tr>
+                                <Td className="text-center">
+                                  {wallet.currencyId}
+                                  {wallet.primaryWallet && (
+                                    <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
+                                      Primary
+                                    </span>
+                                  )}
+                                </Td>
+                                <Td className="text-center">
+                                  {wallet.balance}
+                                </Td>
+                                <Td className="text-center">
+                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1">
+                                    <BiSolidMinusSquare />
+                                  </span>
+                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1">
+                                    <MdAddBox />
+                                  </span>
+                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1">
+                                    <BiTransfer />
+                                  </span>
+                                </Td>
+                              </Tr>
+                            ))
+                          ) : (
                             <Tr>
-                              <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                Currency
-                              </Th>
-                              <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                Balance
-                              </Th>
-                              <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                Available Amount
-                              </Th>
-                              <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                Deposit Withdrawal
-                              </Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            <Tr>
-                              <Td className="text-center" colspan="10">
+                              <Td className="text-center" colSpan="10">
                                 No Data Available.
                               </Td>
                             </Tr>
-                          </Tbody>
-                        </Table>
-                      </TableContainer>
+                          )}
+                        </Tbody>
+                      </Table>
+                      {/* </TableContainer> */}
                     </div>
                   </TabPanel>
                   <TabPanel>

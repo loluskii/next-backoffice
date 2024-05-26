@@ -74,8 +74,8 @@ export const NestedAccordion = (props) => {
 
   return (
     <div className="w-full">
-      <AccordionItem title="Admin" type="agent">
-        {Object?.keys(users).length && (
+      <AccordionItem title="Admin" type="">
+        {users && Object?.keys(users).length && (
           <>
             {users.agents.map((agent, aIndex) => (
               <AccordionItem
