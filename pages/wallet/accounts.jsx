@@ -37,6 +37,21 @@ export default function Dashboard() {
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
+  const [gameSettings, setGameSettings] = useState({
+    ticketStakeMin: 100,
+    ticketStakeMax: 10000,
+    ticketSizeMin: 1,
+    ticketSizeMax: 10,
+    quickPick: [100, 300, 500, 1000],
+    payoutMode: "Manual",
+  });
+
+  const [gameData, setGameData] = useState({
+    roundWaitTimeValue: 5,
+    timerCountdownValue: 30,
+    roundBetsLimit: 10,
+  });
+
   async function getUsers() {
     const res = await getStructuredUsers();
     setData(res.data);
@@ -49,7 +64,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="min-h-screen pb-5">
-        <div class="flex flex-row w-full gap-6">
+        <div class="flex md:flex-row flex-col w-full gap-6">
           <div
             className="bg-white rounded h-full flex-grow"
             style={{ flexBasis: "40%" }}
@@ -60,37 +75,22 @@ export default function Dashboard() {
           <div className="flex-grow" style={{ flexBasis: "60%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
-                <Grid templateColumns="repeat(3, 1fr)" gap={6} className="mb-5">
-                  <GridItem
-                    w="100%"
-                    padding="10px"
-                    className=" bg-blueGray-100 text-blueGray-600"
-                    borderStart="2px solid"
-                  >
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Account Type</p>
                     <p className="text-2xl font-bold">{authUser.role}</p>
-                  </GridItem>
-                  <GridItem
-                    w="100%"
-                    padding="10px"
-                    className=" bg-blueGray-100 text-blueGray-600"
-                    borderStart="2px solid"
-                  >
+                  </div>
+                  <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Sub Agents</p>
                     <p className="text-2xl font-bold">{data?.agents?.length}</p>
-                  </GridItem>
-                  <GridItem
-                    w="100%"
-                    padding="10px"
-                    className=" bg-blueGray-100 text-blueGray-600"
-                    borderStart="2px solid"
-                  >
+                  </div>
+                  <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Cashiers</p>
                     <p className="text-2xl font-bold">
                       {data?.cashiers?.length}
                     </p>
-                  </GridItem>
-                </Grid>
+                  </div>
+                </div>
               </div>
               <Tabs>
                 <TabList>
@@ -168,14 +168,182 @@ export default function Dashboard() {
                       <FormLabel htmlFor="">Reset Password</FormLabel>
                       <Input
                         type="text"
-                        placeholder="Enter Password"
+                        placeholder=""
                         className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                       />
                     </FormControl>
                     <Button className="bg-black text-white">Update</Button>
                   </TabPanel>
-                  <TabPanel>
-                    <p>three!</p>
+                  <TabPanel px={"0px"}>
+                    <div className="container">
+                      <h6 className="text-xl font-normal leading-normal mt-0 mb-3 text-blueGray-800">
+                        Game Configurations
+                      </h6>
+                      <form action="">
+                        <div className="container">
+                          <div className="flex md:flex-row flex-col">
+                            <div className="md:w-1/3 w-full">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Round Wait Time
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameData.roundWaitTimeValue}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="md:w-1/3 w-full px-2">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Timer Countdown
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameData.timerCountdownValue}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="md:w-1/3 w-full">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Round Bets Limit
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameData.roundBetsLimit}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                          </div>
+                        </div>
+                        <Button className="bg-black text-white">Update</Button>
+                      </form>
+                    </div>
+                    <hr className="my-4 md:min-w-full" />
+                    <div className="container">
+                      <h6 className="text-xl font-normal leading-normal mt-0 mb-3 text-blueGray-800">
+                        Game Settings
+                      </h6>
+                      <form action="">
+                        <div className="container">
+                          <div className="flex md:flex-row flex-col">
+                            <div className="md:w-1/2 ">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Min Ticket Stake
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameSettings.ticketStakeMin}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="md:w-1/2  md:px-2">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Max Ticket Stake
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameSettings.ticketStakeMax}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                          </div>
+                          <div className="flex md:flex-row flex-col">
+                            <div className="md:w-1/2 ">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Min Ticket Size
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameSettings.ticketSizeMin}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="md:w-1/2  md:px-2">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">
+                                  Max Ticket Size
+                                </FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  value={gameSettings.ticketSizeMax}
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                          </div>
+                          <div className="flex md:flex-row flex-col">
+                            <div className="w-1/4">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">Quick Stake 1</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="w-1/4 md:px-2">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">Quick Stake 2</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="w-1/4">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">Quick Stake 3</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                            <div className="w-1/4 md:px-2">
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="">Quick Stake 4</FormLabel>
+                                <Input
+                                  type="text"
+                                  placeholder=""
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </div>
+                          </div>
+                          <FormControl className="form-group mb-3">
+                            <FormLabel htmlFor="">Payout Mode</FormLabel>
+                            <Input
+                              type="text"
+                              placeholder=""
+                              value={gameSettings.payoutMode}
+                              className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                            />
+                          </FormControl>
+                        </div>
+                        <Button className="bg-black text-white">Update</Button>
+                      </form>
+                    </div>
                   </TabPanel>
                 </TabPanels>
               </Tabs>
