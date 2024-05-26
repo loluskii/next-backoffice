@@ -22,6 +22,7 @@ import {
 import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
+import { getGameData, getGameSettings } from "services/settings.service";
 
 // components
 
@@ -57,14 +58,32 @@ export default function Dashboard() {
     setData(res.data);
   }
 
+  async function fetchGameData() {
+    const res = await getGameData();
+    setGameData(res.data);
+  }
+
+  async function fetchSettings() {
+    const res = await getGameSettings();
+    setGameSettings(res.data);
+  }
+
   useEffect(() => {
     getUsers();
+  }, []);
+
+  useEffect(() => {
+    fetchGameData();
+  }, []);
+
+  useEffect(() => {
+    fetchSettings();
   }, []);
 
   return (
     <>
       <div className="min-h-screen pb-5">
-        <div class="flex md:flex-row flex-col w-full gap-6">
+        <div className="flex md:flex-row flex-col w-full gap-6">
           <div
             className="bg-white rounded h-full flex-grow"
             style={{ flexBasis: "40%" }}
@@ -72,7 +91,7 @@ export default function Dashboard() {
             <NestedAccordion data={data} />
           </div>
           {/* <div></div> */}
-          <div className="flex-grow" style={{ flexBasis: "60%" }}>
+          <div className="flex-grow mb-8" style={{ flexBasis: "60%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
                 <div className="flex flex-col md:flex-row gap-6">
@@ -223,7 +242,9 @@ export default function Dashboard() {
                             </div>
                           </div>
                         </div>
-                        <Button className="bg-black text-white">Update</Button>
+                        <Button type="submit" className="bg-black text-white">
+                          Update
+                        </Button>
                       </form>
                     </div>
                     <hr className="my-4 md:min-w-full" />
@@ -290,46 +311,22 @@ export default function Dashboard() {
                             </div>
                           </div>
                           <div className="flex md:flex-row flex-col">
-                            <div className="w-1/4">
-                              <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">Quick Stake 1</FormLabel>
-                                <Input
-                                  type="text"
-                                  placeholder=""
-                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                />
-                              </FormControl>
-                            </div>
-                            <div className="w-1/4 md:px-2">
-                              <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">Quick Stake 2</FormLabel>
-                                <Input
-                                  type="text"
-                                  placeholder=""
-                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                />
-                              </FormControl>
-                            </div>
-                            <div className="w-1/4">
-                              <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">Quick Stake 3</FormLabel>
-                                <Input
-                                  type="text"
-                                  placeholder=""
-                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                />
-                              </FormControl>
-                            </div>
-                            <div className="w-1/4 md:px-2">
-                              <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">Quick Stake 4</FormLabel>
-                                <Input
-                                  type="text"
-                                  placeholder=""
-                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                />
-                              </FormControl>
-                            </div>
+                            {gameSettings.quickPick.length &&
+                              gameSettings.quickPick.map((q, index) => (
+                                <div className="w-1/4">
+                                  <FormControl className="form-group mb-3">
+                                    <FormLabel htmlFor="">
+                                      Quick Stake {index + 1}
+                                    </FormLabel>
+                                    <Input
+                                      type="text"
+                                      placeholder=""
+                                      value={gameSettings.quickPick[index]}
+                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                    />
+                                  </FormControl>
+                                </div>
+                              ))}
                           </div>
                           <FormControl className="form-group mb-3">
                             <FormLabel htmlFor="">Payout Mode</FormLabel>
@@ -341,7 +338,9 @@ export default function Dashboard() {
                             />
                           </FormControl>
                         </div>
-                        <Button className="bg-black text-white">Update</Button>
+                        <Button type="submit" className="bg-black text-white">
+                          Update
+                        </Button>
                       </form>
                     </div>
                   </TabPanel>
