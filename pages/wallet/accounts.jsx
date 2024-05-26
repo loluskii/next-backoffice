@@ -43,7 +43,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="h-screen">
+      <div className="min-h-screen pb-5">
         <div class="flex flex-row w-full">
           <div className="bg-white rounded h-full p-4 flex-grow">
             <NestedAccordion data={data} />

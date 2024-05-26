@@ -24,7 +24,7 @@ export const createAgentOrCashier = async (type, payload) => {
     return response;
   } catch (error) {
     console.error(error);
-    return false;
+    throw error.response;
     // throw error;
   }
 };

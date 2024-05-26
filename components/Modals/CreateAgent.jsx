@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { currency_list } from "utils";
 import {
   Modal,
@@ -15,7 +15,7 @@ import {
   Text,
   Select,
 } from "@chakra-ui/react";
-import { createCurrency } from "services/tickets.service";
+import { createCurrency, getCurrencies } from "services/tickets.service";
 import { createAgentOrCashier } from "services/account.service";
 import { FaCheckCircle } from "react-icons/fa";
 
@@ -24,11 +24,19 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
     name: "",
     email: "",
     mobile: "",
+    currencyId: "",
   });
 
   const [agentCashierCreated, setAgentCashierCreated] = useState(false);
   const [userData, setUserData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
+  const [currencies, setCurrencies] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
+
+  async function getCurrencyData() {
+    const res = await getCurrencies();
+    setCurrencies(res.results);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,13 +49,19 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      setIsCreating(true);
       const res = await createAgentOrCashier(type, formData);
-      if (res.status === 201) {
-        setAgentCashierCreated(true);
-        setUserData(res.data);
-      }
-    } catch (error) {}
+      setIsCreating(false);
+      setAgentCashierCreated(true);
+      setUserData(res.data);
+    } catch (error) {
+      setErrorMessage(error.data.message);
+    }
   };
+
+  useEffect(() => {
+    getCurrencyData();
+  }, []);
 
   return (
     <Modal
@@ -62,8 +76,9 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
           <ModalContent fontFamily="PolySans">
             <ModalBody p="23px 26px">
               <div className="text-center">
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center justify-center">
                   <FaCheckCircle className="text-5xl" />
+                  <p>Success!</p>
                 </div>
                 <div className="flex justify-between mt-8">
                   <p>Username: </p>
@@ -81,7 +96,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
         </>
       ) : (
         <form onSubmit={handleSubmit}>
-          <ModalContent fontFamily="PolySans">
+          <ModalContent>
             <ModalHeader>
               <Text
                 fontSize="20px"
@@ -93,7 +108,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
               </Text>
               <ModalCloseButton bg="unset" />
             </ModalHeader>
-            <ModalBody p="23px 26px" overflowY="scroll">
+            <ModalBody>
               <FormControl>
                 <FormLabel>Name</FormLabel>
                 <Input
@@ -126,6 +141,29 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
                   onChange={handleChange}
                 />
               </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Active Currency</FormLabel>
+                <Select
+                  name="currencyId"
+                  className="w-full pb-2"
+                  value={formData.currencyId}
+                  onChange={handleChange}
+                  placeholder={formData.currencyId}
+                >
+                  {currencies?.map((c, index) => (
+                    <option value={c.id} key={index}>
+                      {c.country[0].currencyCode}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {errorMessage ? (
+                <p className="text-red-500 my-2">{errorMessage}</p>
+              ) : (
+                ""
+              )}
             </ModalBody>
 
             <ModalFooter
@@ -139,6 +177,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
                 bg="#2942FF"
                 color="#fff"
                 fontWeight="400"
+                disabled={isCreating}
               >
                 Create
               </Button>
