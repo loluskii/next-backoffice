@@ -35,9 +35,9 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (err) {
         console.error(err);
-        localStorage.removeItem("token");
-        localStorage.removeItem("currentUser");
-        window.location.reload();
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("currentUser");
+        // window.location.reload();
       }
     }
     return Promise.reject(error);

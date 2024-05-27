@@ -33,7 +33,7 @@ import Admin from "layouts/Admin.jsx";
 import UserDetails from "components/Cards/UserDetails";
 
 export default function Dashboard() {
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState({});
   const [data, setData] = useState({});
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
@@ -53,31 +53,24 @@ export default function Dashboard() {
     roundBetsLimit: 10,
   });
 
-  async function getUsers() {
-    const res = await getStructuredUsers();
-    setData(res.data);
-  }
-
-  async function fetchGameData() {
-    const res = await getGameData();
-    setGameData(res.data);
-  }
-
-  async function fetchSettings() {
-    const res = await getGameSettings();
-    setGameSettings(res.data);
+  async function fetchData() {
+    try {
+      const [userData, gameData, settingsData] = await Promise.all([
+        getStructuredUsers(),
+        getGameData(),
+        getGameSettings(),
+      ]);
+      setData(userData.data);
+      setGameData(gameData.data);
+      setGameSettings(settingsData.data);
+      setAuthUser(JSON.parse(localStorage.getItem("currentUser")));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }
 
   useEffect(() => {
-    getUsers();
-  }, []);
-
-  useEffect(() => {
-    fetchGameData();
-  }, []);
-
-  useEffect(() => {
-    fetchSettings();
+    fetchData();
   }, []);
 
   return (
@@ -88,7 +81,13 @@ export default function Dashboard() {
             className="bg-white rounded h-full flex-grow"
             style={{ flexBasis: "40%" }}
           >
-            <NestedAccordion data={data} />
+            <NestedAccordion
+              data={data}
+              setSelectedUser={(user) => {
+                console.log(user);
+                setSelectedUser(user);
+              }}
+            />
           </div>
           {/* <div></div> */}
           <div className="flex-grow mb-8" style={{ flexBasis: "60%" }}>
