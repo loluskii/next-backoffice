@@ -5,7 +5,7 @@ export const getStructuredUsers = async (id = null) => {
   try {
     let url;
     if (id) {
-      url = `/v1/users/structured?agentId${id}`;
+      url = `/v1/users/structured?agentId=${id}`;
     } else {
       url = `/v1/users/structured`;
     }
