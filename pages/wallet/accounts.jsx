@@ -23,6 +23,7 @@ import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { getGameData, getGameSettings } from "services/settings.service";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 // components
 
@@ -34,6 +35,8 @@ import UserDetails from "components/Cards/UserDetails";
 
 export default function Dashboard() {
   const [selectedUser, setSelectedUser] = useState({});
+  const [adminSection, setAdminSection] = useState(false);
+
   const [data, setData] = useState({});
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
@@ -60,6 +63,7 @@ export default function Dashboard() {
         getGameData(),
         getGameSettings(),
       ]);
+      console.log("all data", userData, gameData, settingsData);
       setData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
@@ -76,21 +80,39 @@ export default function Dashboard() {
   return (
     <>
       <div className="min-h-screen pb-5">
-        <div className="flex md:flex-row flex-col w-full gap-6">
+        <div className="grid md:grid-cols-2 w-full md:gap-4 place-items-start">
           <div
-            className="bg-white rounded h-full flex-grow"
-            style={{ flexBasis: "40%" }}
+            style={{ gap: ".5rem" }}
+            className="bg-white rounded h-full flex-grow p-4 border border-black w-full"
           >
-            <NestedAccordion
-              data={data}
-              setSelectedUser={(user) => {
-                console.log(user);
-                setSelectedUser(user);
-              }}
-            />
+            <div className="flex border flex-col w-full justify-start gap-2 items-center">
+              <div
+                style={{ gap: ".5rem" }}
+                onClick={() => setAdminSection((prev) => !prev)}
+                className="flex p-2 justify-start w-full items-center cursor-pointer"
+              >
+                <span className="p-2 text-xl">
+                  {adminSection ? (
+                    <i className="fas fa-caret-down"></i>
+                  ) : (
+                    <i className="fas fa-caret-right"></i>
+                  )}
+                </span>
+                <h4 className="text-xl font-semibold">Admin</h4>
+              </div>
+              <div className="h-[1px] w-full bg-[#B5B5B5]" />
+            </div>
+
+            <div
+              className={`${
+                adminSection ? "max-h-[20rem] h-full" : "max-h-0 h-0"
+              } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
+            >
+              <NestedAccordion data={data} />
+            </div>
           </div>
           {/* <div></div> */}
-          <div className="flex-grow mb-8" style={{ flexBasis: "60%" }}>
+          <div className="flex-grow mb-8 w-full" style={{ flexBasis: "60%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
                 <div className="flex flex-col md:flex-row gap-6">

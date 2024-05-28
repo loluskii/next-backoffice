@@ -1,224 +1,97 @@
-// components/NestedAccordion.jsx
-
-import { Image } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import { getStructuredUsers } from "services/account.service";
 import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
-import CreateAgentCashier from "components/Modals/CreateAgent";
-import { MdAddBox } from "react-icons/md";
-import { getStructuredUsers } from "services/account.service";
-import { data } from "autoprefixer";
-
-export const NestedAccordion = (props) => {
-  const [users, setAgents] = useState({});
-  const [createAgentCashier, showCreateAgentCashier] = useState(false);
-  const [createType, setCreateType] = useState(false);
-
-  const { data, setSelectedUser } = props;
-
-  const AccordionItem = ({ user, data, text, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    // const [fetchData, setFetchData] = useState({});
-
-    const toggleAccordion = () => {
-      setIsOpen(!isOpen);
-    };
-
-    // async function getUserList() {
-    //   const res = await getStructuredUsers(data?.id);
-    //   setFetchData(res.data);
-    // }
-
-    console.log(data, "fetc");
-
-    return (
-      <div className={user === "cashier" ? "pl-3" : ""}>
-        <div className="flex justify-between items-center p-4 cursor-pointer border-l border-b">
-          <div className="flex items-center">
-            <div
-              onClick={() => {
-                // getUserList();
-                toggleAccordion();
-              }}
-            >
-              {user !== "cashier" && (
-                <>
-                  {isOpen ? (
-                    <i className="fas fa-caret-down mr-2"></i>
-                  ) : (
-                    <i className="fas fa-caret-right mr-2"></i>
-                  )}
-                </>
-              )}
-            </div>
-            <h3
-              className="text-lg font-semibold flex items-center"
-              onClick={(e) => {
-                setIsOpen(!isOpen);
-                setSelectedUser(data);
-              }}
-            >
-              {user === "agent" ? (
-                <IoIosPeople className="mr-2" />
-              ) : user === "cashier" ? (
-                <FaDesktop className="mr-2" />
-              ) : (
-                <></>
-              )}
-              {text}
-            </h3>
-          </div>
-          {user === "agent" && (
-            <button
-              onClick={(e) => {
-                // e.preventDefault();
-                // setCreateuser(type);
-                showCreateAgentCashier(true);
-              }}
-            >
-              <MdAddBox />
-            </button>
-          )}
-        </div>
-        {isOpen && (
-          <>
-            <div className="px-4 pb-4 border-t border-l border-gray-300">
-              {children}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-
-  const Accordion = ({ type, data, title, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [fetchData, setFetchData] = useState({});
-
-    const toggleAccordion = () => {
-      setIsOpen(!isOpen);
-    };
-
-    async function getUserList() {
-      const res = await getStructuredUsers(data?.id);
-      setFetchData(res.data);
-    }
-
-    // console.log(fetchData, "fetc");
-
-    return (
-      <div className={type === "cashier" ? "pl-3" : ""}>
-        <div className="flex justify-between items-center p-4 cursor-pointer border-l border-b">
-          <div className="flex items-center">
-            <div
-              onClick={() => {
-                getUserList();
-                toggleAccordion();
-              }}
-            >
-              {type !== "cashier" && (
-                <>
-                  {isOpen ? (
-                    <i className="fas fa-caret-down mr-2"></i>
-                  ) : (
-                    <i className="fas fa-caret-right mr-2"></i>
-                  )}
-                </>
-              )}
-            </div>
-            <h3
-              className="text-lg font-semibold flex items-center"
-              onClick={(e) => {
-                setIsOpen(!isOpen);
-                setSelectedUser(data);
-              }}
-            >
-              {type === "agent" ? (
-                <IoIosPeople className="mr-2" />
-              ) : type === "cashier" ? (
-                <FaDesktop className="mr-2" />
-              ) : (
-                <></>
-              )}
-              {title}
-            </h3>
-          </div>
-          {type === "agent" && (
-            <button
-              onClick={(e) => {
-                // e.preventDefault();
-                setCreateType(type);
-                showCreateAgentCashier(true); // Set modal visibility to true
-              }}
-            >
-              <MdAddBox />
-            </button>
-          )}
-        </div>
-        {isOpen && (
-          <>
-            <div className="px-4 pb-4 border-t border-l border-gray-300">
-              {children}
-            </div>
-
-            <div className="pl-4 border-t border-l border-gray-300">
-              {fetchData?.agents?.map((agent, aIndex) => (
-                <AccordionItem
-                  key={`${aIndex}`}
-                  text={agent.name}
-                  user="agent"
-                  data={agent}
-                />
-              ))}
-              {fetchData?.cashiers?.map((cashier, cIndex) => (
-                <AccordionItem
-                  key={`${cIndex}`}
-                  text={cashier.name}
-                  user="cashier"
-                  data={cashier}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-
+import { IoCaretDown } from "react-icons/io5";
+import { AiFillCaretRight } from "react-icons/ai";
+const NestedAccordion = ({ data }) => {
+  console.log("data", data);
+  const [agentsData, setAgentsData] = useState([]);
+  const [cashiersData, setCashiersData] = useState([]);
+  const [fetchData, setFetchData] = useState({});
   useEffect(() => {
-    setAgents(data);
+    const agents =
+      data && data.agents
+        ? data.agents.map((agent) => {
+            return { ...agent, state: false };
+          })
+        : [];
+    const cashiers =
+      data && data.cashiers
+        ? data.cashiers.map((agent) => {
+            return { ...agent, state: false };
+          })
+        : [];
+    setAgentsData(agents);
+    setCashiersData(cashiers);
   }, [data]);
+  const handleAgentsState = async (id) => {
+    const res = await getStructuredUsers(id);
+    setFetchData(res.data);
+    const agentmap = agentsData.map((agentData) => {
+      return agentData.id === id
+        ? { ...agentData, state: !agentData.state }
+        : { ...agentData, state: false };
+    });
+    setAgentsData(agentmap);
+  };
 
   return (
-    <div className="w-full">
-      <Accordion title="Admin" type="">
-        {users && Object?.keys(users).length && (
-          <>
-            {users.agents.map((agent, aIndex) => (
-              <Accordion
-                key={`${aIndex}`}
-                title={agent.name}
-                type="agent"
-                data={agent}
-              />
-            ))}
-            {users.cashiers.map((cashier, cIndex) => (
-              <Accordion
-                key={`${cIndex}`}
-                title={cashier.name}
-                type="cashier"
-                data={cashier}
-              />
-            ))}
-          </>
-        )}
-      </Accordion>
-      {createAgentCashier && (
-        <CreateAgentCashier
-          type={createType}
-          isOpen={createAgentCashier}
-          onClose={() => showCreateAgentCashier(false)}
-        ></CreateAgentCashier>
+    <div className="flex flex-col px-4 justify-between w-full text-sm items-center text-[#A7A7A7]">
+      {agentsData && agentsData.length ? (
+        agentsData.map((agentData, i) => (
+          <div key={i} className="bg-white rounded  h-full flex-grow w-full">
+            <div
+              style={{ gap: ".5rem" }}
+              onClick={() => handleAgentsState(agentData.id)}
+              className="bg-red-900 flex p-2 border px-4 justify-between w-full items-center cursor-pointer"
+            >
+              <span
+                className="flex justify-start items-center"
+                style={{ gap: ".5rem" }}
+              >
+                <IoIosPeople fontSize={28} />
+
+                <h4 className="font-semibold">{agentData.name}</h4>
+              </span>
+              <span className="p-2">
+                {agentData.state ? (
+                  <IoCaretDown fontSize={18} />
+                ) : (
+                  <AiFillCaretRight fontSize={18} />
+                )}
+              </span>
+            </div>
+            <div
+              className={`${
+                agentData.state ? "max-h-[20rem] h-full" : "max-h-0 h-0"
+              } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
+            >
+              <NestedAccordion data={fetchData} />
+            </div>
+          </div>
+        ))
+      ) : (
+        <></>
+      )}
+      {cashiersData && cashiersData.length ? (
+        cashiersData.map((cashierData, i) => (
+          <div
+            style={{ gap: ".5rem" }}
+            className="flex border p-4 justify-between w-full items-center cursor-pointer"
+          >
+            <span
+              className="flex justify-start items-center"
+              style={{ gap: ".5rem" }}
+            >
+              <FaDesktop fontSize={24} />
+
+              <h4 className="font-semibold">{cashierData.name}</h4>
+            </span>
+          </div>
+        ))
+      ) : (
+        <></>
       )}
     </div>
   );
