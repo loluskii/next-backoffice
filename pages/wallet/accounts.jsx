@@ -85,7 +85,16 @@ export default function Dashboard() {
   useEffect(() => {
     fetchData();
   }, []);
-
+  const handleAdminDetails = () => {
+    const currentUser = localStorage.getItem("currentUser");
+    let storedUser = currentUser ? JSON.parse(currentUser) : null;
+    if (storedUser) {
+      setUserWallets(storedUser.wallets);
+    }
+    setSelectedData(data);
+    setUserRole("super");
+    setAdminSection((prev) => !prev);
+  };
   return (
     <>
       <div className="min-h-screen pb-5">
@@ -97,11 +106,7 @@ export default function Dashboard() {
             <div className="flex border flex-col w-full justify-start gap-2 items-center">
               <div
                 style={{ gap: ".5rem" }}
-                onClick={() => {
-                  setSelectedData(data);
-                  setUserRole("super");
-                  setAdminSection((prev) => !prev);
-                }}
+                onClick={handleAdminDetails}
                 className="flex p-2 justify-start w-full items-center cursor-pointer"
               >
                 <span className="p-2 text-xl">
