@@ -4,10 +4,15 @@ import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
 import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
-const NestedAccordion = ({ data }) => {
-  console.log("data", data);
+import { FaPlus } from "react-icons/fa";
+import CreateAgentCashier from "components/Modals/CreateAgent";
+import PropTypes from "prop-types";
+
+const NestedAccordion = ({ data, setSelectedUser }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
+  const [createAgentCashier, showCreateAgentCashier] = useState(false);
+  const [createType, setCreateType] = useState(false);
   const [fetchData, setFetchData] = useState({});
   useEffect(() => {
     const agents =
@@ -27,13 +32,16 @@ const NestedAccordion = ({ data }) => {
   }, [data]);
   const handleAgentsState = async (id) => {
     const res = await getStructuredUsers(id);
+    setSelectedUser(id);
     setFetchData(res.data);
-    const agentmap = agentsData.map((agentData) => {
-      return agentData.id === id
-        ? { ...agentData, state: !agentData.state }
-        : { ...agentData, state: false };
-    });
-    setAgentsData(agentmap);
+    if (res.data.agents && res.data.agents.length) {
+      const agentmap = agentsData.map((agentData) => {
+        return agentData.id === id
+          ? { ...agentData, state: !agentData.state }
+          : { ...agentData, state: false };
+      });
+      setAgentsData(agentmap);
+    }
   };
 
   return (
@@ -43,23 +51,33 @@ const NestedAccordion = ({ data }) => {
           <div key={i} className="bg-white rounded  h-full flex-grow w-full">
             <div
               style={{ gap: ".5rem" }}
-              onClick={() => handleAgentsState(agentData.id)}
-              className="bg-red-900 flex p-2 border px-4 justify-between w-full items-center cursor-pointer"
+              className="bg-red-900 flex border justify-between w-full items-center cursor-pointer"
             >
               <span
-                className="flex justify-start items-center"
+                onClick={() => handleAgentsState(agentData.id)}
+                className="flex p-2 px-4 justify-start items-center w-full"
                 style={{ gap: ".5rem" }}
               >
+                <span className="p-2">
+                  {agentData.state ? (
+                    <IoCaretDown fontSize={18} />
+                  ) : (
+                    <AiFillCaretRight fontSize={18} />
+                  )}
+                </span>
                 <IoIosPeople fontSize={28} />
 
                 <h4 className="font-semibold">{agentData.name}</h4>
               </span>
-              <span className="p-2">
-                {agentData.state ? (
-                  <IoCaretDown fontSize={18} />
-                ) : (
-                  <AiFillCaretRight fontSize={18} />
-                )}
+
+              <span
+                onClick={() => {
+                  setCreateType(agentData.type);
+                  showCreateAgentCashier(true);
+                }}
+                className="p-4 px-8"
+              >
+                <FaPlus fontSize={18} />
               </span>
             </div>
             <div
@@ -67,7 +85,10 @@ const NestedAccordion = ({ data }) => {
                 agentData.state ? "max-h-[20rem] h-full" : "max-h-0 h-0"
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
-              <NestedAccordion data={fetchData} />
+              <NestedAccordion
+                setSelectedUser={setSelectedUser}
+                data={fetchData}
+              />
             </div>
           </div>
         ))
@@ -77,7 +98,7 @@ const NestedAccordion = ({ data }) => {
       {cashiersData && cashiersData.length ? (
         cashiersData.map((cashierData, i) => (
           <div
-            style={{ gap: ".5rem" }}
+            style={{ gap: ".5rem", paddingInline: "4rem" }}
             className="flex border p-4 justify-between w-full items-center cursor-pointer"
           >
             <span
@@ -92,6 +113,13 @@ const NestedAccordion = ({ data }) => {
         ))
       ) : (
         <></>
+      )}
+      {createAgentCashier && (
+        <CreateAgentCashier
+          type={createType}
+          isOpen={createAgentCashier}
+          onClose={() => showCreateAgentCashier(false)}
+        ></CreateAgentCashier>
       )}
     </div>
   );

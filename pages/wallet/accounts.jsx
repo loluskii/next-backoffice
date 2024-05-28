@@ -63,7 +63,6 @@ export default function Dashboard() {
         getGameData(),
         getGameSettings(),
       ]);
-      console.log("all data", userData, gameData, settingsData);
       setData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
@@ -72,7 +71,7 @@ export default function Dashboard() {
       console.error("Error fetching data:", error);
     }
   }
-
+  console.log(selectedUser, "selectedUser");
   useEffect(() => {
     fetchData();
   }, []);
@@ -108,7 +107,7 @@ export default function Dashboard() {
                 adminSection ? "max-h-[20rem] h-full" : "max-h-0 h-0"
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
-              <NestedAccordion data={data} />
+              <NestedAccordion setSelectedUser={setSelectedUser} data={data} />
             </div>
           </div>
           {/* <div></div> */}
@@ -166,7 +165,7 @@ export default function Dashboard() {
                         <Tbody>
                           {authUser && authUser.wallets.length ? (
                             authUser?.wallets.map((wallet, index) => (
-                              <Tr>
+                              <Tr key={index}>
                                 <Td className="text-center">
                                   {wallet.currencyId}
                                   {wallet.primaryWallet && (
@@ -334,7 +333,7 @@ export default function Dashboard() {
                           <div className="flex md:flex-row flex-col">
                             {gameSettings.quickPick.length &&
                               gameSettings.quickPick.map((q, index) => (
-                                <div className="w-1/4">
+                                <div className="w-1/4" key={index}>
                                   <FormControl className="form-group mb-3">
                                     <FormLabel htmlFor="">
                                       Quick Stake {index + 1}
