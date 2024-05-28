@@ -38,6 +38,8 @@ export default function Dashboard() {
   const [adminSection, setAdminSection] = useState(false);
 
   const [data, setData] = useState({});
+  const [userRole, setUserRole] = useState("super");
+  const [selectedData, setSelectedData] = useState({});
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
@@ -64,6 +66,7 @@ export default function Dashboard() {
         getGameSettings(),
       ]);
       setData(userData.data);
+      setSelectedData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
       setAuthUser(JSON.parse(localStorage.getItem("currentUser")));
@@ -87,7 +90,11 @@ export default function Dashboard() {
             <div className="flex border flex-col w-full justify-start gap-2 items-center">
               <div
                 style={{ gap: ".5rem" }}
-                onClick={() => setAdminSection((prev) => !prev)}
+                onClick={() => {
+                  setSelectedData(data);
+                  setUserRole("super");
+                  setAdminSection((prev) => !prev);
+                }}
                 className="flex p-2 justify-start w-full items-center cursor-pointer"
               >
                 <span className="p-2 text-xl">
@@ -107,7 +114,12 @@ export default function Dashboard() {
                 adminSection ? "max-h-[20rem] h-full" : "max-h-0 h-0"
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
-              <NestedAccordion setSelectedUser={setSelectedUser} data={data} />
+              <NestedAccordion
+                setUserRole={setUserRole}
+                setSelectedData={setSelectedData}
+                setSelectedUser={setSelectedUser}
+                data={data}
+              />
             </div>
           </div>
           {/* <div></div> */}
@@ -117,16 +129,18 @@ export default function Dashboard() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Account Type</p>
-                    <p className="text-2xl font-bold">{authUser.role}</p>
+                    <p className="text-2xl font-bold">{userRole}</p>
                   </div>
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Sub Agents</p>
-                    <p className="text-2xl font-bold">{data?.agents?.length}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedData?.agents?.length}
+                    </p>
                   </div>
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Cashiers</p>
                     <p className="text-2xl font-bold">
-                      {data?.cashiers?.length}
+                      {selectedData?.cashiers?.length}
                     </p>
                   </div>
                 </div>

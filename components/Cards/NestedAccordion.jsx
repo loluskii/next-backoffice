@@ -8,7 +8,12 @@ import { FaPlus } from "react-icons/fa";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import PropTypes from "prop-types";
 
-const NestedAccordion = ({ data, setSelectedUser }) => {
+const NestedAccordion = ({
+  data,
+  setSelectedUser,
+  setSelectedData,
+  setUserRole,
+}) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
@@ -33,6 +38,8 @@ const NestedAccordion = ({ data, setSelectedUser }) => {
   const handleAgentsState = async (id) => {
     const res = await getStructuredUsers(id);
     setSelectedUser(id);
+    setSelectedData(res.data);
+    setUserRole("agent");
     setFetchData(res.data);
     if (res.data.agents && res.data.agents.length) {
       const agentmap = agentsData.map((agentData) => {
@@ -86,6 +93,8 @@ const NestedAccordion = ({ data, setSelectedUser }) => {
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
               <NestedAccordion
+                setUserRole={setUserRole}
+                setSelectedData={setSelectedData}
                 setSelectedUser={setSelectedUser}
                 data={fetchData}
               />
