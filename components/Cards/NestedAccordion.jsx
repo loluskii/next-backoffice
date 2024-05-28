@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { getStructuredUsers } from "services/account.service";
+import { getStructuredUsers, getUser } from "services/account.service";
 import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
 import { IoCaretDown } from "react-icons/io5";
@@ -13,6 +13,7 @@ const NestedAccordion = ({
   setSelectedUser,
   setSelectedData,
   setUserRole,
+  setUserWallets,
 }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
@@ -37,6 +38,8 @@ const NestedAccordion = ({
   }, [data]);
   const handleAgentsState = async (id) => {
     const res = await getStructuredUsers(id);
+    const user = await getUser(id);
+    setUserWallets(user.wallets);
     setSelectedUser(id);
     setSelectedData(res.data);
     setUserRole("agent");
@@ -93,6 +96,7 @@ const NestedAccordion = ({
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
               <NestedAccordion
+                setUserWallets={setUserWallets}
                 setUserRole={setUserRole}
                 setSelectedData={setSelectedData}
                 setSelectedUser={setSelectedUser}

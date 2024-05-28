@@ -38,11 +38,13 @@ export default function Dashboard() {
   const [adminSection, setAdminSection] = useState(false);
 
   const [data, setData] = useState({});
+  const [userWallets, setUserWallets] = useState([]);
   const [userRole, setUserRole] = useState("super");
   const [selectedData, setSelectedData] = useState({});
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
+
   const [gameSettings, setGameSettings] = useState({
     ticketStakeMin: 100,
     ticketStakeMax: 10000,
@@ -65,16 +67,21 @@ export default function Dashboard() {
         getGameData(),
         getGameSettings(),
       ]);
+      const currentUser = localStorage.getItem("currentUser");
+      let storedUser = currentUser ? JSON.parse(currentUser) : null;
+
       setData(userData.data);
       setSelectedData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
-      setAuthUser(JSON.parse(localStorage.getItem("currentUser")));
+      if (storedUser) {
+        setAuthUser(storedUser);
+        setUserWallets(storedUser.wallets);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
-  console.log(selectedUser, "selectedUser");
   useEffect(() => {
     fetchData();
   }, []);
@@ -115,6 +122,7 @@ export default function Dashboard() {
               } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
             >
               <NestedAccordion
+                setUserWallets={setUserWallets}
                 setUserRole={setUserRole}
                 setSelectedData={setSelectedData}
                 setSelectedUser={setSelectedUser}
@@ -177,8 +185,8 @@ export default function Dashboard() {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {authUser && authUser.wallets.length ? (
-                            authUser?.wallets.map((wallet, index) => (
+                          {userWallets.length ? (
+                            userWallets.map((wallet, index) => (
                               <Tr key={index}>
                                 <Td className="text-center">
                                   {wallet.currencyId}
