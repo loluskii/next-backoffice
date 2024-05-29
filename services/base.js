@@ -8,7 +8,7 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${JSON.parse(token)}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -28,11 +28,12 @@ apiClient.interceptors.response.use(
       try {
         if (!refreshToken) throw new Error("No refresh token available");
 
-        const { data } = await apiClient.post("/auth/refresh-tokens", {
-          refreshToken: refreshToken,
+        const { data } = await apiClient.post("/v1/auth/refresh-tokens", {
+          refreshToken: JSON.parse(refreshToken),
         });
-        localStorage.setItem("token", data.token);
-        return apiClient(originalRequest);
+        localStorage.setItem("token", data.access.token);
+        localStorage.setItem("refreshToken", data.refresh.token);
+        
       } catch (err) {
         console.error(err);
         // localStorage.removeItem("token");

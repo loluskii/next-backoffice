@@ -69,7 +69,7 @@ export default function Dashboard() {
       ]);
       const currentUser = localStorage.getItem("currentUser");
       let storedUser = currentUser ? JSON.parse(currentUser) : null;
-
+      setAdminSection((prev) => !prev);
       setData(userData.data);
       setSelectedData(userData.data);
       setGameData(gameData.data);
@@ -82,18 +82,15 @@ export default function Dashboard() {
       console.error("Error fetching data:", error);
     }
   }
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
   const handleAdminDetails = () => {
-    const currentUser = localStorage.getItem("currentUser");
-    let storedUser = currentUser ? JSON.parse(currentUser) : null;
-    if (storedUser) {
-      setUserWallets(storedUser.wallets);
+    if (!adminSection) {
+      fetchData();
+    } else {
+      setAdminSection((prev) => !prev);
     }
-    setSelectedData(data);
-    setUserRole("super");
-    setAdminSection((prev) => !prev);
   };
   return (
     <>
@@ -109,7 +106,7 @@ export default function Dashboard() {
                 onClick={handleAdminDetails}
                 className="flex p-2 justify-start w-full items-center cursor-pointer"
               >
-                <span className="p-2 text-xl">
+                <span className="">
                   {adminSection ? (
                     <i className="fas fa-caret-down"></i>
                   ) : (
@@ -194,7 +191,7 @@ export default function Dashboard() {
                             userWallets.map((wallet, index) => (
                               <Tr key={index}>
                                 <Td className="text-center">
-                                  {wallet.currencyId}
+                                  {wallet?.currencyId?.countryId}
                                   {wallet.primaryWallet && (
                                     <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
                                       Primary

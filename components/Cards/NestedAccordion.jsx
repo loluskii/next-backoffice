@@ -6,7 +6,7 @@ import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";
 import CreateAgentCashier from "components/Modals/CreateAgent";
-import PropTypes from "prop-types";
+import { MdAddBox } from "react-icons/md";
 
 const NestedAccordion = ({
   data,
@@ -17,6 +17,7 @@ const NestedAccordion = ({
 }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
+  const [parentAgentId, setParentAgentId] = useState(null);
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
   const [createType, setCreateType] = useState(false);
   const [fetchData, setFetchData] = useState({});
@@ -36,26 +37,28 @@ const NestedAccordion = ({
     setAgentsData(agents);
     setCashiersData(cashiers);
   }, [data]);
-  const handleAgentsState = async (id) => {
-    const res = await getStructuredUsers(id);
-    const user = await getUser(id);
+  const handleUserState = async (id, type) => {
+    const [res, user] = await Promise.all([
+      getStructuredUsers(id),
+      getUser(id),
+    ]);
     setUserWallets(user.wallets);
+    setParentAgentId(id);
     setSelectedUser(id);
     setSelectedData(res.data);
-    setUserRole("agent");
+    setUserRole(type);
     setFetchData(res.data);
-    if (res.data.agents && res.data.agents.length) {
-      const agentmap = agentsData.map((agentData) => {
-        return agentData.id === id
-          ? { ...agentData, state: !agentData.state }
-          : { ...agentData, state: false };
-      });
-      setAgentsData(agentmap);
+    if (res.data.agents) {
+      const updatedAgentsData = agentsData.map((agentData) => ({
+        ...agentData,
+        state: agentData.id === id && !agentData.state,
+      }));
+      setAgentsData(updatedAgentsData);
     }
   };
 
   return (
-    <div className="flex flex-col px-4 justify-between w-full text-sm items-center text-[#A7A7A7]">
+    <div className="flex flex-col pl-4 justify-between w-full text-sm items-center text-[#A7A7A7]">
       {agentsData && agentsData.length ? (
         agentsData.map((agentData, i) => (
           <div key={i} className="bg-white rounded  h-full flex-grow w-full">
@@ -64,30 +67,26 @@ const NestedAccordion = ({
               className="bg-red-900 flex border justify-between w-full items-center cursor-pointer"
             >
               <span
-                onClick={() => handleAgentsState(agentData.id)}
-                className="flex p-2 px-4 justify-start items-center w-full"
+                onClick={() => handleUserState(agentData.id, "agent")}
+                className="flex p-2 justify-start items-center w-full"
                 style={{ gap: ".5rem" }}
               >
                 <span className="p-2">
-                  {agentData.state ? (
-                    <IoCaretDown fontSize={18} />
-                  ) : (
-                    <AiFillCaretRight fontSize={18} />
-                  )}
+                  {agentData.state ? <IoCaretDown /> : <AiFillCaretRight />}
                 </span>
-                <IoIosPeople fontSize={28} />
+                <IoIosPeople fontSize={20} />
 
                 <h4 className="font-semibold">{agentData.name}</h4>
               </span>
 
               <span
                 onClick={() => {
-                  setCreateType(agentData.type);
+                  setCreateType("agent");
                   showCreateAgentCashier(true);
                 }}
                 className="p-4 px-8"
               >
-                <FaPlus fontSize={18} />
+                <MdAddBox />
               </span>
             </div>
             <div
@@ -108,28 +107,32 @@ const NestedAccordion = ({
       ) : (
         <></>
       )}
-      {cashiersData && cashiersData.length ? (
-        cashiersData.map((cashierData, i) => (
-          <div
-            style={{ gap: ".5rem", paddingInline: "4rem" }}
-            className="flex border p-4 justify-between w-full items-center cursor-pointer"
-          >
-            <span
-              className="flex justify-start items-center"
+      <div className="pl-4 w-full">
+        {cashiersData && cashiersData.length ? (
+          cashiersData.map((cashierData, i) => (
+            <div
               style={{ gap: ".5rem" }}
+              className="flex border p-4 justify-between w-full items-center cursor-pointer"
             >
-              <FaDesktop fontSize={24} />
+              <span
+                className="flex justify-start items-center"
+                style={{ gap: ".5rem" }}
+                onClick={() => handleUserState(cashierData.id, "cashier")}
+              >
+                <FaDesktop />
 
-              <h4 className="font-semibold">{cashierData.name}</h4>
-            </span>
-          </div>
-        ))
-      ) : (
-        <></>
-      )}
+                <h4 className="font-semibold">{cashierData.name}</h4>
+              </span>
+            </div>
+          ))
+        ) : (
+          <></>
+        )}
+      </div>
       {createAgentCashier && (
         <CreateAgentCashier
           type={createType}
+          agentId={parentAgentId}
           isOpen={createAgentCashier}
           onClose={() => showCreateAgentCashier(false)}
         ></CreateAgentCashier>
