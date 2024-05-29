@@ -23,6 +23,7 @@ import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { getGameData, getGameSettings } from "services/settings.service";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 // components
 
@@ -34,10 +35,16 @@ import UserDetails from "components/Cards/UserDetails";
 
 export default function Dashboard() {
   const [selectedUser, setSelectedUser] = useState({});
+  const [adminSection, setAdminSection] = useState(false);
+
   const [data, setData] = useState({});
+  const [userWallets, setUserWallets] = useState([]);
+  const [userRole, setUserRole] = useState("super");
+  const [selectedData, setSelectedData] = useState({});
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
+
   const [gameSettings, setGameSettings] = useState({
     ticketStakeMin: 100,
     ticketStakeMax: 10000,
@@ -60,52 +67,90 @@ export default function Dashboard() {
         getGameData(),
         getGameSettings(),
       ]);
+      const currentUser = localStorage.getItem("currentUser");
+      let storedUser = currentUser ? JSON.parse(currentUser) : null;
+      setAdminSection((prev) => !prev);
       setData(userData.data);
+      setSelectedData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
-      setAuthUser(JSON.parse(localStorage.getItem("currentUser")));
+      if (storedUser) {
+        setAuthUser(storedUser);
+        setUserWallets(storedUser.wallets);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+  const handleAdminDetails = () => {
+    if (!adminSection) {
+      fetchData();
+    } else {
+      setAdminSection((prev) => !prev);
+    }
+  };
   return (
     <>
       <div className="min-h-screen pb-5">
-        <div className="flex md:flex-row flex-col w-full gap-6">
+        <div className="grid md:grid-cols-2 w-full md:gap-4 place-items-start">
           <div
-            className="bg-white rounded h-full flex-grow"
-            style={{ flexBasis: "40%" }}
+            style={{ gap: ".5rem" }}
+            className="bg-white rounded h-full flex-grow p-4 border border-black w-full"
           >
-            <NestedAccordion
-              data={data}
-              setSelectedUser={(user) => {
-                console.log(user);
-                setSelectedUser(user);
-              }}
-            />
+            <div className="flex border flex-col w-full justify-start gap-2 items-center">
+              <div
+                style={{ gap: ".5rem" }}
+                onClick={handleAdminDetails}
+                className="flex p-2 justify-start w-full items-center cursor-pointer"
+              >
+                <span className="">
+                  {adminSection ? (
+                    <i className="fas fa-caret-down"></i>
+                  ) : (
+                    <i className="fas fa-caret-right"></i>
+                  )}
+                </span>
+                <h4 className="text-xl font-semibold">Admin</h4>
+              </div>
+              <div className="h-[1px] w-full bg-[#B5B5B5]" />
+            </div>
+
+            <div
+              className={`${
+                adminSection ? "max-h-[20rem] h-full" : "max-h-0 h-0"
+              } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
+            >
+              <NestedAccordion
+                setUserWallets={setUserWallets}
+                setUserRole={setUserRole}
+                setSelectedData={setSelectedData}
+                setSelectedUser={setSelectedUser}
+                data={data}
+              />
+            </div>
           </div>
           {/* <div></div> */}
-          <div className="flex-grow mb-8" style={{ flexBasis: "60%" }}>
+          <div className="flex-grow mb-8 w-full" style={{ flexBasis: "60%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Account Type</p>
-                    <p className="text-2xl font-bold">{authUser.role}</p>
+                    <p className="text-2xl font-bold">{userRole}</p>
                   </div>
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Sub Agents</p>
-                    <p className="text-2xl font-bold">{data?.agents?.length}</p>
+                    <p className="text-2xl font-bold">
+                      {selectedData?.agents?.length}
+                    </p>
                   </div>
                   <div className=" bg-blueGray-100 text-blueGray-600 p-3 w-full border-l mb-2">
                     <p>Cashiers</p>
                     <p className="text-2xl font-bold">
-                      {data?.cashiers?.length}
+                      {selectedData?.cashiers?.length}
                     </p>
                   </div>
                 </div>
@@ -142,11 +187,11 @@ export default function Dashboard() {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {authUser && authUser.wallets.length ? (
-                            authUser?.wallets.map((wallet, index) => (
-                              <Tr>
+                          {userWallets.length ? (
+                            userWallets.map((wallet, index) => (
+                              <Tr key={index}>
                                 <Td className="text-center">
-                                  {wallet.currencyId}
+                                  {wallet?.currencyId?.countryId}
                                   {wallet.primaryWallet && (
                                     <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
                                       Primary
@@ -312,7 +357,7 @@ export default function Dashboard() {
                           <div className="flex md:flex-row flex-col">
                             {gameSettings.quickPick.length &&
                               gameSettings.quickPick.map((q, index) => (
-                                <div className="w-1/4">
+                                <div className="w-1/4" key={index}>
                                   <FormControl className="form-group mb-3">
                                     <FormLabel htmlFor="">
                                       Quick Stake {index + 1}

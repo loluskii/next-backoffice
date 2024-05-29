@@ -17,6 +17,17 @@ export const getStructuredUsers = async (id = null) => {
     // throw error;
   }
 };
+// Login function
+export const getUser = async (id = null) => {
+  try {
+    const { data } = await apiClient.get(`/v1/users/${id}`);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return false;
+    // throw error;
+  }
+};
 
 export const createAgentOrCashier = async (type, payload) => {
   try {

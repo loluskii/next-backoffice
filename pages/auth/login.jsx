@@ -13,9 +13,10 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     const response = await loginUser(email, password);
-    setIsLoading(false);
     if (response) {
-      return router.push("/wallet/accounts");
+      router.push("/wallet/accounts");
+      setIsLoading(false);
+      return;
     } else {
       console.error(response);
     }

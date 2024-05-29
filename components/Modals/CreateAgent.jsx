@@ -19,20 +19,21 @@ import { createCurrency, getCurrencies } from "services/tickets.service";
 import { createAgentOrCashier } from "services/account.service";
 import { FaCheckCircle } from "react-icons/fa";
 
-const CreateAgentCashier = ({ type, onClose, isOpen }) => {
+const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobile: "",
-    currencyId: "",
+    agentId: agentId,
   });
 
   const [agentCashierCreated, setAgentCashierCreated] = useState(false);
   const [userData, setUserData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [currencies, setCurrencies] = useState([]);
+  const [selectedCurrencyId, setSelectedCurrencyId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [accountType, setAccountType] = useState(type);
+  const [accountType, setAccountType] = useState("");
 
   async function getCurrencyData() {
     const res = await getCurrencies();
@@ -49,9 +50,13 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const payload =
+      accountType === "agent"
+        ? { ...formData, currencyId: selectedCurrencyId }
+        : formData;
     try {
       setIsCreating(true);
-      const res = await createAgentOrCashier(type, formData);
+      const res = await createAgentOrCashier(accountType, payload);
       setIsCreating(false);
       setAgentCashierCreated(true);
       setUserData(res.data);
@@ -105,26 +110,24 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
                 color="#293137"
                 className="text-capitalize"
               >
-                Create {type}
+                Create User
               </Text>
               <ModalCloseButton bg="unset" />
             </ModalHeader>
             <ModalBody>
-              {accountType === "" && (
-                <FormControl mb={4}>
-                  <FormLabel>Account Type</FormLabel>
-                  <Select
-                    name="type"
-                    className="w-full pb-2"
-                    value={formData.currencyId}
-                    onChange={(e) => setAccountType(e.target.value)}
-                    placeholder={"select a type"}
-                  >
-                    <option value="agent">Agent</option>
-                    <option value="cashier">Cashier</option>
-                  </Select>
-                </FormControl>
-              )}
+              <FormControl mb={4}>
+                <FormLabel>Account Type</FormLabel>
+                <Select
+                  name="type"
+                  className="w-full pb-2"
+                  value={accountType}
+                  onChange={(e) => setAccountType(e.target.value)}
+                  placeholder={"select a type"}
+                >
+                  <option value="agent">Agent</option>
+                  <option value="cashier">Cashier</option>
+                </Select>
+              </FormControl>
 
               <FormControl>
                 <FormLabel>Name</FormLabel>
@@ -158,23 +161,24 @@ const CreateAgentCashier = ({ type, onClose, isOpen }) => {
                   onChange={handleChange}
                 />
               </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel>Active Currency</FormLabel>
-                <Select
-                  name="currencyId"
-                  className="w-full pb-2"
-                  value={formData.currencyId}
-                  onChange={handleChange}
-                  placeholder={formData.currencyId}
-                >
-                  {currencies?.map((c, index) => (
-                    <option value={c.id} key={index}>
-                      {c.country[0].currencyCode}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
+              {accountType === "agent" && (
+                <FormControl mt={4}>
+                  <FormLabel>Active Currency</FormLabel>
+                  <Select
+                    name="currencyId"
+                    className="w-full pb-2"
+                    value={selectedCurrencyId}
+                    onChange={(e) => setSelectedCurrencyId(e.target.value)}
+                    placeholder={selectedCurrencyId}
+                  >
+                    {currencies?.map((c, index) => (
+                      <option value={c.id} key={index}>
+                        {c.country[0].currencyCode}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
 
               {errorMessage ? (
                 <p className="text-red-500 my-2">{errorMessage}</p>
