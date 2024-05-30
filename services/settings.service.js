@@ -19,3 +19,13 @@ export const getGameData = async () => {
     throw error.response;
   }
 };
+
+export const performWalletAction = async (payload) => {
+  try {
+    const response = await apiClient.post("cashier/v1/wallet", payload);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error.response;
+  }
+};

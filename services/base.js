@@ -29,11 +29,10 @@ apiClient.interceptors.response.use(
         if (!refreshToken) throw new Error("No refresh token available");
 
         const { data } = await apiClient.post("/v1/auth/refresh-tokens", {
-          refreshToken: JSON.parse(refreshToken),
+          refreshToken: refreshToken,
         });
         localStorage.setItem("token", data.access.token);
         localStorage.setItem("refreshToken", data.refresh.token);
-        
       } catch (err) {
         console.error(err);
         // localStorage.removeItem("token");

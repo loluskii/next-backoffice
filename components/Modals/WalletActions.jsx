@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { currency_list } from "utils";
 import {
   Modal,
   ModalOverlay,
@@ -15,14 +14,13 @@ import {
   Text,
   Select,
 } from "@chakra-ui/react";
-import { createCurrency, getCurrencies } from "services/tickets.service";
-import { createAgentOrCashier } from "services/account.service";
-import { FaCheckCircle } from "react-icons/fa";
+import { getCurrencies } from "services/tickets.service";
+import { performWalletAction } from "services/settings.service";
 
-const WalletActions = ({ type, onClose, isOpen, agentId }) => {
+const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
   const [formData, setFormData] = useState({
-    fromCurrencyId: "",
-    toCurrencyId: "",
+    fromCurrencyId: currency.id,
+    toCurrencyId: currency.id,
     userId: agentId,
     amount: "",
   });
@@ -50,13 +48,10 @@ const WalletActions = ({ type, onClose, isOpen, agentId }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const payload =
-      accountType === "agent"
-        ? { ...formData, currencyId: selectedCurrencyId }
-        : formData;
+
     try {
       setIsCreating(true);
-      const res = await createAgentOrCashier(accountType, payload);
+      const res = await performWalletAction(formData);
       setIsCreating(false);
       setAgentCashierCreated(true);
       setUserData(res.data);
@@ -81,52 +76,89 @@ const WalletActions = ({ type, onClose, isOpen, agentId }) => {
               color="#293137"
               className="text-capitalize"
             >
-              Fund Wallet
+              {action === "add"
+                ? `Fund ${currency.currencyId.countryId} Wallet`
+                : action === "deduct" ? `Deduct From ${currency.currencyId.countryId} Wallet`: "Transfer Funds"}
+              
             </Text>
             <ModalCloseButton bg="unset" />
           </ModalHeader>
           <ModalBody>
-            <FormControl mt={4}>
-              <FormLabel>From</FormLabel>
-              <Select
-                name="fromCurrencyId"
-                className="w-full pb-2"
-                value={formData.fromCurrencyId}
-                onChange={(e) => handleChange(e)}
-                placeholder={formData.fromCurrencyId}
-              >
-                {currencies?.map((c, index) => (
-                  <option value={c.id} key={index}>
-                    {c.country[0].currencyCode}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            {action === "deduct" && (
+              <>
+                <FormControl mb={4}>
+                  <FormLabel>From</FormLabel>
+                  <Input
+                    name="currency"
+                    type="text"
+                    placeholder={currency.currencyId.countryId}
+                    value={currency.currencyId.countryId}
+                    readOnly
+                  />
+                </FormControl>
+              </>
+            )}
 
-            <FormControl mt={4}>
-              <FormLabel>To</FormLabel>
-              <Select
-                name="toCurrencyId"
-                className="w-full pb-2"
-                value={formData.toCurrencyId}
-                onChange={(e) => handleChange(e)}
-                placeholder={formData.toCurrencyId}
-              >
-                {currencies?.map((c, index) => (
-                  <option value={c.id} key={index}>
-                    {c.country[0].currencyCode}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            {action === "add" && (
+              <>
+                <FormControl mb={4}>
+                  <FormLabel>To</FormLabel>
+                  <Input
+                    name="currency"
+                    type="text"
+                    placeholder={currency.currencyId.countryId}
+                    value={currency.currencyId.countryId}
+                    readOnly
+                  />
+                </FormControl>
+              </>
+            )}
 
-            <FormControl mt={4}>
+            {action === "transfer" && (
+              <>
+                <FormControl mb={4}>
+                  <FormLabel>From</FormLabel>
+                  <Select
+                    name="toCurrencyId"
+                    className="w-full pb-2"
+                    onChange={(e) => handleChange(e)}
+                    placeholder="Select a currency"
+                    required
+                  >
+                    <option>Select a currency</option>
+                    {currencies?.map((c, index) => (
+                      <option value={c.id} key={index}>
+                        {c.country[0].currencyCode}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl mb={4}>
+                  <FormLabel>To</FormLabel>
+                  <Select
+                    name="toCurrencyId"
+                    className="w-full pb-2"
+                    onChange={(e) => handleChange(e)}
+                    placeholder="Select a currency"
+                    required
+                  >
+                    <option>Select a currency</option>
+                    {currencies?.map((c, index) => (
+                      <option value={c.id} key={index}>
+                        {c.country[0].currencyCode}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
+
+            <FormControl mb={4}>
               <FormLabel>Amount</FormLabel>
               <Input
-                name="mobile"
-                type="number"
+                name="amount"
+                type="text"
                 placeholder="12345"
-                value={formData.amount}
                 onChange={handleChange}
               />
             </FormControl>

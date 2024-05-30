@@ -24,14 +24,11 @@ import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { getGameData, getGameSettings } from "services/settings.service";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-
-// components
-
+import CreateAgentCashier from "components/Modals/CreateAgent";
+import { getUser } from "services/account.service";
+import WalletActions from "components/Modals/WalletActions";
 import NestedAccordion from "components/Cards/NestedAccordion";
-// layout for page
-
 import Admin from "layouts/Admin.jsx";
-import UserDetails from "components/Cards/UserDetails";
 
 export default function Dashboard() {
   const [selectedUser, setSelectedUser] = useState({});
@@ -41,6 +38,12 @@ export default function Dashboard() {
   const [userWallets, setUserWallets] = useState([]);
   const [userRole, setUserRole] = useState("super");
   const [selectedData, setSelectedData] = useState({});
+  const [createAgentCashier, showCreateAgentCashier] = useState(false);
+  const [createType, setCreateType] = useState(false);
+  const [showWalletActions, setShowWalletActions] = useState(false);
+  const [walletAction, setWalletAction] = useState("");
+  const [walletActionCurrency, setWalletActionCurrency] = useState("");
+
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
@@ -62,24 +65,25 @@ export default function Dashboard() {
 
   async function fetchData() {
     try {
-      const [userData, gameData, settingsData] = await Promise.all([
+      const currentUser = localStorage.getItem("currentUser");
+      let storedUser = currentUser ? JSON.parse(currentUser) : null;
+      const [authData, userData, gameData, settingsData] = await Promise.all([
+        getUser(storedUser.id),
         getStructuredUsers(),
         getGameData(),
         getGameSettings(),
       ]);
-      const currentUser = localStorage.getItem("currentUser");
-      let storedUser = currentUser ? JSON.parse(currentUser) : null;
       setAdminSection((prev) => !prev);
       setData(userData.data);
       setSelectedData(userData.data);
       setGameData(gameData.data);
       setGameSettings(settingsData.data);
-      if (storedUser) {
-        setAuthUser(storedUser);
-        setUserWallets(storedUser.wallets);
-      }
+      setAuthUser(authData);
+      setSelectedUser(authData.id);
+      setUserWallets(authData.wallets);
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert("an error occured");
     }
   }
   // useEffect(() => {
@@ -92,6 +96,13 @@ export default function Dashboard() {
       setAdminSection((prev) => !prev);
     }
   };
+
+  const handleWalletAction = (name, value) => {
+    setWalletAction((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   return (
     <>
       <div className="min-h-screen pb-5">
@@ -100,7 +111,7 @@ export default function Dashboard() {
             style={{ gap: ".5rem" }}
             className="bg-white rounded h-full flex-grow p-4 border border-black w-full"
           >
-            <div className="flex border flex-col w-full justify-start gap-2 items-center">
+            <div className="flex border w-full justify-between gap-2 items-center">
               <div
                 style={{ gap: ".5rem" }}
                 onClick={handleAdminDetails}
@@ -115,7 +126,16 @@ export default function Dashboard() {
                 </span>
                 <h4 className="text-xl font-semibold">Admin</h4>
               </div>
-              <div className="h-[1px] w-full bg-[#B5B5B5]" />
+
+              <span
+                onClick={() => {
+                  setCreateType("agent");
+                  showCreateAgentCashier(true);
+                }}
+                className="p-4 px-8"
+              >
+                <MdAddBox />
+              </span>
             </div>
 
             <div
@@ -202,15 +222,38 @@ export default function Dashboard() {
                                   {wallet.balance}
                                 </Td>
                                 <Td className="text-center">
-                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1">
+                                  <span
+                                    onClick={() => {
+                                      setShowWalletActions(true);
+                                      setWalletAction("deduct");
+                                      setWalletActionCurrency(wallet);
+                                    }}
+                                    className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
+                                  >
                                     <BiSolidMinusSquare />
                                   </span>
-                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1">
+                                  <span
+                                    onClick={() => {
+                                      setShowWalletActions(true);
+                                      setWalletAction("add");
+                                      setWalletActionCurrency(wallet);
+                                    }}
+                                    className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                  >
                                     <MdAddBox />
                                   </span>
-                                  <span className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1">
-                                    <BiTransfer />
-                                  </span>
+                                  {authUser.id === selectedUser && (
+                                    <span
+                                      onClick={() => {
+                                        setShowWalletActions(true);
+                                        setWalletAction("transfer");
+                                        setWalletActionCurrency(wallet);
+                                      }}
+                                      className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                    >
+                                      <BiTransfer />
+                                    </span>
+                                  )}
                                 </Td>
                               </Tr>
                             ))
@@ -393,6 +436,24 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        {createAgentCashier && (
+          <CreateAgentCashier
+            type={createType}
+            agentId={authUser.id}
+            isOpen={createAgentCashier}
+            onClose={() => showCreateAgentCashier(false)}
+          ></CreateAgentCashier>
+        )}
+
+        {showWalletActions && (
+          <WalletActions
+            isOpen={showWalletActions}
+            onClose={() => setShowWalletActions(false)}
+            action={walletAction}
+            currency={walletActionCurrency}
+            agentId={selectedUser}
+          ></WalletActions>
+        )}
       </div>
     </>
   );
