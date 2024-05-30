@@ -20,6 +20,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log(error.config)
     const token = localStorage.getItem("token");
     const refreshToken = localStorage.getItem("refreshToken");
     console.log(error);
@@ -35,9 +36,9 @@ apiClient.interceptors.response.use(
         localStorage.setItem("refreshToken", data.refresh.token);
       } catch (err) {
         console.error(err);
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("currentUser");
-        // window.location.reload();
+        localStorage.removeItem("token");
+        localStorage.removeItem("currentUser");
+        window.location.reload();
       }
     }
     return Promise.reject(error);

@@ -106,9 +106,9 @@ export default function Dashboard() {
   return (
     <>
       <div className="min-h-screen pb-5">
-        <div className="grid md:grid-cols-2 w-full md:gap-4 place-items-start">
+        <div className="flex flex-col md:flex-row w-full gap-6 place-items-start">
           <div
-            style={{ gap: ".5rem" }}
+            style={{ flexBasis: "45%" }}
             className="bg-white rounded h-full flex-grow p-4 border border-black w-full"
           >
             <div className="flex border w-full justify-between gap-2 items-center">
@@ -153,7 +153,7 @@ export default function Dashboard() {
             </div>
           </div>
           {/* <div></div> */}
-          <div className="flex-grow mb-8 w-full" style={{ flexBasis: "60%" }}>
+          <div className="flex-grow mb-8 w-full" style={{ flexBasis: "45%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
                 <div className="flex flex-col md:flex-row gap-6">
