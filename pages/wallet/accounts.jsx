@@ -219,7 +219,7 @@ export default function Dashboard() {
                                   )}
                                 </Td>
                                 <Td className="text-center">
-                                  {wallet.balance}
+                                  {wallet.balance.toFixed(2)}
                                 </Td>
                                 <Td className="text-center">
                                   <span
@@ -438,8 +438,8 @@ export default function Dashboard() {
         </div>
         {createAgentCashier && (
           <CreateAgentCashier
-            type={createType}
-            agentId={authUser.id}
+            type={"direct"}
+            // agentId={authUser.id}
             isOpen={createAgentCashier}
             onClose={() => showCreateAgentCashier(false)}
           ></CreateAgentCashier>

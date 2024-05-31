@@ -38,22 +38,25 @@ const NestedAccordion = ({
     setCashiersData(cashiers);
   }, [data]);
   const handleUserState = async (id, type) => {
-    const [res, user] = await Promise.all([
-      getStructuredUsers(id),
-      getUser(id),
-    ]);
-    setUserWallets(user.wallets);
-    setParentAgentId(id);
-    setSelectedUser(id);
-    setSelectedData(res.data);
-    setUserRole(type);
-    setFetchData(res.data);
-    if (res.data.agents) {
-      const updatedAgentsData = agentsData.map((agentData) => ({
-        ...agentData,
-        state: agentData.id === id && !agentData.state,
-      }));
-      setAgentsData(updatedAgentsData);
+    if (agentsData.state) {
+    } else {
+      const [res, user] = await Promise.all([
+        getStructuredUsers(id),
+        getUser(id),
+      ]);
+      setUserWallets(user.wallets);
+      setParentAgentId(id);
+      setSelectedUser(id);
+      setSelectedData(res.data);
+      setUserRole(type);
+      setFetchData(res.data);
+      if (res.data.agents) {
+        const updatedAgentsData = agentsData.map((agentData) => ({
+          ...agentData,
+          state: agentData.id === id && !agentData.state,
+        }));
+        setAgentsData(updatedAgentsData);
+      }
     }
   };
 
@@ -83,6 +86,7 @@ const NestedAccordion = ({
                 onClick={() => {
                   setCreateType("agent");
                   showCreateAgentCashier(true);
+                  setParentAgentId(agentData.id);
                 }}
                 className="p-4 px-8"
               >
@@ -131,7 +135,7 @@ const NestedAccordion = ({
       </div>
       {createAgentCashier && (
         <CreateAgentCashier
-          type={createType}
+          type={"indirect"}
           agentId={parentAgentId}
           isOpen={createAgentCashier}
           onClose={() => showCreateAgentCashier(false)}

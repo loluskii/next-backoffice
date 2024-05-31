@@ -80,6 +80,7 @@ export default function Login() {
                       type="button"
                       onClick={(e) => doLogin(e)}
                       disabled={isLoading}
+                      isLoading={isLoading}
                     >
                       {isLoading ? "Please Wait..." : "Continue"}
                     </button>

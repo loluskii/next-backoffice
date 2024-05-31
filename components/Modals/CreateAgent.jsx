@@ -24,7 +24,6 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
     name: "",
     email: "",
     mobile: "",
-    agentId: agentId,
   });
 
   const [agentCashierCreated, setAgentCashierCreated] = useState(false);
@@ -50,10 +49,26 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const payload =
-      accountType === "agent"
-        ? { ...formData, currencyId: selectedCurrencyId }
-        : formData;
+    let payload;
+    if (accountType === "agent") {
+      if (type === "indirect") {
+        payload = {
+          ...formData,
+          currencyId: selectedCurrencyId,
+          agentId: agentId,
+        };
+      } else {
+        payload = {
+          ...formData,
+          currencyId: selectedCurrencyId,
+        };
+      }
+    } else {
+      payload = {
+        ...formData,
+        currencyId: selectedCurrencyId,
+      };
+    }
     try {
       setIsCreating(true);
       const res = await createAgentOrCashier(accountType, payload);
@@ -169,8 +184,9 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                     className="w-full pb-2"
                     value={selectedCurrencyId}
                     onChange={(e) => setSelectedCurrencyId(e.target.value)}
-                    placeholder={selectedCurrencyId}
+                    // placeholder={selectedCurrencyId}
                   >
+                    <option>Select currency</option>
                     {currencies?.map((c, index) => (
                       <option value={c.id} key={index}>
                         {c.country[0].currencyCode}
