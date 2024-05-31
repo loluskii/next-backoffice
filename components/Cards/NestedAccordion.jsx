@@ -21,6 +21,7 @@ const NestedAccordion = ({
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
   const [createType, setCreateType] = useState(false);
   const [fetchData, setFetchData] = useState({});
+  const [activeAgent, setActiveAgent] = useState(null)
   useEffect(() => {
     const agents =
       data && data.agents
@@ -38,8 +39,10 @@ const NestedAccordion = ({
     setCashiersData(cashiers);
   }, [data]);
   const handleUserState = async (id, type) => {
-    if (agentsData.state) {
+    if (activeAgent) {
+      setActiveAgent(null)
     } else {
+      setActiveAgent(id)
       const [res, user] = await Promise.all([
         getStructuredUsers(id),
         getUser(id),
@@ -67,20 +70,24 @@ const NestedAccordion = ({
           <div key={i} className="bg-white rounded  h-full flex-grow w-full">
             <div
               style={{ gap: ".5rem" }}
-              className="bg-red-900 flex border justify-between w-full items-center cursor-pointer"
+              className="bg-red-900 flex border justify-between w-full items-center"
             >
-              <span
-                onClick={() => handleUserState(agentData.id, "agent")}
-                className="flex p-2 justify-start items-center w-full"
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleUserState(agentData.id, "agent");
+                }}
+                className={`${
+                  agentData.id === activeAgent ? "text-lightBlue-500" : ""
+                }   flex p-2 justify-start items-center cursor-pointer`}
                 style={{ gap: ".5rem" }}
               >
                 <span className="p-2">
                   {agentData.state ? <IoCaretDown /> : <AiFillCaretRight />}
                 </span>
                 <IoIosPeople fontSize={20} />
-
                 <h4 className="font-semibold">{agentData.name}</h4>
-              </span>
+              </div>
 
               <span
                 onClick={() => {

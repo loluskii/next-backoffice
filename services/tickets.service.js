@@ -57,3 +57,14 @@ export const getCurrencies = async (data) => {
     return false;
   }
 };
+
+export const getFinancialReport = async (startDate, endDate, betType) => {
+  try {
+    let url = `cashier/v1/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&betType=${betType}`;
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};

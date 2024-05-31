@@ -115,7 +115,7 @@ export default function Dashboard() {
               <div
                 style={{ gap: ".5rem" }}
                 onClick={handleAdminDetails}
-                className="flex p-2 justify-start w-full items-center cursor-pointer"
+                className="flex p-2 justify-start items-center cursor-pointer"
               >
                 <span className="">
                   {adminSection ? (
