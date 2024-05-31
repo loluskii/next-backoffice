@@ -64,10 +64,17 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
         };
       }
     } else {
-      payload = {
-        ...formData,
-        currencyId: selectedCurrencyId,
-      };
+      if (type === "indirect") {
+        payload = {
+          ...formData,
+          agentId: agentId,
+        };
+      } else {
+        payload = {
+          ...formData,
+        };
+      }
+      // payload = formData
     }
     try {
       setIsCreating(true);
