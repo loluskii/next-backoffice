@@ -20,10 +20,12 @@ export const updateGameSettings = async (payload, id) => {
       "cashier/v1/game/gameSettings/" + id,
       payload
     );
-    return response.data;
+    return { status: true, data: response.data };
   } catch (error) {
-    console.error(error);
-    throw error.response;
+    return {
+      status: false,
+      data: error.response ? error.response.data : error.message,
+    };
   }
 };
 
@@ -35,10 +37,12 @@ export const updateGameData = async (payload, id) => {
       "cashier/v1/game/gameData/" + id,
       payload
     );
-    return response.data;
+    return { status: true, data: response.data };
   } catch (error) {
-    console.error(error);
-    throw error.response;
+    return {
+      status: false,
+      data: error.response ? error.response.data : error.message,
+    };
   }
 };
 

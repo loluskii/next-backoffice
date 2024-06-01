@@ -125,22 +125,22 @@ export default function Dashboard() {
 
   const handleGameSettingsUpdate = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const res = await updateGameData(gameData, selectedUser);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
+    const res = await updateGameData(gameData, selectedUser);
+    if (res.status) {
+      alert("Game settings updated successfully");
+    } else {
+      alert(res.data.message);
     }
-    // Add logic to handle game settings update
   };
 
   const handleGameDataUpdate = async (e) => {
     e.preventDefault();
-    try {
-      const res = await updateGameData(gameData, selectedUser);
-    } catch (error) {}
-    // Add logic to handle game data update
+    const res = await updateGameData(gameData, selectedUser);
+    if (res.status) {
+      alert("Game data updated successfully");
+    } else {
+      alert(res.data.message);
+    }
   };
 
   const handleChangeForGameSettings = (e) => {
