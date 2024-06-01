@@ -7,6 +7,7 @@ import { AiFillCaretRight } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import { MdAddBox } from "react-icons/md";
+import { getGameData, getGameSettings } from "services/settings.service";
 
 const NestedAccordion = ({
   data,
@@ -14,6 +15,8 @@ const NestedAccordion = ({
   setSelectedData,
   setUserRole,
   setUserWallets,
+  setGameData,
+  setGameSettings
 }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
@@ -43,9 +46,10 @@ const NestedAccordion = ({
       setActiveAgent(null)
     } else {
       setActiveAgent(id)
-      const [res, user] = await Promise.all([
+      const [res, user, gameSettings] = await Promise.all([
         getStructuredUsers(id),
         getUser(id),
+        getGameSettings(id)
       ]);
       setUserWallets(user.wallets);
       setParentAgentId(id);
@@ -53,6 +57,8 @@ const NestedAccordion = ({
       setSelectedData(res.data);
       setUserRole(type);
       setFetchData(res.data);
+      setGameData(gameSettings.data.game[0])
+      setGameData(gameSettings.data.gameConfig[0])
       if (res.data.agents) {
         const updatedAgentsData = agentsData.map((agentData) => ({
           ...agentData,
@@ -120,8 +126,9 @@ const NestedAccordion = ({
       )}
       <div className="pl-4 w-full">
         {cashiersData && cashiersData.length ? (
-          cashiersData.map((cashierData, i) => (
+          cashiersData.map((cashierData, j) => (
             <div
+            key={j}
               style={{ gap: ".5rem" }}
               className="flex border p-4 justify-between w-full items-center cursor-pointer"
             >

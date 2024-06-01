@@ -15,49 +15,62 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { getCurrencies } from "services/tickets.service";
-import { performWalletAction } from "services/settings.service";
+import { createWallet, fundOrDeductWallet } from "services/settings.service";
 import { FaCheckCircle } from "react-icons/fa";
 
 const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
-  const [formData, setFormData] = useState({
-    fromCurrencyId: currency.currencyId.id,
-    toCurrencyId: currency.currencyId.id,
-    userId: agentId,
-    amount: "",
-  });
-
   const [walletActionPerformed, setWalletActionPerformed] = useState(false);
-  const [userData, setUserData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [currencies, setCurrencies] = useState([]);
-  const [selectedCurrencyId, setSelectedCurrencyId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [accountType, setAccountType] = useState("");
+  const [fromCurrencyId, setFromCurrencyId] = useState("");
+  const [toCurrencyId, setToCurrencyId] = useState("");
+  const [amount, setAmount] = useState("");
 
   async function getCurrencyData() {
     const res = await getCurrencies();
     setCurrencies(res.results);
   }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const createWalletAction = async (e) => {
+    e.preventDefault();
+    let payload = {
+      fromCurrencyId: fromCurrencyId,
+      toCurrencyId: toCurrencyId,
+      userId: agentId,
+      amount: parseFloat(amount),
+    };
     try {
       setIsCreating(true);
-      const res = await performWalletAction(formData);
+      await createWallet(payload);
       setIsCreating(false);
       setWalletActionPerformed(true);
     } catch (error) {
       setErrorMessage(error.data.message);
     }
+  };
+
+  const performWalletAction = async (event) => {
+    event.preventDefault();
+    let payload = {
+      currencyId: currency.currencyId.id,
+      userId: agentId,
+      amount: action === "add" ? parseFloat(amount) : parseFloat(`-${amount}`),
+    };
+    try {
+      setIsCreating(true);
+      await fundOrDeductWallet(payload);
+      setIsCreating(false);
+      setWalletActionPerformed(true);
+    } catch (error) {
+      setErrorMessage(error.data.message);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    return action === "transfer"
+      ? createWalletAction(e)
+      : performWalletAction(e);
   };
 
   useEffect(() => {
@@ -137,8 +150,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                     <Select
                       name="fromCurrencyId"
                       className="w-full pb-2"
-                      onChange={(e) => handleChange(e)}
-                      placeholder="Select a currency"
+                      onChange={(e) => setFromCurrencyId(e.target.value)}
                       required
                     >
                       <option>Select a currency</option>
@@ -154,10 +166,10 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                     <Select
                       name="toCurrencyId"
                       className="w-full pb-2"
-                      onChange={(e) => handleChange(e)}
-                      placeholder="Select a currency"
+                      onChange={(e) => setToCurrencyId(e.target.value)}
                       required
                     >
+                      <option>Select a currency</option>
                       {currencies?.map((c, index) => (
                         <option value={c.id} key={index}>
                           {c.country[0].currencyCode}
@@ -174,7 +186,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                   name="amount"
                   type="text"
                   placeholder="12345"
-                  onChange={handleChange}
+                  onChange={(e) => setAmount(e.target.value)}
                 />
               </FormControl>
 

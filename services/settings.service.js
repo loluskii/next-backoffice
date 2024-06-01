@@ -1,28 +1,60 @@
 import { apiClient } from "./base";
 
-export const getGameSettings = async () => {
+export const getGameSettings = async (id = null) => {
   try {
-    const response = await apiClient.get("cashier/v1/game/gameSettings");
-    return response;
+    let url = id
+      ? `cashier/v1/game/gameConfig/${id}`
+      : "cashier/v1/game/gameSettings";
+
+    const response = await apiClient.get(url);
+    return response.data;
   } catch (error) {
     console.error(error);
     throw error.response;
   }
 };
 
-export const getGameData = async () => {
+export const updateGameSettings = async (payload, id) => {
   try {
-    const response = await apiClient.get("cashier/v1/game/gameData");
-    return response;
+    const response = await apiClient.patch(
+      "cashier/v1/game/gameSettings/" + id,
+      payload
+    );
+    return response.data;
   } catch (error) {
     console.error(error);
     throw error.response;
   }
 };
 
-export const performWalletAction = async (payload) => {
+export const updateGameData = async (payload, id) => {
+  try {
+    delete payload.id;
+    delete payload.agentId;
+    const response = await apiClient.patch(
+      "cashier/v1/game/gameData/" + id,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error.response;
+  }
+};
+
+export const createWallet = async (payload) => {
   try {
     const response = await apiClient.post("cashier/v1/wallet", payload);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error.response;
+  }
+};
+
+export const fundOrDeductWallet = async (payload) => {
+  try {
+    const response = await apiClient.post("cashier/v1/wallet/fund", payload);
     return response;
   } catch (error) {
     console.error(error);
