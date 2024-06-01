@@ -22,13 +22,18 @@ import {
 import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
-import { getGameData, getGameSettings } from "services/settings.service";
+import {
+  getGameData,
+  getGameSettings,
+  updateGameData,
+} from "services/settings.service";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import { getUser } from "services/account.service";
 import WalletActions from "components/Modals/WalletActions";
 import NestedAccordion from "components/Cards/NestedAccordion";
 import Admin from "layouts/Admin.jsx";
+import { resetPassword } from "services/auth.service";
 
 export default function Dashboard() {
   const [selectedUser, setSelectedUser] = useState({});
@@ -39,10 +44,15 @@ export default function Dashboard() {
   const [userRole, setUserRole] = useState("super");
   const [selectedData, setSelectedData] = useState({});
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
-  const [createType, setCreateType] = useState(false);
+  const [createType, setCreateType] = useState("");
   const [showWalletActions, setShowWalletActions] = useState(false);
   const [walletAction, setWalletAction] = useState("");
   const [walletActionCurrency, setWalletActionCurrency] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const [authUser, setAuthUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
@@ -63,32 +73,33 @@ export default function Dashboard() {
     roundBetsLimit: 10,
   });
 
-  async function fetchData() {
+  const fetchData = async () => {
     try {
       const currentUser = localStorage.getItem("currentUser");
       let storedUser = currentUser ? JSON.parse(currentUser) : null;
-      const [authData, userData, gameData, settingsData] = await Promise.all([
+      const [authData, userData, gameData] = await Promise.all([
         getUser(storedUser.id),
         getStructuredUsers(),
-        getGameData(),
-        getGameSettings(),
+        getGameSettings(storedUser.id),
       ]);
       setAdminSection((prev) => !prev);
       setData(userData.data);
       setSelectedData(userData.data);
-      setGameData(gameData.data);
-      setGameSettings(settingsData.data);
+      setGameData(gameData.data.game[0]);
+      setGameSettings(gameData.data.gameConfig[0]);
       setAuthUser(authData);
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
     } catch (error) {
       console.error("Error fetching data:", error);
-      alert("an error occured");
+      alert("An error occurred");
     }
-  }
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleAdminDetails = () => {
     if (!adminSection) {
       fetchData();
@@ -97,12 +108,57 @@ export default function Dashboard() {
     }
   };
 
-  const handleWalletAction = (name, value) => {
-    setWalletAction((prev) => ({
-      ...prev,
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    let payload = {
+      oldPassword: oldPassword,
+      password: newPassword,
+    };
+
+    const res = await resetPassword(payload);
+    if (res.status) {
+      alert("Password changed successfully");
+    } else {
+      alert(res.data.message);
+    }
+  };
+
+  const handleGameSettingsUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await updateGameData(gameData, selectedUser);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+    // Add logic to handle game settings update
+  };
+
+  const handleGameDataUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await updateGameData(gameData, selectedUser);
+    } catch (error) {}
+    // Add logic to handle game data update
+  };
+
+  const handleChangeForGameSettings = (e) => {
+    const { name, value } = e.target;
+    setGameSettings((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
     }));
   };
+
+  const handleChangeForGameData = (e) => {
+    const { name, value } = e.target;
+    setGameData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <div className="min-h-screen pb-5">
@@ -148,11 +204,12 @@ export default function Dashboard() {
                 setUserRole={setUserRole}
                 setSelectedData={setSelectedData}
                 setSelectedUser={setSelectedUser}
+                setGameData={setGameData}
+                setGameSettings={setGameSettings}
                 data={data}
               />
             </div>
           </div>
-          {/* <div></div> */}
           <div className="flex-grow mb-8 w-full" style={{ flexBasis: "45%" }}>
             <div className="card p-4 bg-white">
               <div className="summary">
@@ -270,66 +327,98 @@ export default function Dashboard() {
                     </div>
                   </TabPanel>
                   <TabPanel>
-                    <FormControl className="form-group mb-3">
-                      <FormLabel htmlFor="">Reset Password</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder=""
-                        className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                      />
-                    </FormControl>
-                    <Button className="bg-black text-white">Update</Button>
+                    <form onSubmit={handlePasswordChange}>
+                      <FormControl className="form-group mb-3">
+                        <FormLabel htmlFor="oldPassword">
+                          Old Password
+                        </FormLabel>
+                        <Input
+                          type="password"
+                          placeholder="Enter old password"
+                          onChange={(e) => setOldPassword(e.target.value)}
+                          className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                        />
+                      </FormControl>
+                      <FormControl className="form-group mb-3">
+                        <FormLabel htmlFor="newPassword">
+                          New Password
+                        </FormLabel>
+                        <Input
+                          type="password"
+                          placeholder="Enter new password"
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                        />
+                      </FormControl>
+                      <Button
+                        type="submit"
+                        isLoading={loading}
+                        className="bg-black text-white"
+                      >
+                        Update
+                      </Button>
+                    </form>
                   </TabPanel>
                   <TabPanel px={"0px"}>
                     <div className="container">
                       <h6 className="text-xl font-normal leading-normal mt-0 mb-3 text-blueGray-800">
                         Game Configurations
                       </h6>
-                      <form action="">
+                      <form onSubmit={handleGameDataUpdate}>
                         <div className="container">
                           <div className="flex md:flex-row flex-col">
                             <div className="md:w-1/3 w-full">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="roundWaitTimeValue">
                                   Round Wait Time
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="roundWaitTimeValue"
                                   value={gameData.roundWaitTimeValue}
+                                  onChange={handleChangeForGameData}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
                             <div className="md:w-1/3 w-full px-2">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="timerCountdownValue">
                                   Timer Countdown
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="timerCountdownValue"
                                   value={gameData.timerCountdownValue}
+                                  onChange={handleChangeForGameData}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
                             <div className="md:w-1/3 w-full">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="roundBetsLimit">
                                   Round Bets Limit
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="roundBetsLimit"
                                   value={gameData.roundBetsLimit}
+                                  onChange={handleChangeForGameData}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
                           </div>
                         </div>
-                        <Button type="submit" className="bg-black text-white">
+                        <Button
+                          type="submit"
+                          className="bg-black text-white"
+                          isLoading={loading}
+                        >
                           Update
                         </Button>
                       </form>
@@ -339,59 +428,67 @@ export default function Dashboard() {
                       <h6 className="text-xl font-normal leading-normal mt-0 mb-3 text-blueGray-800">
                         Game Settings
                       </h6>
-                      <form action="">
+                      <form onSubmit={handleGameSettingsUpdate}>
                         <div className="container">
                           <div className="flex md:flex-row flex-col">
-                            <div className="md:w-1/2 ">
+                            <div className="md:w-1/2">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="ticketStakeMin">
                                   Min Ticket Stake
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="ticketStakeMin"
                                   value={gameSettings.ticketStakeMin}
+                                  onChange={handleChangeForGameSettings}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
-                            <div className="md:w-1/2  md:px-2">
+                            <div className="md:w-1/2 md:px-2">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="ticketStakeMax">
                                   Max Ticket Stake
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="ticketStakeMax"
                                   value={gameSettings.ticketStakeMax}
+                                  onChange={handleChangeForGameSettings}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
                           </div>
                           <div className="flex md:flex-row flex-col">
-                            <div className="md:w-1/2 ">
+                            <div className="md:w-1/2">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="ticketSizeMin">
                                   Min Ticket Size
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="ticketSizeMin"
                                   value={gameSettings.ticketSizeMin}
+                                  onChange={handleChangeForGameSettings}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
                             </div>
-                            <div className="md:w-1/2  md:px-2">
+                            <div className="md:w-1/2 md:px-2">
                               <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="">
+                                <FormLabel htmlFor="ticketSizeMax">
                                   Max Ticket Size
                                 </FormLabel>
                                 <Input
                                   type="text"
                                   placeholder=""
+                                  name="ticketSizeMax"
                                   value={gameSettings.ticketSizeMax}
+                                  onChange={handleChangeForGameSettings}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
@@ -402,13 +499,24 @@ export default function Dashboard() {
                               gameSettings.quickPick.map((q, index) => (
                                 <div className="w-1/4" key={index}>
                                   <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="">
+                                    <FormLabel htmlFor={`quickPick-${index}`}>
                                       Quick Stake {index + 1}
                                     </FormLabel>
                                     <Input
                                       type="text"
                                       placeholder=""
-                                      value={gameSettings.quickPick[index]}
+                                      name={`quickPick-${index}`}
+                                      value={q}
+                                      onChange={(e) => {
+                                        const newQuickPick = [
+                                          ...gameSettings.quickPick,
+                                        ];
+                                        newQuickPick[index] = e.target.value;
+                                        setGameSettings((prev) => ({
+                                          ...prev,
+                                          quickPick: newQuickPick,
+                                        }));
+                                      }}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
                                   </FormControl>
@@ -416,16 +524,24 @@ export default function Dashboard() {
                               ))}
                           </div>
                           <FormControl className="form-group mb-3">
-                            <FormLabel htmlFor="">Payout Mode</FormLabel>
+                            <FormLabel htmlFor="payoutMode">
+                              Payout Mode
+                            </FormLabel>
                             <Input
                               type="text"
                               placeholder=""
+                              name="payoutMode"
                               value={gameSettings.payoutMode}
+                              onChange={handleChangeForGameSettings}
                               className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                             />
                           </FormControl>
                         </div>
-                        <Button type="submit" className="bg-black text-white">
+                        <Button
+                          type="submit"
+                          isLoading={loading}
+                          className="bg-black text-white"
+                        >
                           Update
                         </Button>
                       </form>
@@ -439,7 +555,6 @@ export default function Dashboard() {
         {createAgentCashier && (
           <CreateAgentCashier
             type={"direct"}
-            // agentId={authUser.id}
             isOpen={createAgentCashier}
             onClose={() => showCreateAgentCashier(false)}
           ></CreateAgentCashier>

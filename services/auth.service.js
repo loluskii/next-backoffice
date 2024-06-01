@@ -17,3 +17,14 @@ export const loginUser = async (email, password) => {
     // throw error;
   }
 };
+
+// Login function
+export const resetPassword = async (payload) => {
+  try {
+    const response = await apiClient.post("/v1/auth/reset-password/", payload);
+    return { status: true, data: response.data };
+  } catch (error) {
+    console.error(error);
+    return { status: false, data: error.response.data };
+  }
+};
