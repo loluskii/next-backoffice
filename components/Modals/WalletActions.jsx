@@ -38,7 +38,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
       fromCurrencyId: fromCurrencyId,
       toCurrencyId: toCurrencyId,
       userId: agentId,
-      amount: parseFloat(amount),
+      amount: amount,
     };
     try {
       setIsCreating(true);
@@ -55,7 +55,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
     let payload = {
       currencyId: currency.currencyId.id,
       userId: agentId,
-      amount: action === "add" ? parseFloat(amount) : parseFloat(`-${amount}`),
+      amount: action === "add" ? amount : `-${amount}`,
     };
     try {
       setIsCreating(true);
