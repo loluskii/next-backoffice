@@ -80,6 +80,7 @@ export default function Dashboard() {
       setLoading(true);
       const currentUser = localStorage.getItem("currentUser");
       let storedUser = currentUser ? JSON.parse(currentUser) : null;
+      setActiveAgentId(storedUser.id);
       const [authData, userData, gameData] = await Promise.all([
         getUser(storedUser.id),
         getStructuredUsers(),
@@ -95,7 +96,6 @@ export default function Dashboard() {
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
       setUserRole(authUser.role);
-      setActiveAgentId(authData.id);
     } catch (error) {
       // console.error("Error fetching data:", error);
       alert("An error occurred");
@@ -117,10 +117,18 @@ export default function Dashboard() {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    let payload = {
-      oldPassword: oldPassword,
-      password: newPassword,
-    };
+    let payload;
+    if (authUser.id === activeAgentId) {
+      payload = {
+        oldPassword: oldPassword,
+        password: newPassword,
+      };
+    } else {
+      payload = {
+        password: newPassword,
+        agentId: activeAgentId,
+      };
+    }
 
     const res = await resetPassword(payload);
     if (res.status) {
@@ -354,28 +362,48 @@ export default function Dashboard() {
                       </TabPanel>
                       <TabPanel px={"0px"}>
                         <form onSubmit={handlePasswordChange}>
-                          <FormControl className="form-group mb-3">
-                            <FormLabel htmlFor="oldPassword">
-                              Old Password
-                            </FormLabel>
-                            <Input
-                              type="password"
-                              placeholder="Enter old password"
-                              onChange={(e) => setOldPassword(e.target.value)}
-                              className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                            />
-                          </FormControl>
-                          <FormControl className="form-group mb-3">
-                            <FormLabel htmlFor="newPassword">
-                              New Password
-                            </FormLabel>
-                            <Input
-                              type="password"
-                              placeholder="Enter new password"
-                              onChange={(e) => setNewPassword(e.target.value)}
-                              className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                            />
-                          </FormControl>
+                          {activeAgentId === authUser?.id ? (
+                            <>
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="oldPassword">
+                                  Old Password
+                                </FormLabel>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter old password"
+                                  onChange={(e) =>
+                                    setOldPassword(e.target.value)
+                                  }
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="newPassword">
+                                  New Password
+                                </FormLabel>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter new password"
+                                  onChange={(e) =>
+                                    setNewPassword(e.target.value)
+                                  }
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
+                            </>
+                          ) : (
+                            <FormControl className="form-group mb-3">
+                              <FormLabel htmlFor="newPassword">
+                                Password
+                              </FormLabel>
+                              <Input
+                                type="password"
+                                placeholder="Enter new password"
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                              />
+                            </FormControl>
+                          )}
                           <Button
                             type="submit"
                             isLoading={loading}

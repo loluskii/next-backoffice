@@ -21,7 +21,7 @@ export const loginUser = async (email, password) => {
 // Login function
 export const resetPassword = async (payload) => {
   try {
-    const response = await apiClient.post("/v1/auth/reset-password/", payload);
+    const response = await apiClient.post("/v1/auth/forgot-password/", payload);
     return { status: true, data: response.data };
   } catch (error) {
     console.error(error);
