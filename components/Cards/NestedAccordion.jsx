@@ -115,7 +115,7 @@ const NestedAccordion = ({
                 setGameData={setGameData}
                 setGameSettings={setGameSettings}
                 setActiveAgentId={setActiveAgentId}
-                data={data}
+                data={fetchData}
                 activeAgentId={activeAgentId}
               />
             </div>
