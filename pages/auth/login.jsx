@@ -5,7 +5,7 @@ import { loginUser } from "services/auth.service";
 
 export default function Login() {
   const [email, setEmail] = useState("lorem@gmail.com");
-  const [password, setPassword] = useState("Password123");
+  const [password, setPassword] = useState("SiEBef0H821");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -13,14 +13,15 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     const response = await loginUser(email, password);
+    setIsLoading(false);
     if (response) {
       router.push("/wallet/accounts");
-      setIsLoading(false);
       return;
     } else {
       console.error(response);
     }
   }
+  
 
   return (
     <>
@@ -42,6 +43,7 @@ export default function Login() {
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
                       name="email"
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
@@ -58,6 +60,7 @@ export default function Login() {
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Password"
                       name="password"
+                      value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>

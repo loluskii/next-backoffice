@@ -10,21 +10,21 @@ import { MdAddBox } from "react-icons/md";
 import { getGameData, getGameSettings } from "services/settings.service";
 
 const NestedAccordion = ({
-  data,
-  setSelectedUser,
-  setSelectedData,
-  setUserRole,
   setUserWallets,
+  setUserRole,
+  setSelectedData,
+  setSelectedUser,
   setGameData,
-  setGameSettings
+  setGameSettings,
+  setActiveAgentId,
+  data,
+  activeAgentId,
 }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
   const [parentAgentId, setParentAgentId] = useState(null);
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
-  const [createType, setCreateType] = useState(false);
   const [fetchData, setFetchData] = useState({});
-  const [activeAgent, setActiveAgent] = useState(null)
   useEffect(() => {
     const agents =
       data && data.agents
@@ -42,30 +42,27 @@ const NestedAccordion = ({
     setCashiersData(cashiers);
   }, [data]);
   const handleUserState = async (id, type) => {
-    if (activeAgent) {
-      setActiveAgent(null)
-    } else {
-      setActiveAgent(id)
-      const [res, user, gameSettings] = await Promise.all([
-        getStructuredUsers(id),
-        getUser(id),
-        getGameSettings(id)
-      ]);
-      setUserWallets(user.wallets);
-      setParentAgentId(id);
-      setSelectedUser(id);
-      setSelectedData(res.data);
-      setUserRole(type);
-      setFetchData(res.data);
-      setGameData(gameSettings.data.game[0])
-      setGameData(gameSettings.data.gameConfig[0])
-      if (res.data.agents) {
-        const updatedAgentsData = agentsData.map((agentData) => ({
-          ...agentData,
-          state: agentData.id === id && !agentData.state,
-        }));
-        setAgentsData(updatedAgentsData);
-      }
+    setActiveAgentId(id);
+    const [res, user, gameSettings] = await Promise.all([
+      getStructuredUsers(id),
+      getUser(id),
+      getGameSettings(id),
+    ]);
+    setUserWallets(user.wallets);
+    setParentAgentId(id);
+    setSelectedUser(id);
+    setSelectedData(res.data);
+    setUserRole(type);
+    setFetchData(res.data);
+    setGameData(gameSettings.data.game[0]);
+    setGameSettings(gameSettings.data.gameConfig[0]);
+
+    if (res.data.agents) {
+      const updatedAgentsData = agentsData.map((agentData) => ({
+        ...agentData,
+        state: agentData.id === id && !agentData.state,
+      }));
+      setAgentsData(updatedAgentsData);
     }
   };
 
@@ -84,7 +81,7 @@ const NestedAccordion = ({
                   handleUserState(agentData.id, "agent");
                 }}
                 className={`${
-                  agentData.id === activeAgent ? "text-lightBlue-500" : ""
+                  agentData.id === activeAgentId ? "text-lightBlue-500" : ""
                 }   flex p-2 justify-start items-center cursor-pointer`}
                 style={{ gap: ".5rem" }}
               >
@@ -97,7 +94,6 @@ const NestedAccordion = ({
 
               <span
                 onClick={() => {
-                  setCreateType("agent");
                   showCreateAgentCashier(true);
                   setParentAgentId(agentData.id);
                 }}
@@ -116,7 +112,11 @@ const NestedAccordion = ({
                 setUserRole={setUserRole}
                 setSelectedData={setSelectedData}
                 setSelectedUser={setSelectedUser}
-                data={fetchData}
+                setGameData={setGameData}
+                setGameSettings={setGameSettings}
+                setActiveAgentId={setActiveAgentId}
+                data={data}
+                activeAgentId={activeAgentId}
               />
             </div>
           </div>
@@ -128,7 +128,7 @@ const NestedAccordion = ({
         {cashiersData && cashiersData.length ? (
           cashiersData.map((cashierData, j) => (
             <div
-            key={j}
+              key={j}
               style={{ gap: ".5rem" }}
               className="flex border p-4 justify-between w-full items-center cursor-pointer"
             >
