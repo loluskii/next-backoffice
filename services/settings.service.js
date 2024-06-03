@@ -9,8 +9,7 @@ export const getGameSettings = async (id = null) => {
     const response = await apiClient.get(url);
     return response.data;
   } catch (error) {
-    console.error(error);
-    throw error.response;
+    return error.response;
   }
 };
 

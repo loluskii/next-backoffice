@@ -54,9 +54,10 @@ const NestedAccordion = ({
     setSelectedData(res.data);
     setUserRole(type);
     setFetchData(res.data);
-    setGameData(gameSettings.data.game[0]);
-    setGameSettings(gameSettings.data.gameConfig[0]);
-
+    if (type === "agent") {
+      setGameData(gameSettings.data.game[0]);
+      setGameSettings(gameSettings.data.gameConfig[0]);
+    }
     if (res.data.agents) {
       const updatedAgentsData = agentsData.map((agentData) => ({
         ...agentData,

@@ -430,7 +430,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="roundWaitTimeValue"
-                                      value={gameData.roundWaitTimeValue}
+                                      value={gameData?.roundWaitTimeValue}
                                       onChange={handleChangeForGameData}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -445,7 +445,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="timerCountdownValue"
-                                      value={gameData.timerCountdownValue}
+                                      value={gameData?.timerCountdownValue}
                                       onChange={handleChangeForGameData}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -460,7 +460,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="roundBetsLimit"
-                                      value={gameData.roundBetsLimit}
+                                      value={gameData?.roundBetsLimit}
                                       onChange={handleChangeForGameData}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -492,7 +492,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="ticketStakeMin"
-                                      value={gameSettings.ticketStakeMin}
+                                      value={gameSettings?.ticketStakeMin}
                                       onChange={handleChangeForGameSettings}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -507,7 +507,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="ticketStakeMax"
-                                      value={gameSettings.ticketStakeMax}
+                                      value={gameSettings?.ticketStakeMax}
                                       onChange={handleChangeForGameSettings}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -524,7 +524,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="ticketSizeMin"
-                                      value={gameSettings.ticketSizeMin}
+                                      value={gameSettings?.ticketSizeMin}
                                       onChange={handleChangeForGameSettings}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -539,7 +539,7 @@ export default function Dashboard() {
                                       type="text"
                                       placeholder=""
                                       name="ticketSizeMax"
-                                      value={gameSettings.ticketSizeMax}
+                                      value={gameSettings?.ticketSizeMax}
                                       onChange={handleChangeForGameSettings}
                                       className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                     />
@@ -547,8 +547,8 @@ export default function Dashboard() {
                                 </div>
                               </div>
                               <div className="flex md:flex-row flex-col">
-                                {gameSettings.quickPick.length &&
-                                  gameSettings.quickPick.map((q, index) => (
+                                {gameSettings?.quickPick.length &&
+                                  gameSettings?.quickPick.map((q, index) => (
                                     <div className="w-1/4" key={index}>
                                       <FormControl className="form-group mb-3">
                                         <FormLabel
@@ -563,7 +563,7 @@ export default function Dashboard() {
                                           value={q}
                                           onChange={(e) => {
                                             const newQuickPick = [
-                                              ...gameSettings.quickPick,
+                                              ...gameSettings?.quickPick,
                                             ];
                                             newQuickPick[index] =
                                               e.target.value;
@@ -586,7 +586,7 @@ export default function Dashboard() {
                                   type="text"
                                   placeholder=""
                                   name="payoutMode"
-                                  value={gameSettings.payoutMode}
+                                  value={gameSettings?.payoutMode}
                                   onChange={handleChangeForGameSettings}
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
