@@ -156,7 +156,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                       <option>Select a currency</option>
                       {currencies?.map((c, index) => (
                         <option value={c.id} key={index}>
-                          {c.country[0].currencyCode}
+                          {`${c.country[0].currencyCode}(${c.exchangeRate})`}
                         </option>
                       ))}
                     </Select>
@@ -172,7 +172,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                       <option>Select a currency</option>
                       {currencies?.map((c, index) => (
                         <option value={c.id} key={index}>
-                          {c.country[0].currencyCode}
+                          {`${c.country[0].currencyCode}(${c.exchangeRate})`}
                         </option>
                       ))}
                     </Select>

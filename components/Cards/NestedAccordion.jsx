@@ -1,13 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
 import { getStructuredUsers, getUser } from "services/account.service";
 import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
 import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
-import { FaPlus } from "react-icons/fa";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import { MdAddBox } from "react-icons/md";
 import { getGameData, getGameSettings } from "services/settings.service";
+
+import React, { useState, useEffect, useCallback } from "react";
+import clsx from "clsx";
 
 const NestedAccordion = ({
   setUserWallets,
@@ -25,76 +26,100 @@ const NestedAccordion = ({
   const [parentAgentId, setParentAgentId] = useState(null);
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
   const [fetchData, setFetchData] = useState({});
+
   useEffect(() => {
-    const agents =
-      data && data.agents
-        ? data.agents.map((agent) => {
-            return { ...agent, state: false };
-          })
-        : [];
-    const cashiers =
-      data && data.cashiers
-        ? data.cashiers.map((agent) => {
-            return { ...agent, state: false };
-          })
-        : [];
-    setAgentsData(agents);
-    setCashiersData(cashiers);
+    if (data) {
+      setAgentsData(
+        data.agents
+          ? data.agents.map((agent) => ({ ...agent, state: false }))
+          : []
+      );
+      setCashiersData(
+        data.cashiers
+          ? data.cashiers.map((agent) => ({ ...agent, state: false }))
+          : []
+      );
+    }
   }, [data]);
-  const handleUserState = async (id, type) => {
-    setActiveAgentId(id);
-    const [res, user, gameSettings] = await Promise.all([
-      getStructuredUsers(id),
-      getUser(id),
-      getGameSettings(id),
-    ]);
-    setUserWallets(user.wallets);
-    setParentAgentId(id);
-    setSelectedUser(id);
-    setSelectedData(res.data);
-    setUserRole(type);
-    setFetchData(res.data);
-    if (type === "agent") {
-      setGameData(gameSettings.data.game[0]);
-      setGameSettings(gameSettings.data.gameConfig[0]);
-    }
-    if (res.data.agents) {
-      const updatedAgentsData = agentsData.map((agentData) => ({
+
+  const fetchUserData = useCallback(
+    async (id, type) => {
+      const [res, user, gameSettings] = await Promise.all([
+        getStructuredUsers(id),
+        getUser(id),
+        getGameSettings(id),
+      ]);
+
+      setActiveAgentId(user);
+      setUserWallets(user.wallets);
+      setParentAgentId(id);
+      setSelectedUser(id);
+      setSelectedData(res.data);
+      setUserRole(type);
+      setFetchData(res.data);
+
+      if (type === "agent") {
+        setGameData(gameSettings.data.game[0]);
+        setGameSettings(gameSettings.data.gameConfig[0]);
+      }
+    },
+    [
+      setActiveAgentId,
+      setUserWallets,
+      setSelectedUser,
+      setSelectedData,
+      setUserRole,
+      setGameData,
+      setGameSettings,
+    ]
+  );
+
+  const toggleDropdown = useCallback((id) => {
+    setAgentsData((prevAgentsData) =>
+      prevAgentsData.map((agentData) => ({
         ...agentData,
-        state: agentData.id === id && !agentData.state,
-      }));
-      setAgentsData(updatedAgentsData);
-    }
-  };
+        state: agentData.id === id ? !agentData.state : agentData.state,
+      }))
+    );
+  }, []);
 
   return (
     <div className="flex flex-col pl-4 justify-between w-full text-sm items-center text-[#A7A7A7]">
-      {agentsData && agentsData.length ? (
+      {agentsData.length > 0 &&
         agentsData.map((agentData, i) => (
-          <div key={i} className="bg-white rounded  h-full flex-grow w-full">
+          <div key={i} className="bg-white rounded h-full flex-grow w-full">
             <div
+              className="hover-bg-blueGrey-100 flex border justify-between w-full items-center cursor-pointer"
               style={{ gap: ".5rem" }}
-              className="bg-red-900 flex border justify-between w-full items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                fetchUserData(agentData.id, "agent");
+              }}
             >
               <div
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleUserState(agentData.id, "agent");
-                }}
-                className={`${
-                  agentData.id === activeAgentId ? "text-lightBlue-500" : ""
-                }   flex p-2 justify-start items-center cursor-pointer`}
+                className={clsx("flex p-2 justify-start items-center", {
+                  "text-lightBlue-500": agentData.id === activeAgentId?.id,
+                })}
                 style={{ gap: ".5rem" }}
               >
-                <span className="p-2">
+                <span
+                  className="p-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown(agentData.id);
+                  }}
+                >
                   {agentData.state ? <IoCaretDown /> : <AiFillCaretRight />}
                 </span>
                 <IoIosPeople fontSize={20} />
-                <h4 className="font-semibold">{agentData.name}</h4>
+                <h4 className="font-semibold">
+                  {agentData.name} ({activeAgentId?.email})
+                </h4>
               </div>
 
               <span
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   showCreateAgentCashier(true);
                   setParentAgentId(agentData.id);
                 }}
@@ -104,49 +129,48 @@ const NestedAccordion = ({
               </span>
             </div>
             <div
-              className={`${
-                agentData.state ? "max-h-[20rem] h-full" : "max-h-0 h-0"
-              } overflow-hidden transition-all flex flex-col w-full gap-2 items-center `}
+              className={clsx(
+                "overflow-hidden transition-all flex flex-col w-full gap-2 items-center",
+                {
+                  "max-h-[20rem] h-full": agentData.state,
+                  "max-h-0 h-0": !agentData.state,
+                }
+              )}
             >
-              <NestedAccordion
-                setUserWallets={setUserWallets}
-                setUserRole={setUserRole}
-                setSelectedData={setSelectedData}
-                setSelectedUser={setSelectedUser}
-                setGameData={setGameData}
-                setGameSettings={setGameSettings}
-                setActiveAgentId={setActiveAgentId}
-                data={fetchData}
-                activeAgentId={activeAgentId}
-              />
+              {agentData.state && (
+                <NestedAccordion
+                  setUserWallets={setUserWallets}
+                  setUserRole={setUserRole}
+                  setSelectedData={setSelectedData}
+                  setSelectedUser={setSelectedUser}
+                  setGameData={setGameData}
+                  setGameSettings={setGameSettings}
+                  setActiveAgentId={setActiveAgentId}
+                  data={fetchData}
+                  activeAgentId={activeAgentId}
+                />
+              )}
             </div>
           </div>
-        ))
-      ) : (
-        <></>
-      )}
+        ))}
       <div className="pl-4 w-full">
-        {cashiersData && cashiersData.length ? (
+        {cashiersData.length > 0 &&
           cashiersData.map((cashierData, j) => (
             <div
               key={j}
-              style={{ gap: ".5rem" }}
               className="flex border p-4 justify-between w-full items-center cursor-pointer"
+              style={{ gap: ".5rem" }}
+              onClick={() => fetchUserData(cashierData.id, "cashier")}
             >
               <span
                 className="flex justify-start items-center"
                 style={{ gap: ".5rem" }}
-                onClick={() => handleUserState(cashierData.id, "cashier")}
               >
                 <FaDesktop />
-
                 <h4 className="font-semibold">{cashierData.name}</h4>
               </span>
             </div>
-          ))
-        ) : (
-          <></>
-        )}
+          ))}
       </div>
       {createAgentCashier && (
         <CreateAgentCashier
@@ -154,7 +178,7 @@ const NestedAccordion = ({
           agentId={parentAgentId}
           isOpen={createAgentCashier}
           onClose={() => showCreateAgentCashier(false)}
-        ></CreateAgentCashier>
+        />
       )}
     </div>
   );
