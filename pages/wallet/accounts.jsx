@@ -80,7 +80,7 @@ export default function Dashboard() {
       setLoading(true);
       const currentUser = localStorage.getItem("currentUser");
       let storedUser = currentUser ? JSON.parse(currentUser) : null;
-      setActiveAgentId(storedUser.id);
+      setActiveAgentId(storedUser);
       const [authData, userData, gameData] = await Promise.all([
         getUser(storedUser.id),
         getStructuredUsers(),
@@ -118,7 +118,7 @@ export default function Dashboard() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     let payload;
-    if (authUser.id === activeAgentId) {
+    if (authUser.id === activeAgentId.id) {
       payload = {
         oldPassword: oldPassword,
         password: newPassword,
@@ -126,7 +126,7 @@ export default function Dashboard() {
     } else {
       payload = {
         password: newPassword,
-        agentId: activeAgentId,
+        agentId: activeAgentId.id,
       };
     }
 
@@ -362,7 +362,7 @@ export default function Dashboard() {
                       </TabPanel>
                       <TabPanel px={"0px"}>
                         <form onSubmit={handlePasswordChange}>
-                          {activeAgentId === authUser?.id ? (
+                          {activeAgentId.id === authUser?.id ? (
                             <>
                               <FormControl className="form-group mb-3">
                                 <FormLabel htmlFor="oldPassword">
