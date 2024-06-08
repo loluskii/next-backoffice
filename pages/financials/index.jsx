@@ -20,7 +20,7 @@ import { getFinancialReport } from "services/tickets.service";
 const Index = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [betType, setBetType] = useState("");
+  const [betType, setBetType] = useState("multiple");
   const [loading, setLoading] = useState(false);
   const [visibleRows, setVisibleRows] = useState({});
   const [data, setData] = useState({});

@@ -199,7 +199,7 @@ export default function Dashboard() {
                         <i className="fas fa-caret-right"></i>
                       )}
                     </div>
-                    <h4 className="text-xl font-semibold">Admin</h4>
+                    <h4 className="text-xl font-semibold">{authUser.name}</h4>
                   </div>
 
                   <span
@@ -310,7 +310,9 @@ export default function Dashboard() {
                                       )}
                                     </Td>
                                     <Td className="text-center">
-                                      {wallet.balance.toFixed(2)}
+                                      {authUser.role === "super"
+                                        ? "Unlimited"
+                                        : wallet.balance.toFixed(2)}
                                     </Td>
                                     <Td className="text-center">
                                       <span

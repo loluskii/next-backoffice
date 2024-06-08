@@ -113,7 +113,7 @@ const NestedAccordion = ({
                 </span>
                 <IoIosPeople fontSize={20} />
                 <h4 className="font-semibold">
-                  {agentData.name} ({activeAgentId?.email})
+                  {agentData.name}
                 </h4>
               </div>
 
