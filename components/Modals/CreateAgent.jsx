@@ -24,6 +24,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
     name: "",
     email: "",
     mobile: "",
+    password: "",
   });
 
   const [agentCashierCreated, setAgentCashierCreated] = useState(false);
@@ -183,6 +184,18 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                   onChange={handleChange}
                 />
               </FormControl>
+
+              <FormControl mt={4}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  name="password"
+                  type="password"
+                  placeholder="****"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
               {accountType === "agent" && (
                 <FormControl mt={4}>
                   <FormLabel>Active Currency</FormLabel>
