@@ -24,11 +24,7 @@ const EditCurrency = ({ currency, onClose, isOpen }) => {
     updateType: currency.updateType,
     status: currency.status,
     countryId: currency.countryId,
-    country: {
-      name: currency.country.name,
-      currencyCode: currency.country.currencyCode,
-      currencySymbol: currency.country.currencySymbol,
-    },
+    country: currency.country,
   });
 
   const [loading, setLoading] = useState(false);
