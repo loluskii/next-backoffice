@@ -53,12 +53,12 @@ const Index = () => {
             <Tr key={`${parentKey}-cashier-${index}`}>
               <Td style={indent}>{cashier}</Td>
               <Td>{currency}</Td>
-              <Td>{cashierData.totalWinnings}</Td>
-              <Td>{cashierData.totalStake}</Td>
               <Td>{cashierData.numberOfBets}</Td>
-              <Td>{cashierData.profit}</Td>
-              <Td>{cashierData.totalClosedPayout}</Td>
               <Td>{cashierData.totalOpenPayout}</Td>
+              <Td>{cashierData.totalClosedPayout}</Td>
+              <Td>{cashierData.totalStake}</Td>
+              <Td>{cashierData.totalWinnings}</Td>
+              <Td>{cashierData.profit}</Td>
             </Tr>
           );
         })}
@@ -152,22 +152,22 @@ const Index = () => {
                     Currency
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Winnings
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Stake
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Number of Bets
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Profit
+                    Total Open Payout
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Total Closed Payout
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Open Payout
+                    Total Stake
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Total Winnings
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Profit
                   </Th>
                 </Tr>
               </Thead>
@@ -198,12 +198,12 @@ const Index = () => {
                             </button>
                             {agentKey}
                           </Td>
-                          <Td>{data[agentKey].totals.totalWinnings}</Td>
-                          <Td>{data[agentKey].totals.totalStake}</Td>
                           <Td>{data[agentKey].totals.numberOfBets}</Td>
-                          <Td>{data[agentKey].totals.profit}</Td>
-                          <Td>{data[agentKey].totals.totalClosedPayout}</Td>
                           <Td>{data[agentKey].totals.totalOpenPayout}</Td>
+                          <Td>{data[agentKey].totals.totalClosedPayout}</Td>
+                          <Td>{data[agentKey].totals.totalStake}</Td>
+                          <Td>{data[agentKey].totals.totalWinnings}</Td>
+                          <Td>{data[agentKey].totals.profit}</Td>
                         </Tr>
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>

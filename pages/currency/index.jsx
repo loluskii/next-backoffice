@@ -16,11 +16,14 @@ import {
 } from "@chakra-ui/react";
 import { getCurrencies } from "services/tickets.service";
 import CreateCurrency from "components/Modals/CreateCurrency";
+import EditCurrency from "components/Modals/EditCurrency";
 
 const Currency = () => {
   const [loading, setLoading] = useState(false);
   const [currencies, setCurrencies] = useState([]);
   const [showCreateCurrency, setShowCreateCurrency] = useState(false);
+  const [showEditCurrency, setShowEditCurrency] = useState(false);
+  const [activeEditCurrency, setActiveEditCurrency] = useState({});
 
   async function getCurrencyData() {
     setLoading(true);
@@ -74,7 +77,7 @@ const Currency = () => {
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Status
                   </Th>
-                  {/* <Th>Action</Th> */}
+                  <Th>Action</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -91,21 +94,31 @@ const Currency = () => {
                     {currencies.length ? (
                       <>
                         {currencies.map((res, index) => (
-                          <Tr key={index}>
-                            <Td className="text-center">{res.countryId}</Td>
-                            <Td className="text-center">
-                              {res.country[0].currencyCode}(
-                              {res.country[0].currencySymbol})
-                            </Td>
-                            <Td className="text-center">{res.exchangeRate}</Td>
-                            <Td className="text-center">{res.decimals}</Td>
-                            <Td className="text-center">{res.status}</Td>
-                            {/* <Td className="text-center">
-                              <button className="px-2  text-white py-1 bg-black rounded">
-                                Edit
-                              </button>
-                            </Td> */}
-                          </Tr>
+                          <>
+                            <Tr key={index}>
+                              <Td className="text-center">{res.countryId}</Td>
+                              <Td className="text-center">
+                                {res.country[0].currencyCode}(
+                                {res.country[0].currencySymbol})
+                              </Td>
+                              <Td className="text-center">
+                                {res.exchangeRate}
+                              </Td>
+                              <Td className="text-center">{res.decimals}</Td>
+                              <Td className="text-center">{res.status}</Td>
+                              <Td className="text-center">
+                                <button
+                                  className="px-2  text-white py-1 bg-black rounded"
+                                  onClick={() => {
+                                    setActiveEditCurrency(res);
+                                    setShowEditCurrency(true);
+                                  }}
+                                >
+                                  Edit
+                                </button>
+                              </Td>
+                            </Tr>
+                          </>
                         ))}
                       </>
                     ) : (
@@ -121,6 +134,13 @@ const Currency = () => {
             </Table>
           </TableContainer>
         </div>
+        {showEditCurrency && (
+          <EditCurrency
+            isOpen={showEditCurrency}
+            onClose={() => setShowEditCurrency(false)}
+            currency={activeEditCurrency}
+          ></EditCurrency>
+        )}
       </div>
     </>
   );

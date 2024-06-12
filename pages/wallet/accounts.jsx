@@ -103,7 +103,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
 
   const handleAdminDetails = () => {
@@ -310,9 +310,7 @@ export default function Dashboard() {
                                       )}
                                     </Td>
                                     <Td className="text-center">
-                                      {authUser.role === "super"
-                                        ? "Unlimited"
-                                        : wallet.balance.toFixed(2)}
+                                      {wallet.balance}
                                     </Td>
                                     <Td className="text-center">
                                       <span

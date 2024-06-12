@@ -47,6 +47,17 @@ export const createCurrency = async (data) => {
   }
 };
 
+export const updateCurrency = async (id, data) => {
+  try {
+    let url = `cashier/v1/currency/${id}`;
+    const response = await apiClient.patch(url, data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 export const getCurrencies = async (data) => {
   try {
     let url = `cashier/v1/currency/`;
