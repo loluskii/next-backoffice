@@ -25,7 +25,20 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [fromCurrencyId, setFromCurrencyId] = useState("");
   const [toCurrencyId, setToCurrencyId] = useState("");
+  const [conversionRate, setConversionRate] = useState("0");
+  const [fromC, setFromC] = useState("");
   const [amount, setAmount] = useState("");
+
+  function handleToCurrency(id) {
+    setToCurrencyId(id);
+    const fromCurrency = currencies.find(
+      (currency) => currency.id === fromCurrencyId
+    );
+    const toCurrency = currencies.find((currency) => currency.id === id);
+    const rate = fromCurrency.exchangeRate / toCurrency.exchangeRate;
+    setFromC(fromCurrency.countryId);
+    setConversionRate(`${toCurrency.countryId} ${rate.toFixed(4)}`);
+  }
 
   async function getCurrencyData() {
     const res = await getCurrencies();
@@ -166,7 +179,9 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                     <Select
                       name="toCurrencyId"
                       className="w-full pb-2"
-                      onChange={(e) => setToCurrencyId(e.target.value)}
+                      onChange={(e) => {
+                        handleToCurrency(e.target.value);
+                      }}
                       required
                     >
                       <option>Select a currency</option>
@@ -177,6 +192,18 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                       ))}
                     </Select>
                   </FormControl>
+
+                  {toCurrencyId && (
+                    <FormControl mb={4}>
+                      <FormLabel>Currency Rate {`(1 ${fromC})`}</FormLabel>
+                      <Input
+                        name="amount"
+                        type="text"
+                        readOnly
+                        value={conversionRate}
+                      />
+                    </FormControl>
+                  )}
                 </>
               )}
 
