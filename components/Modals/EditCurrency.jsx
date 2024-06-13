@@ -24,7 +24,7 @@ const EditCurrency = ({ currency, onClose, isOpen }) => {
     updateType: currency.updateType,
     status: currency.status,
     countryId: currency.countryId,
-    country: currency.country,
+    country: currency.country[0],
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,9 @@ const EditCurrency = ({ currency, onClose, isOpen }) => {
   const handleSubmit = async (event) => {
     setLoading(true);
     event.preventDefault();
-    const res = await updateCurrency(currency.id, formData);
+    let payload = formData;
+    delete payload.country._id;
+    const res = await updateCurrency(currency.id, payload);
     setLoading(false);
     onClose();
     // Handle form submission here
