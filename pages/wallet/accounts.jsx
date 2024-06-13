@@ -299,55 +299,58 @@ export default function Dashboard() {
                             </Thead>
                             <Tbody>
                               {userWallets.length ? (
-                                userWallets.map((wallet, index) => (
-                                  <Tr key={index}>
-                                    <Td className="text-center">
-                                      {wallet?.currencyId?.countryId}
-                                      {wallet.primaryWallet && (
-                                        <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
-                                          Primary
-                                        </span>
-                                      )}
-                                    </Td>
-                                    <Td className="text-center">
-                                      {wallet.balance}
-                                    </Td>
-                                    <Td className="text-center">
-                                      <span
-                                        onClick={() => {
-                                          setShowWalletActions(true);
-                                          setWalletAction("deduct");
-                                          setWalletActionCurrency(wallet);
-                                        }}
-                                        className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
-                                      >
-                                        <BiSolidMinusSquare />
-                                      </span>
-                                      <span
-                                        onClick={() => {
-                                          setShowWalletActions(true);
-                                          setWalletAction("add");
-                                          setWalletActionCurrency(wallet);
-                                        }}
-                                        className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
-                                      >
-                                        <MdAddBox />
-                                      </span>
-                                      {authUser.id === selectedUser && (
-                                        <span
-                                          onClick={() => {
-                                            setShowWalletActions(true);
-                                            setWalletAction("transfer");
-                                            setWalletActionCurrency(wallet);
-                                          }}
-                                          className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
-                                        >
-                                          <BiTransfer />
-                                        </span>
-                                      )}
-                                    </Td>
-                                  </Tr>
-                                ))
+                                userWallets.map(
+                                  (wallet, index) =>
+                                    wallet.currencyId && (
+                                      <Tr key={index}>
+                                        <Td className="text-center">
+                                          {wallet?.currencyId?.countryId}
+                                          {wallet.primaryWallet && (
+                                            <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
+                                              Primary
+                                            </span>
+                                          )}
+                                        </Td>
+                                        <Td className="text-center">
+                                          {wallet.balance}
+                                        </Td>
+                                        <Td className="text-center">
+                                          <span
+                                            onClick={() => {
+                                              setShowWalletActions(true);
+                                              setWalletAction("deduct");
+                                              setWalletActionCurrency(wallet);
+                                            }}
+                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
+                                          >
+                                            <BiSolidMinusSquare />
+                                          </span>
+                                          <span
+                                            onClick={() => {
+                                              setShowWalletActions(true);
+                                              setWalletAction("add");
+                                              setWalletActionCurrency(wallet);
+                                            }}
+                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                          >
+                                            <MdAddBox />
+                                          </span>
+                                          {authUser.id === selectedUser && (
+                                            <span
+                                              onClick={() => {
+                                                setShowWalletActions(true);
+                                                setWalletAction("transfer");
+                                                setWalletActionCurrency(wallet);
+                                              }}
+                                              className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                            >
+                                              <BiTransfer />
+                                            </span>
+                                          )}
+                                        </Td>
+                                      </Tr>
+                                    )
+                                )
                               ) : (
                                 <Tr>
                                   <Td className="text-center" colSpan="10">

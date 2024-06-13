@@ -17,10 +17,12 @@ import {
 import { getCurrencies } from "services/tickets.service";
 import { createWallet, fundOrDeductWallet } from "services/settings.service";
 import { FaCheckCircle } from "react-icons/fa";
+import { getUser } from "services/account.service";
 
 const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
   const [walletActionPerformed, setWalletActionPerformed] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [userWallets, setUserWallets] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [fromCurrencyId, setFromCurrencyId] = useState("");
@@ -38,6 +40,13 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
     const rate = fromCurrency.exchangeRate / toCurrency.exchangeRate;
     setFromC(fromCurrency.countryId);
     setConversionRate(`${toCurrency.countryId} ${rate.toFixed(4)}`);
+  }
+
+  async function getWallets() {
+    const currentUser = localStorage.getItem("currentUser");
+    let storedUser = currentUser ? JSON.parse(currentUser) : null;
+    const res = await getUser(storedUser.id);
+    setUserWallets(res.wallets);
   }
 
   async function getCurrencyData() {
@@ -87,6 +96,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
   };
 
   useEffect(() => {
+    getWallets();
     getCurrencyData();
   }, []);
 
@@ -167,11 +177,14 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                       required
                     >
                       <option>Select a currency</option>
-                      {currencies?.map((c, index) => (
-                        <option value={c.id} key={index}>
-                          {`${c.country[0].currencyCode}(${c.exchangeRate})`}
-                        </option>
-                      ))}
+                      {userWallets?.map(
+                        (c, index) =>
+                          c.currencyId && (
+                            <option value={c?.currencyId?.id} key={index}>
+                              {`${c?.currencyId?.countryId}(${c?.currencyId?.exchangeRate})`}
+                            </option>
+                          )
+                      )}
                     </Select>
                   </FormControl>
                   <FormControl mb={4}>

@@ -16,7 +16,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { createCurrency, getCurrencies } from "services/tickets.service";
-import { createAgentOrCashier } from "services/account.service";
+import { createAgentOrCashier, getUser } from "services/account.service";
 import { FaCheckCircle } from "react-icons/fa";
 
 const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
@@ -34,10 +34,18 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
   const [selectedCurrencyId, setSelectedCurrencyId] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [accountType, setAccountType] = useState("");
+  const [userWallets, setUserWallets] = useState([]);
 
   async function getCurrencyData() {
     const res = await getCurrencies();
     setCurrencies(res.results);
+  }
+
+  async function getWallets() {
+    const currentUser = localStorage.getItem("currentUser");
+    let storedUser = currentUser ? JSON.parse(currentUser) : null;
+    const res = await getUser(storedUser.id);
+    setUserWallets(res.wallets);
   }
 
   const handleChange = (e) => {
@@ -90,6 +98,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
 
   useEffect(() => {
     getCurrencyData();
+    getWallets();
   }, []);
 
   return (
@@ -206,12 +215,15 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                     onChange={(e) => setSelectedCurrencyId(e.target.value)}
                     // placeholder={selectedCurrencyId}
                   >
-                    <option>Select currency</option>
-                    {currencies?.map((c, index) => (
-                      <option value={c.id} key={index}>
-                        {c.country[0].currencyCode}
-                      </option>
-                    ))}
+                    <option>Select a currency</option>
+                    {userWallets?.map(
+                      (c, index) =>
+                        c.currencyId && (
+                          <option value={c?.currencyId?.id} key={index}>
+                            {`${c?.currencyId?.countryId}(${c?.currencyId?.exchangeRate})`}
+                          </option>
+                        )
+                    )}
                   </Select>
                 </FormControl>
               )}
