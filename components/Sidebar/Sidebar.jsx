@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -6,8 +6,17 @@ import NotificationDropdown from "components/Dropdowns/TableDropdown";
 import UserDropdown from "components/Dropdowns/UserDropdown.jsx";
 
 export default function Sidebar() {
-  const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const [collapseShow, setCollapseShow] = useState("hidden");
+  const [isSuperUser, setIsSuperUser] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem("currentUser");
+    let storedUser = currentUser ? JSON.parse(currentUser) : null;
+    if (storedUser) {
+      setIsSuperUser(storedUser.role === "super");
+    }
+  }, []);
   return (
     <>
       <nav className="bg-blueGray-700 md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl  flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -73,7 +82,7 @@ export default function Sidebar() {
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
             {/* Heading */}
-            <h6 className="md:min-w-full text-blueGray-100 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Wallet System
             </h6>
             {/* Navigation */}
@@ -154,7 +163,7 @@ export default function Sidebar() {
             </ul>
 
             {/* Heading */}
-            <h6 className="md:min-w-full text-white text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Ticket Management
             </h6>
             {/* Navigation */}
@@ -164,7 +173,12 @@ export default function Sidebar() {
                 <Link legacyBehavior href="/tickets/ticket-search">
                   <a
                     href="#pablo"
-                    className="text-white hover:text-white text-xs uppercase py-3 font-bold block"
+                    className={
+                      "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                      (router.pathname.indexOf("/tickets/ticket-search") !== -1
+                        ? "text-lightBlue-500 hover:text-lightBlue-600"
+                        : "text-white hover:text-white")
+                    }
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
                     Tickets Search
@@ -174,7 +188,7 @@ export default function Sidebar() {
             </ul>
 
             {/* Heading */}
-            <h6 className="md:min-w-full text-white text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+            <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Financials
             </h6>
             {/* Navigation */}
@@ -184,7 +198,12 @@ export default function Sidebar() {
                 <Link legacyBehavior href="/financials">
                   <a
                     href="#pablo"
-                    className="text-white hover:text-white text-xs uppercase py-3 font-bold block"
+                    className={
+                      "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                      (router.pathname.indexOf("/financials") !== -1
+                        ? "text-lightBlue-500 hover:text-lightBlue-600"
+                        : "text-white hover:text-white")
+                    }
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
                     General Revenue
@@ -193,25 +212,34 @@ export default function Sidebar() {
               </li>
             </ul>
 
-            {/* Heading */}
-            <h6 className="md:min-w-full text-white text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Settings
-            </h6>
-            {/* Navigation */}
+            {isSuperUser && (
+              <>
+                {/* Heading */}
+                <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+                  Settings
+                </h6>
+                {/* Navigation */}
 
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-              <li className="items-center">
-                <Link legacyBehavior href="/currency">
-                  <a
-                    href="#pablo"
-                    className="text-white hover:text-white text-xs uppercase py-3 font-bold block"
-                  >
-                    <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
-                    Currency
-                  </a>
-                </Link>
-              </li>
-            </ul>
+                <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+                  <li className="items-center">
+                    <Link legacyBehavior href="/currency">
+                      <a
+                        href="#pablo"
+                        className={
+                          "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                          (router.pathname.indexOf("/currency") !== -1
+                            ? "text-lightBlue-500 hover:text-lightBlue-600"
+                            : "text-white hover:text-white")
+                        }
+                      >
+                        <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
+                        Currency
+                      </a>
+                    </Link>
+                  </li>
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </nav>

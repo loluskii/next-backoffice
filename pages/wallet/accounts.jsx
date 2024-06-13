@@ -184,7 +184,10 @@ export default function Dashboard() {
                 <h2 className="font-bold">System List</h2>
               </div>
               <div className="content p-4">
-                <div className="flex border w-full justify-between gap-2 items-center">
+                <div
+                  className="flex border w-full justify-between gap-2 items-center hover-bg-blueGrey-100 cursor-pointer"
+                  onClick={handleAdminDetails}
+                >
                   <div
                     style={{ gap: ".5rem" }}
                     className="flex p-2 justify-start items-center"

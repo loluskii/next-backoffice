@@ -1,14 +1,15 @@
+import React, { useState, useEffect, useCallback } from "react";
 import { getStructuredUsers, getUser } from "services/account.service";
+import { getGameData, getGameSettings } from "services/settings.service";
 import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
 import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
-import CreateAgentCashier from "components/Modals/CreateAgent";
 import { MdAddBox } from "react-icons/md";
-import { getGameData, getGameSettings } from "services/settings.service";
-
-import React, { useState, useEffect, useCallback } from "react";
+import CreateAgentCashier from "components/Modals/CreateAgent";
+import { AiOutlineLoading3Quarters } from "react-icons/ai"; // Import loading icon
 import clsx from "clsx";
+import { Spinner } from "@chakra-ui/react";
 
 const NestedAccordion = ({
   setUserWallets,
@@ -25,7 +26,8 @@ const NestedAccordion = ({
   const [cashiersData, setCashiersData] = useState([]);
   const [parentAgentId, setParentAgentId] = useState(null);
   const [createAgentCashier, showCreateAgentCashier] = useState(false);
-  const [fetchData, setFetchData] = useState({});
+  const [fetchedData, setFetchedData] = useState({});
+  const [loading, setLoading] = useState({});
 
   useEffect(() => {
     if (data) {
@@ -44,6 +46,8 @@ const NestedAccordion = ({
 
   const fetchUserData = useCallback(
     async (id, type) => {
+      setLoading((prev) => ({ ...prev, [id]: true }));
+
       const [res, user, gameSettings] = await Promise.all([
         getStructuredUsers(id),
         getUser(id),
@@ -56,7 +60,8 @@ const NestedAccordion = ({
       setSelectedUser(id);
       setSelectedData(res.data);
       setUserRole(type);
-      setFetchData(res.data);
+      setFetchedData((prevData) => ({ ...prevData, [id]: res.data }));
+      setLoading((prev) => ({ ...prev, [id]: false }));
 
       if (type === "agent") {
         setGameData(gameSettings.data.game[0]);
@@ -74,11 +79,23 @@ const NestedAccordion = ({
     ]
   );
 
-  const toggleDropdown = useCallback((id) => {
+  const handleMainClick = async (data, type) => {
+    if (fetchedData[data.id]) {
+      // Data already fetched, just toggle dropdown
+      toggleDropdown(data);
+    } else {
+      // Fetch data and toggle dropdown
+      await fetchUserData(data.id, type);
+      toggleDropdown(data);
+    }
+  };
+
+  const toggleDropdown = useCallback((data) => {
+    setActiveAgentId(data);
     setAgentsData((prevAgentsData) =>
       prevAgentsData.map((agentData) => ({
         ...agentData,
-        state: agentData.id === id ? !agentData.state : agentData.state,
+        state: agentData.id === data.id ? !agentData.state : agentData.state,
       }))
     );
   }, []);
@@ -93,7 +110,7 @@ const NestedAccordion = ({
               style={{ gap: ".5rem" }}
               onClick={(e) => {
                 e.preventDefault();
-                fetchUserData(agentData.id, "agent");
+                handleMainClick(agentData, "agent");
               }}
             >
               <div
@@ -106,27 +123,35 @@ const NestedAccordion = ({
                   className="p-2"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleDropdown(agentData.id);
+                    if (!loading[agentData.id]) {
+                      toggleDropdown(agentData);
+                    }
                   }}
                 >
                   {agentData.state ? <IoCaretDown /> : <AiFillCaretRight />}
                 </span>
                 <IoIosPeople fontSize={20} />
-                <h4 className="font-semibold">
-                  {agentData.name}
-                </h4>
+                <h4 className="font-semibold">{agentData.name}</h4>
               </div>
 
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  showCreateAgentCashier(true);
-                  setParentAgentId(agentData.id);
-                }}
-                className="p-4 px-8"
-              >
-                <MdAddBox />
-              </span>
+              {loading[agentData.id] && (
+                <span className="p-4 px-8">
+                  <Spinner size="xs" />
+                </span>
+              )}
+
+              {!loading[agentData.id] && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    showCreateAgentCashier(true);
+                    setParentAgentId(agentData.id);
+                  }}
+                  className="p-4 px-8"
+                >
+                  <MdAddBox />
+                </span>
+              )}
             </div>
             <div
               className={clsx(
@@ -146,7 +171,7 @@ const NestedAccordion = ({
                   setGameData={setGameData}
                   setGameSettings={setGameSettings}
                   setActiveAgentId={setActiveAgentId}
-                  data={fetchData}
+                  data={fetchedData[agentData.id]}
                   activeAgentId={activeAgentId}
                 />
               )}
@@ -160,7 +185,7 @@ const NestedAccordion = ({
               key={j}
               className="flex border p-4 justify-between w-full items-center cursor-pointer"
               style={{ gap: ".5rem" }}
-              onClick={() => fetchUserData(cashierData.id, "cashier")}
+              onClick={() => handleMainClick(cashierData, "cashier")}
             >
               <span
                 className="flex justify-start items-center"
