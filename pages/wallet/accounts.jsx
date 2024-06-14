@@ -111,7 +111,6 @@ export default function Dashboard() {
       fetchData();
     } else {
       setAdminSection((prev) => !prev);
-      setActiveAgentId(null);
     }
   };
 
