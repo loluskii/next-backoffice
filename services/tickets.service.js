@@ -3,11 +3,11 @@ import { apiClient } from "./base";
 // Login function
 export const getTicketsHistory = async (data) => {
   try {
-    let url = `cashier/v1/bet/history?`;
+    let url = `cashier/v1/bet/history?limit=25&page=${data.page}`;
 
     // Check if startDate exists in data before adding it to the URL
     if (data.startDate && data.endDate) {
-      url += `startDate=${data.startDate}&endDate=${data.endDate}`;
+      url += `&startDate=${data.startDate}&endDate=${data.endDate}`;
       // Add other query parameters if they exist in data
       if (data.limit) {
         url += `&limit=${data.limit}`;

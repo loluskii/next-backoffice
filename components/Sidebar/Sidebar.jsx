@@ -174,7 +174,7 @@ export default function Sidebar() {
                   <a
                     href="#pablo"
                     className={
-                      "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                      "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/tickets/ticket-search") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
                         : "text-white hover:text-white")
@@ -199,7 +199,7 @@ export default function Sidebar() {
                   <a
                     href="#pablo"
                     className={
-                      "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                      "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/financials") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
                         : "text-white hover:text-white")
@@ -226,7 +226,7 @@ export default function Sidebar() {
                       <a
                         href="#pablo"
                         className={
-                          "text-white hover:text-white text-xs uppercase py-3 font-bold block" +
+                          "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                           (router.pathname.indexOf("/currency") !== -1
                             ? "text-lightBlue-500 hover:text-lightBlue-600"
                             : "text-white hover:text-white")

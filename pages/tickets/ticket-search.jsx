@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Admin from "layouts/Admin.jsx";
 import {
   FormControl,
@@ -12,30 +12,88 @@ import {
   Td,
   Select,
   TableContainer,
+  Box,
   Button,
+  Spinner,
 } from "@chakra-ui/react";
 import { getTicketsHistory } from "services/tickets.service";
 
+// Pagination control component
+const Pagination = ({ totalPages, currentPage, onPageChange }) => {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  return (
+    <Box display="flex" justifyContent="center" mt="4">
+      <Button
+        onClick={() => onPageChange(currentPage - 1)}
+        isDisabled={currentPage === 1}
+        mr="2"
+      >
+        Previous
+      </Button>
+      {pages.map((page) => (
+        <Button
+          key={page}
+          onClick={() => onPageChange(page)}
+          colorScheme={page === currentPage ? "blue" : "gray"}
+          mx="1"
+        >
+          {page}
+        </Button>
+      ))}
+      <Button
+        onClick={() => onPageChange(currentPage + 1)}
+        isDisabled={currentPage === totalPages}
+        ml="2"
+      >
+        Next
+      </Button>
+    </Box>
+  );
+};
+
+const getDefaultDates = () => {
+  const today = new Date();
+  const oneWeekLater = new Date(today);
+  oneWeekLater.setDate(today.getDate() + 7);
+
+  return {
+    startDate: today.toISOString().split("T")[0], // Format: YYYY-MM-DD
+    endDate: oneWeekLater.toISOString().split("T")[0], // Format: YYYY-MM-DD
+  };
+};
+
 const TicketSearch = () => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const { startDate: defaultStartDate, endDate: defaultEndDate } =
+    getDefaultDates();
+
+  const [startDate, setStartDate] = useState(defaultStartDate);
+  const [endDate, setEndDate] = useState(defaultEndDate);
   const [betType, setBetType] = useState("");
   const [payout, setPayout] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  async function getFilteredData() {
+  const getFilteredData = async (page = 1) => {
     let payload = {
-      startDate: startDate,
-      endDate: endDate,
-      betType: betType,
-      payout: payout,
+      startDate,
+      endDate,
+      betType,
+      payout,
+      page,
     };
     setLoading(true);
     const res = await getTicketsHistory(payload);
     setLoading(false);
     setResults(res.results);
-  }
+    setTotalPages(res.totalPages); // Assuming `totalPages` is part of the response
+  };
+
+  useEffect(() => {
+    getFilteredData(currentPage);
+  }, [currentPage]);
+
   return (
     <>
       <div className="h-screen">
@@ -50,6 +108,7 @@ const TicketSearch = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
@@ -59,6 +118,7 @@ const TicketSearch = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
@@ -84,6 +144,7 @@ const TicketSearch = () => {
                   id=""
                   onChange={(e) => setPayout(e.target.value)}
                 >
+                  <option value="">All</option>
                   <option value="true">Paid Out</option>
                   <option value="false">Pending</option>
                 </Select>
@@ -91,7 +152,10 @@ const TicketSearch = () => {
               <button
                 type="button"
                 className="bg-black text-white rounded px-3 py-2"
-                onClick={() => getFilteredData()}
+                onClick={() => {
+                  setCurrentPage(1);
+                  getFilteredData(1);
+                }}
               >
                 Submit
               </button>
@@ -103,9 +167,6 @@ const TicketSearch = () => {
             <Table className="table table-striped table-bordered">
               <Thead className="bg-gray-500">
                 <Tr>
-                  {/* <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    ID
-                  </Th> */}
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Ticket ID
                   </Th>
@@ -140,45 +201,40 @@ const TicketSearch = () => {
               </Thead>
               <Tbody>
                 {loading ? (
-                  <tr>
-                    <td colspan="10" className="text-center">
-                      <div className="spinner-border text-light" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </td>
-                  </tr>
+                  <Tr>
+                    <Td colSpan="10" className="text-center">
+                      <Spinner size="xl" />
+                    </Td>
+                  </Tr>
                 ) : (
                   <>
                     {results.length ? (
-                      <>
-                        {results.map((res, index) => (
-                          <Tr key={index}>
-                            {/* <Td className="text-center">{res.id}</Td> */}
-                            <Td className="text-center">{res.ticketId}</Td>
-                            <Td className="text-center">{res.betType}</Td>
-                            <Td className="text-center">
-                              {res.selections.length}
-                            </Td>
-                            <Td className="text-center">
-                              {res.stake.toLocaleString("en")}
-                            </Td>
-                            <Td className="text-center">{res.result}</Td>
-                            <Td className="text-center">
-                              {res.potentialWinnings.toLocaleString("en")}
-                            </Td>
-                            <Td className="text-center">{res.gameOutcome}</Td>
-                            <Td className="text-center">
-                              {res.winnings.toLocaleString("en")}
-                            </Td>
-                            <Td className="text-center">
-                              {res.roundHasEnded ? "Ended" : "Ongoing"}
-                            </Td>
-                            <Td className="text-center">
-                              {res.payout ? "Paid Out" : "Awaiting Payout"}
-                            </Td>
-                          </Tr>
-                        ))}
-                      </>
+                      results.map((res, index) => (
+                        <Tr key={index}>
+                          <Td className="text-center">{res.ticketId}</Td>
+                          <Td className="text-center">{res.betType}</Td>
+                          <Td className="text-center">
+                            {res.selections.length}
+                          </Td>
+                          <Td className="text-center">
+                            {res.stake.toLocaleString("en")}
+                          </Td>
+                          <Td className="text-center">{res.result}</Td>
+                          <Td className="text-center">
+                            {res.potentialWinnings.toLocaleString("en")}
+                          </Td>
+                          <Td className="text-center">{res.gameOutcome}</Td>
+                          <Td className="text-center">
+                            {res.winnings.toLocaleString("en")}
+                          </Td>
+                          <Td className="text-center">
+                            {res.roundHasEnded ? "Ended" : "Ongoing"}
+                          </Td>
+                          <Td className="text-center">
+                            {res.payout ? "Paid Out" : "Awaiting Payout"}
+                          </Td>
+                        </Tr>
+                      ))
                     ) : (
                       <Tr>
                         <Td className="text-center" colSpan="10">
@@ -192,6 +248,14 @@ const TicketSearch = () => {
             </Table>
           </TableContainer>
         </div>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            getFilteredData(page);
+          }}
+        />
       </div>
     </>
   );
