@@ -37,7 +37,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
       (currency) => currency.id === fromCurrencyId
     );
     const toCurrency = currencies.find((currency) => currency.id === id);
-    const rate = fromCurrency.exchangeRate / toCurrency.exchangeRate;
+    const rate = toCurrency.exchangeRate / fromCurrency.exchangeRate;
     setFromC(fromCurrency.countryId);
     setConversionRate(`${toCurrency.countryId} ${rate.toFixed(4)}`);
   }
