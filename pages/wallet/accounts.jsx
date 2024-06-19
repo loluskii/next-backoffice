@@ -23,12 +23,13 @@ import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { PiEmptyBold } from "react-icons/pi";
+import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa";
 import {
   getGameData,
   getGameSettings,
   updateGameData,
 } from "services/settings.service";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import { getUser } from "services/account.service";
 import WalletActions from "components/Modals/WalletActions";
@@ -87,7 +88,7 @@ export default function Dashboard() {
         getGameSettings(storedUser.id),
       ]);
       setLoading(false);
-      setAdminSection((prev) => !prev);
+      // setAdminSection((prev) => !prev);
       setData(userData.data);
       setSelectedData(userData.data);
       setGameData(gameData.data.game[0]);
@@ -104,13 +105,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
+    setAdminSection((prev) => !prev);
   }, []);
 
   const handleAdminDetails = () => {
-    if (!adminSection) {
-      fetchData();
+    fetchData();
+  };
+
+  const handleCaretClick = () => {
+    console.log(adminSection);
+    if (adminSection) {
+      setAdminSection(false);
     } else {
-      setAdminSection((prev) => !prev);
+      setAdminSection(true);
     }
   };
 
@@ -178,39 +185,38 @@ export default function Dashboard() {
       <div className="" style={{ minHeight: "500px" }}>
         <div className="flex flex-col md:flex-row w-full h-full gap-6">
           <div style={{ flexBasis: "45%" }}>
-            <div className="card bg-white rounded w-full relative">
-              <div className="px-4 py-3 border-b w-full mb-2 sticky">
+            <div className="card  rounded w-full relative">
+              <div className="px-4 py-3 border-b w-full mb-2 sticky bg-white">
                 <h2 className="font-bold">System List</h2>
               </div>
-              <div className="content p-4">
+              <div className="content">
                 <div
-                  className="flex border w-full justify-between gap-2 items-center hover-bg-blueGrey-100 cursor-pointer"
-                  onClick={handleAdminDetails}
+                  style={{ gap: ".5rem" }}
+                  className="flex p-2 justify-start items-center bg-white hover-bg-blueGrey-100 border"
                 >
-                  <div
-                    style={{ gap: ".5rem" }}
-                    className="flex p-2 justify-start items-center"
-                  >
-                    <div
-                      className="cursor-pointer"
-                      onClick={handleAdminDetails}
-                    >
-                      {adminSection ? (
-                        <i className="fas fa-caret-down"></i>
-                      ) : (
-                        <i className="fas fa-caret-right"></i>
-                      )}
-                    </div>
-                    <h4 className="text-xl font-semibold">{authUser.name}</h4>
+                  <div style={{ flexBasis: "5%" }}>
+                    {!adminSection ? (
+                      <FaRegSquarePlus onClick={handleCaretClick} />
+                    ) : (
+                      <FaRegSquareMinus onClick={handleCaretClick} />
+                    )}
                   </div>
 
+                  <div
+                    className="flex justify-between gap-2 items-center cursor-pointer"
+                    onClick={handleAdminDetails}
+                    style={{ flexBasis: "90%" }}
+                  >
+                    <h4 className="text-xl font-semibold">{authUser.name}</h4>
+                  </div>
                   <span
+                    className="p-2 px-8"
+                    style={{ flexBasis: "5%" }}
                     onClick={() => {
                       showCreateAgentCashier(true);
                     }}
-                    className="p-4 px-8"
                   >
-                    <MdAddBox />
+                    <FaPlus />
                   </span>
                 </div>
 
@@ -301,57 +307,57 @@ export default function Dashboard() {
                             </Thead>
                             <Tbody>
                               {userWallets.length ? (
-                                userWallets.map(
-                                  (wallet, index) =>
-                                    wallet.currencyId && (
-                                      <Tr key={index}>
-                                        <Td className="text-center">
-                                          {wallet?.currencyId?.countryId}
-                                          {wallet.primaryWallet && (
-                                            <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
-                                              Primary
-                                            </span>
-                                          )}
-                                        </Td>
-                                        <Td className="text-center">
-                                          {wallet.balance}
-                                        </Td>
-                                        <Td className="text-center">
+                                userWallets.map((wallet, index) =>
+                                  wallet.currencyId &&
+                                  wallet.currencyId.status === "active" && (
+                                    <Tr key={index}>
+                                      <Td className="text-center">
+                                        {wallet?.currencyId?.countryId}
+                                        {wallet.primaryWallet && (
+                                          <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
+                                            Primary
+                                          </span>
+                                        )}
+                                      </Td>
+                                      <Td className="text-center">
+                                        {wallet.balance}
+                                      </Td>
+                                      <Td className="text-center">
+                                        <span
+                                          onClick={() => {
+                                            setShowWalletActions(true);
+                                            setWalletAction("deduct");
+                                            setWalletActionCurrency(wallet);
+                                          }}
+                                          className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
+                                        >
+                                          <BiSolidMinusSquare />
+                                        </span>
+                                        <span
+                                          onClick={() => {
+                                            setShowWalletActions(true);
+                                            setWalletAction("add");
+                                            setWalletActionCurrency(wallet);
+                                          }}
+                                          className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                        >
+                                          <MdAddBox />
+                                        </span>
+                                        {authUser.id === selectedUser && (
                                           <span
                                             onClick={() => {
                                               setShowWalletActions(true);
-                                              setWalletAction("deduct");
+                                              setWalletAction("transfer");
                                               setWalletActionCurrency(wallet);
                                             }}
-                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
+                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
                                           >
-                                            <BiSolidMinusSquare />
+                                            <BiTransfer />
                                           </span>
-                                          <span
-                                            onClick={() => {
-                                              setShowWalletActions(true);
-                                              setWalletAction("add");
-                                              setWalletActionCurrency(wallet);
-                                            }}
-                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
-                                          >
-                                            <MdAddBox />
-                                          </span>
-                                          {authUser.id === selectedUser && (
-                                            <span
-                                              onClick={() => {
-                                                setShowWalletActions(true);
-                                                setWalletAction("transfer");
-                                                setWalletActionCurrency(wallet);
-                                              }}
-                                              className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
-                                            >
-                                              <BiTransfer />
-                                            </span>
-                                          )}
-                                        </Td>
-                                      </Tr>
-                                    )
+                                        )}
+                                      </Td>
+                                    </Tr>
+                                  ) 
                                 )
                               ) : (
                                 <Tr>

@@ -18,17 +18,22 @@ import { getCurrencies } from "services/tickets.service";
 import { createWallet, fundOrDeductWallet } from "services/settings.service";
 import { FaCheckCircle } from "react-icons/fa";
 import { getUser } from "services/account.service";
+import { RiErrorWarningFill } from "react-icons/ri";
 
 const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
   const [walletActionPerformed, setWalletActionPerformed] = useState(false);
+  const [confirmWallettAction, setConfirmWalletAction] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [userWallets, setUserWallets] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
-  const [fromCurrencyId, setFromCurrencyId] = useState("");
+  const [fromCurrencyId, setFromCurrencyId] = useState(
+    action === "transfer" ? currency.currencyId.id : ""
+  );
   const [toCurrencyId, setToCurrencyId] = useState("");
   const [conversionRate, setConversionRate] = useState("0");
   const [fromC, setFromC] = useState("");
+  const [toC, setToC] = useState("");
   const [amount, setAmount] = useState("");
 
   function handleToCurrency(id) {
@@ -38,8 +43,9 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
     );
     const toCurrency = currencies.find((currency) => currency.id === id);
     const rate = toCurrency.exchangeRate / fromCurrency.exchangeRate;
-    setFromC(fromCurrency.countryId);
-    setConversionRate(`${toCurrency.countryId} ${rate.toFixed(4)}`);
+    setFromC(fromCurrency);
+    setToC(toCurrency);
+    setConversionRate(`${toCurrency.countryId} ${rate.toFixed(6)}`);
   }
 
   async function getWallets() {
@@ -54,8 +60,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
     setCurrencies(res.results);
   }
 
-  const createWalletAction = async (e) => {
-    e.preventDefault();
+  const confirm = async () => {
     let payload = {
       fromCurrencyId: fromCurrencyId,
       toCurrencyId: toCurrencyId,
@@ -70,6 +75,11 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
     } catch (error) {
       setErrorMessage(error.data.message);
     }
+  };
+
+  const createWalletAction = async (e) => {
+    setConfirmWalletAction(true);
+    e.preventDefault();
   };
 
   const performWalletAction = async (event) => {
@@ -117,7 +127,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
             </ModalBody>
           </ModalContent>
         </>
-      ) : (
+      ) : !confirmWallettAction ? (
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <ModalHeader>
@@ -168,7 +178,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
 
               {action === "transfer" && (
                 <>
-                  <FormControl mb={4}>
+                  {/* <FormControl mb={4}>
                     <FormLabel>From</FormLabel>
                     <Select
                       name="fromCurrencyId"
@@ -181,11 +191,21 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                         (c, index) =>
                           c.currencyId && (
                             <option value={c?.currencyId?.id} key={index}>
-                              {`${c?.currencyId?.countryId}(${c?.currencyId?.exchangeRate})`}
+                              {`${c?.currencyId?.countryId}`}
                             </option>
                           )
                       )}
                     </Select>
+                  </FormControl> */}
+                  <FormControl mb={4}>
+                    <FormLabel>From</FormLabel>
+                    <Input
+                      name="fromCurrencyId"
+                      type="text"
+                      placeholder={currency.currencyId.countryId}
+                      value={currency.currencyId.countryId}
+                      readOnly
+                    />
                   </FormControl>
                   <FormControl mb={4}>
                     <FormLabel>To</FormLabel>
@@ -200,7 +220,7 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                       <option>Select a currency</option>
                       {currencies?.map((c, index) => (
                         <option value={c.id} key={index}>
-                          {`${c.country[0].currencyCode}(${c.exchangeRate})`}
+                          {`${c.country[0].currencyCode}`}
                         </option>
                       ))}
                     </Select>
@@ -208,7 +228,9 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
 
                   {toCurrencyId && (
                     <FormControl mb={4}>
-                      <FormLabel>Currency Rate {`(1 ${fromC})`}</FormLabel>
+                      <FormLabel>
+                        Currency Rate {`(1 ${fromC.countryId})`}
+                      </FormLabel>
                       <Input
                         name="amount"
                         type="text"
@@ -248,14 +270,61 @@ const WalletActions = ({ action, currency, onClose, isOpen, agentId }) => {
                 bg="#2942FF"
                 color="#fff"
                 fontWeight="400"
-                disabled={isCreating}
-                isLoading={isCreating}
               >
                 Create
               </Button>
             </ModalFooter>
           </ModalContent>
         </form>
+      ) : (
+        <>
+          <ModalContent fontFamily="PolySans">
+            <ModalBody p="23px 26px">
+              <div className="text-center">
+                <div className="flex flex-col items-center justify-center">
+                  <RiErrorWarningFill className="text-5xl" />
+                  <p className="font-bold text-2xl">Confirm Action</p>
+                </div>
+                <p className="">
+                  Are you sure you want to exchange {fromC.countryId} {amount}{" "}
+                  to approx. {toC.countryId}{" "}
+                  {((toC.exchangeRate / fromC.exchangeRate) * amount).toFixed(
+                    6
+                  )}{" "}
+                  at exchange rate of{" "}
+                  {(toC.exchangeRate / fromC.exchangeRate).toFixed(6)}
+                </p>
+              </div>
+              <div className="flex justify-center mt-5">
+                <Button
+                  type="submit"
+                  h="35px"
+                  w="105px"
+                  bg="#f1f1f1"
+                  color="#000"
+                  fontWeight="400"
+                  className="mr-3"
+                  onClick={onClose}
+                >
+                  No
+                </Button>
+                <Button
+                  type="button"
+                  h="35px"
+                  w="105px"
+                  bg="#2942FF"
+                  color="#fff"
+                  fontWeight="400"
+                  disabled={isCreating}
+                  isLoading={isCreating}
+                  onClick={confirm}
+                >
+                  Yes
+                </Button>
+              </div>
+            </ModalBody>
+          </ModalContent>
+        </>
       )}
     </Modal>
   );

@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { getStructuredUsers, getUser } from "services/account.service";
-import { getGameData, getGameSettings } from "services/settings.service";
+import { getGameSettings } from "services/settings.service";
 import { IoIosPeople } from "react-icons/io";
 import { FaDesktop } from "react-icons/fa6";
-import { IoCaretDown } from "react-icons/io5";
-import { AiFillCaretRight } from "react-icons/ai";
-import { MdAddBox } from "react-icons/md";
+import { FaRegSquarePlus, FaRegSquareMinus, FaPlus } from "react-icons/fa6";
 import CreateAgentCashier from "components/Modals/CreateAgent";
-import { AiOutlineLoading3Quarters } from "react-icons/ai"; // Import loading icon
-import clsx from "clsx";
 import { Spinner } from "@chakra-ui/react";
+import clsx from "clsx";
 
 const NestedAccordion = ({
   setUserWallets,
@@ -44,61 +41,62 @@ const NestedAccordion = ({
     }
   }, [data]);
 
-  const fetchUserData = useCallback(
-    async (id, type) => {
-      setLoading((prev) => ({ ...prev, [id]: true }));
+  const fetchUserData = async (id, type) => {
+    setLoading((prev) => ({ ...prev, [id]: true }));
 
-      const [res, user, gameSettings] = await Promise.all([
-        getStructuredUsers(id),
-        getUser(id),
-        getGameSettings(id),
-      ]);
+    const [res, user, gameSettings] = await Promise.all([
+      getStructuredUsers(id),
+      getUser(id),
+      getGameSettings(id),
+    ]);
 
-      setActiveAgentId(user);
-      setUserWallets(user.wallets);
-      setParentAgentId(id);
-      setSelectedUser(id);
-      setSelectedData(res.data);
-      setUserRole(type);
-      setFetchedData((prevData) => ({ ...prevData, [id]: res.data }));
-      setLoading((prev) => ({ ...prev, [id]: false }));
+    setActiveAgentId(user);
+    setUserWallets(user.wallets);
+    setParentAgentId(id);
+    setSelectedUser(id);
+    setSelectedData(res.data);
+    setUserRole(type);
+    setFetchedData((prevData) => ({ ...prevData, [id]: res.data }));
+    setLoading((prev) => ({ ...prev, [id]: false }));
 
-      if (type === "agent") {
-        setGameData(gameSettings.data.game[0]);
-        setGameSettings(gameSettings.data.gameConfig[0]);
-      }
-    },
-    [
-      setActiveAgentId,
-      setUserWallets,
-      setSelectedUser,
-      setSelectedData,
-      setUserRole,
-      setGameData,
-      setGameSettings,
-    ]
-  );
+    if (type === "agent") {
+      setGameData(gameSettings.data.game[0]);
+      setGameSettings(gameSettings.data.gameConfig[0]);
+    }
+  };
 
   const handleMainClick = async (data, type) => {
     if (fetchedData[data.id]) {
       // Data already fetched, just toggle dropdown
-      toggleDropdown(data);
+      setActiveAgentId(data);
+      setAgentsData((prevAgentsData) =>
+        prevAgentsData.map((agentData) => ({
+          ...agentData,
+          state: agentData.id === data.id ? !agentData.state : agentData.state,
+        }))
+      );
     } else {
       // Fetch data and toggle dropdown
       await fetchUserData(data.id, type);
-      toggleDropdown(data);
     }
   };
 
-  const toggleDropdown = useCallback((data) => {
-    setActiveAgentId(data);
+  const toggleDropdown = async (data) => {
+    const isCurrentlyOpen = agentsData.find(
+      (agentData) => agentData.id === data.id
+    )?.state;
+
+    if (!isCurrentlyOpen) {
+      await fetchUserData(data.id, "agent");
+    }
+
     setAgentsData((prevAgentsData) =>
       prevAgentsData.map((agentData) => ({
         ...agentData,
         state: agentData.id === data.id ? !agentData.state : agentData.state,
       }))
     );
-  }, []);
+  };
 
   return (
     <div className="flex flex-col pl-4 justify-between w-full text-sm items-center text-[#A7A7A7]">
@@ -128,7 +126,7 @@ const NestedAccordion = ({
                     }
                   }}
                 >
-                  {agentData.state ? <IoCaretDown /> : <AiFillCaretRight />}
+                  {agentData.state ? <FaRegSquareMinus /> : <FaRegSquarePlus />}
                 </span>
                 <IoIosPeople fontSize={20} />
                 <h4 className="font-semibold">{agentData.name}</h4>
@@ -149,7 +147,7 @@ const NestedAccordion = ({
                   }}
                   className="p-4 px-8"
                 >
-                  <MdAddBox />
+                  <FaPlus />
                 </span>
               )}
             </div>
