@@ -17,7 +17,7 @@ import {
   Th,
   Td,
   Button,
-  TableContainer,
+  Spinner,
 } from "@chakra-ui/react";
 import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
@@ -52,6 +52,7 @@ export default function Dashboard() {
 
   const [activeAgentId, setActiveAgentId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -235,17 +236,18 @@ export default function Dashboard() {
                     setActiveAgentId={setActiveAgentId}
                     data={data}
                     activeAgentId={activeAgentId}
+                    setDetailLoading={setDetailLoading}
                   />
                 </div>
               </div>
             </div>
           </div>
           <div style={{ flexBasis: "55%" }}>
-            <div className="card bg-white rounded w-full relative">
+            <div className="card bg-white rounded w-full relative" style={{ minHeight: "500px" }}>
               <div className="px-4 py-3 border-b w-full">
                 <h2 className="font-bold">Details</h2>
               </div>
-              {activeAgentId ? (
+              {!detailLoading && activeAgentId ? (
                 <div className="card p-4">
                   <div className="summary">
                     <div className="flex flex-col md:flex-row gap-6">
@@ -307,57 +309,58 @@ export default function Dashboard() {
                             </Thead>
                             <Tbody>
                               {userWallets.length ? (
-                                userWallets.map((wallet, index) =>
-                                  wallet.currencyId &&
-                                  wallet.currencyId.status === "active" && (
-                                    <Tr key={index}>
-                                      <Td className="text-center">
-                                        {wallet?.currencyId?.countryId}
-                                        {wallet.primaryWallet && (
-                                          <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
-                                            Primary
-                                          </span>
-                                        )}
-                                      </Td>
-                                      <Td className="text-center">
-                                        {wallet.balance}
-                                      </Td>
-                                      <Td className="text-center">
-                                        <span
-                                          onClick={() => {
-                                            setShowWalletActions(true);
-                                            setWalletAction("deduct");
-                                            setWalletActionCurrency(wallet);
-                                          }}
-                                          className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
-                                        >
-                                          <BiSolidMinusSquare />
-                                        </span>
-                                        <span
-                                          onClick={() => {
-                                            setShowWalletActions(true);
-                                            setWalletAction("add");
-                                            setWalletActionCurrency(wallet);
-                                          }}
-                                          className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
-                                        >
-                                          <MdAddBox />
-                                        </span>
-                                        {authUser.id === selectedUser && (
+                                userWallets.map(
+                                  (wallet, index) =>
+                                    wallet.currencyId &&
+                                    wallet.currencyId.status === "active" && (
+                                      <Tr key={index}>
+                                        <Td className="text-center">
+                                          {wallet?.currencyId?.countryId}
+                                          {wallet.primaryWallet && (
+                                            <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
+                                              Primary
+                                            </span>
+                                          )}
+                                        </Td>
+                                        <Td className="text-center">
+                                          {wallet.balance}
+                                        </Td>
+                                        <Td className="text-center">
                                           <span
                                             onClick={() => {
                                               setShowWalletActions(true);
-                                              setWalletAction("transfer");
+                                              setWalletAction("deduct");
                                               setWalletActionCurrency(wallet);
                                             }}
-                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
                                           >
-                                            <BiTransfer />
+                                            <BiSolidMinusSquare />
                                           </span>
-                                        )}
-                                      </Td>
-                                    </Tr>
-                                  ) 
+                                          <span
+                                            onClick={() => {
+                                              setShowWalletActions(true);
+                                              setWalletAction("add");
+                                              setWalletActionCurrency(wallet);
+                                            }}
+                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                          >
+                                            <MdAddBox />
+                                          </span>
+                                          {authUser.id === selectedUser && (
+                                            <span
+                                              onClick={() => {
+                                                setShowWalletActions(true);
+                                                setWalletAction("transfer");
+                                                setWalletActionCurrency(wallet);
+                                              }}
+                                              className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                            >
+                                              <BiTransfer />
+                                            </span>
+                                          )}
+                                        </Td>
+                                      </Tr>
+                                    )
                                 )
                               ) : (
                                 <Tr>
@@ -618,8 +621,7 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="p-4 flex flex-col items-center w-full h-full justify-center">
-                  <PiEmptyBold className="text-5xl" />
-                  <p>Select an account</p>
+                  <Spinner size="xl" />
                 </div>
               )}
             </div>

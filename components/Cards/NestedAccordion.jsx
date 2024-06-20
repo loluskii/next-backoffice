@@ -7,6 +7,7 @@ import { FaRegSquarePlus, FaRegSquareMinus, FaPlus } from "react-icons/fa6";
 import CreateAgentCashier from "components/Modals/CreateAgent";
 import { Spinner } from "@chakra-ui/react";
 import clsx from "clsx";
+import { FaBullseye } from "react-icons/fa";
 
 const NestedAccordion = ({
   setUserWallets,
@@ -18,6 +19,7 @@ const NestedAccordion = ({
   setActiveAgentId,
   data,
   activeAgentId,
+  setDetailLoading,
 }) => {
   const [agentsData, setAgentsData] = useState([]);
   const [cashiersData, setCashiersData] = useState([]);
@@ -42,13 +44,12 @@ const NestedAccordion = ({
   }, [data]);
 
   const fetchUserData = async (id, type) => {
-    setLoading((prev) => ({ ...prev, [id]: true }));
-
     const [res, user, gameSettings] = await Promise.all([
       getStructuredUsers(id),
       getUser(id),
       getGameSettings(id),
     ]);
+    setDetailLoading(false);
 
     setActiveAgentId(user);
     setUserWallets(user.wallets);
@@ -69,6 +70,7 @@ const NestedAccordion = ({
     if (fetchedData[data.id]) {
       // Data already fetched, just toggle dropdown
       setActiveAgentId(data);
+      fetchUserData(data.id, type);
       // setAgentsData((prevAgentsData) =>
       //   prevAgentsData.map((agentData) => ({
       //     ...agentData,
@@ -77,6 +79,7 @@ const NestedAccordion = ({
       // );
     } else {
       // Fetch data and toggle dropdown
+      setDetailLoading(true);
       await fetchUserData(data.id, type);
     }
   };
@@ -87,6 +90,7 @@ const NestedAccordion = ({
     )?.state;
 
     if (!isCurrentlyOpen) {
+      setLoading((prev) => ({ ...prev, [data.id]: true }));
       await fetchUserData(data.id, "agent");
     }
 
@@ -171,6 +175,7 @@ const NestedAccordion = ({
                   setActiveAgentId={setActiveAgentId}
                   data={fetchedData[agentData.id]}
                   activeAgentId={activeAgentId}
+                  setDetailLoading={setLoading}
                 />
               )}
             </div>
