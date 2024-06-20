@@ -69,12 +69,12 @@ const NestedAccordion = ({
     if (fetchedData[data.id]) {
       // Data already fetched, just toggle dropdown
       setActiveAgentId(data);
-      setAgentsData((prevAgentsData) =>
-        prevAgentsData.map((agentData) => ({
-          ...agentData,
-          state: agentData.id === data.id ? !agentData.state : agentData.state,
-        }))
-      );
+      // setAgentsData((prevAgentsData) =>
+      //   prevAgentsData.map((agentData) => ({
+      //     ...agentData,
+      //     state: agentData.id === data.id ? !agentData.state : agentData.state,
+      //   }))
+      // );
     } else {
       // Fetch data and toggle dropdown
       await fetchUserData(data.id, type);
