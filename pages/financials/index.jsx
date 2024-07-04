@@ -77,7 +77,55 @@ const Index = () => {
                   </button>
                   {subAgent}
                 </Td>
-                <Td colSpan={7} />
+                {Object.keys(entity.agents[subAgent].totals).length ? (
+                  Object.keys(entity.agents[subAgent].totals).map(
+                    (currency) => (
+                      <>
+                        <Td>{currency}</Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .numberOfBets
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .totalOpenPayout
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .totalClosedPayout
+                          }
+                        </Td>
+                        <Td>
+                          {entity.agents[subAgent].totals[currency].totalStake}
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .totalWinnings
+                          }
+                        </Td>
+                        <Td>
+                          {entity.agents[subAgent].totals[currency].profit}
+                        </Td>
+                      </>
+                    )
+                  )
+                ) : (
+                  <>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                  </>
+                )}
               </Tr>
               {isVisible &&
                 renderTableRows(entity.agents[subAgent], depth + 1, key)}
@@ -89,7 +137,7 @@ const Index = () => {
   };
   return (
     <>
-      <div className="h-screen">
+      <div className="h-full">
         <div className="title mb-5">
           <h3 className="text-2xl">Financials</h3>
         </div>
@@ -140,9 +188,9 @@ const Index = () => {
             </div>
           </form>
         </div>
-        <div className="bg-white mt-3">
+        <div className="bg-white mt-3 pb-5">
           <TableContainer>
-            <Table className="table table-striped table-bordered">
+            <Table className="table table-striped table-bordered" size={"sm"}>
               <Thead className="bg-gray-500">
                 <Tr>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
@@ -198,12 +246,55 @@ const Index = () => {
                             </button>
                             {agentKey}
                           </Td>
-                          <Td>{data[agentKey].totals.numberOfBets}</Td>
-                          <Td>{data[agentKey].totals.totalOpenPayout}</Td>
-                          <Td>{data[agentKey].totals.totalClosedPayout}</Td>
-                          <Td>{data[agentKey].totals.totalStake}</Td>
-                          <Td>{data[agentKey].totals.totalWinnings}</Td>
-                          <Td>{data[agentKey].totals.profit}</Td>
+                          {Object.keys(data[agentKey].totals).length ? (
+                            Object.keys(data[agentKey].totals).map(
+                              (currency) => (
+                                <>
+                                  <Td>{currency}</Td>
+                                  <Td>
+                                    {
+                                      data[agentKey].totals[currency]
+                                        .numberOfBets
+                                    }
+                                  </Td>
+                                  <Td>
+                                    {
+                                      data[agentKey].totals[currency]
+                                        .totalOpenPayout
+                                    }
+                                  </Td>
+                                  <Td>
+                                    {
+                                      data[agentKey].totals[currency]
+                                        .totalClosedPayout
+                                    }
+                                  </Td>
+                                  <Td>
+                                    {data[agentKey].totals[currency].totalStake}
+                                  </Td>
+                                  <Td>
+                                    {
+                                      data[agentKey].totals[currency]
+                                        .totalWinnings
+                                    }
+                                  </Td>
+                                  <Td>
+                                    {data[agentKey].totals[currency].profit}
+                                  </Td>
+                                </>
+                              )
+                            )
+                          ) : (
+                            <>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                              <Td>--</Td>
+                            </>
+                          )}
                         </Tr>
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>
@@ -221,3 +312,4 @@ const Index = () => {
 
 export default Index;
 Index.layout = Admin;
+// R8Ua9_j5:guE5me

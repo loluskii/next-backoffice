@@ -67,7 +67,7 @@ export default function Dashboard() {
     ticketSizeMin: 1,
     ticketSizeMax: 10,
     quickPick: [100, 300, 500, 1000],
-    payoutMode: "Manual",
+    payoutMode: "manual",
   });
 
   const [gameData, setGameData] = useState({
