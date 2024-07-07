@@ -1,10 +1,10 @@
 import { apiClient } from "./base";
 
 // Login function
-export const loginUser = async (email, password) => {
+export const loginUser = async (username, password) => {
   try {
     const response = await apiClient.post("/v1/auth/login/", {
-      email,
+      username,
       password,
     });
     localStorage.setItem("token", response.data.tokens.access.token); // Save the token

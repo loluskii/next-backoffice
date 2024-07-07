@@ -3554,6 +3554,10 @@ select {
   white-space: pre-wrap;
 }
 
+.whitespace-break-spaces {
+  white-space: break-spaces;
+}
+
 .break-normal {
   overflow-wrap: normal;
   word-break: normal;

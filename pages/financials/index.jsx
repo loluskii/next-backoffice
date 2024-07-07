@@ -12,6 +12,7 @@ import {
   Td,
   Select,
   TableContainer,
+  Spinner,
 } from "@chakra-ui/react";
 import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
@@ -40,28 +41,12 @@ const Index = () => {
   }
 
   const renderTableRows = (entity, depth = 1, parentKey = "") => {
-    const indent = { paddingLeft: `${depth * 40}px` };
+    const indent = { paddingLeft: `${depth * 25}px` };
     const cashierKeys = Object.keys(entity.cashiers || {});
     const agentKeys = Object.keys(entity.agents || {});
 
     return (
       <>
-        {cashierKeys.map((cashier, index) => {
-          const currency = Object.keys(entity.cashiers[cashier])[0];
-          const cashierData = entity.cashiers[cashier][currency];
-          return (
-            <Tr key={`${parentKey}-cashier-${index}`}>
-              <Td style={indent}>{cashier}</Td>
-              <Td>{currency}</Td>
-              <Td>{cashierData.numberOfBets}</Td>
-              <Td>{cashierData.totalOpenPayout}</Td>
-              <Td>{cashierData.totalClosedPayout}</Td>
-              <Td>{cashierData.totalStake}</Td>
-              <Td>{cashierData.totalWinnings}</Td>
-              <Td>{cashierData.profit}</Td>
-            </Tr>
-          );
-        })}
         {agentKeys.map((subAgent, index) => {
           const key = `${parentKey}-agent-${index}`;
           const isVisible = visibleRows[key];
@@ -89,18 +74,6 @@ const Index = () => {
                           }
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .totalOpenPayout
-                          }
-                        </Td>
-                        <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .totalClosedPayout
-                          }
-                        </Td>
-                        <Td>
                           {entity.agents[subAgent].totals[currency].totalStake}
                         </Td>
                         <Td>
@@ -109,6 +82,22 @@ const Index = () => {
                               .totalWinnings
                           }
                         </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .totalOpenPayout
+                          }
+                        </Td>
+                        <Td>0.00</Td>
+                        <Td>0.00</Td>
+                        <Td>0.00</Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .totalClosedPayout
+                          }
+                        </Td>
+
                         <Td>
                           {entity.agents[subAgent].totals[currency].profit}
                         </Td>
@@ -124,12 +113,35 @@ const Index = () => {
                     <Td>--</Td>
                     <Td>--</Td>
                     <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
                   </>
                 )}
               </Tr>
               {isVisible &&
                 renderTableRows(entity.agents[subAgent], depth + 1, key)}
             </>
+          );
+        })}
+
+        {cashierKeys.map((cashier, index) => {
+          const currency = Object.keys(entity.cashiers[cashier])[0];
+          const cashierData = entity.cashiers[cashier][currency];
+          return (
+            <Tr key={`${parentKey}-cashier-${index}`}>
+              <Td style={indent}>{cashier}</Td>
+              <Td>{currency}</Td>
+              <Td>{cashierData.numberOfBets}</Td>
+              <Td>{cashierData.totalStake}</Td>
+              <Td>{cashierData.totalWinnings}</Td>
+              <Td>{cashierData.totalOpenPayout}</Td>
+              <Td>0.00</Td>
+              <Td>0.00</Td>
+              <Td>0.00</Td>
+              <Td>{cashierData.totalClosedPayout}</Td>
+              <Td>{cashierData.profit}</Td>
+            </Tr>
           );
         })}
       </>
@@ -193,47 +205,47 @@ const Index = () => {
             <Table className="table table-striped table-bordered" size={"sm"}>
               <Thead className="bg-gray-500">
                 <Tr>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Name
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Currency
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Number of Bets
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Open Payout
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Closed Payout
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Stake
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Total Winnings
-                  </Th>
-                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                    Profit
-                  </Th>
+                  <Th className="whitespace-break-spaces ">Name</Th>
+                  <Th className="whitespace-break-spaces ">Currency</Th>
+                  <Th className="whitespace-break-spaces ">tickets count</Th>
+                  <Th className="whitespace-break-spaces ">Total In</Th>
+                  <Th className="whitespace-break-spaces ">Total Out</Th>
+                  <Th className="whitespace-break-spaces ">Open Payouts</Th>
+                  <Th className="whitespace-break-spaces ">jackpot 1 Payout</Th>
+                  <Th className="whitespace-break-spaces ">jackpot 2 Payout</Th>
+                  <Th className="whitespace-break-spaces ">jackpot 3 Payout</Th>
+                  <Th className="whitespace-break-spaces ">Closed Payout</Th>
+                  <Th className="">Profit</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {!Object.keys(data).length ? (
+                {!Object.keys(data).length && !loading ? (
                   <Tr>
-                    <Td colSpan={7} className="text-center">
+                    <Td colSpan={10} style={{ textAlign: "center" }}>
                       No Data Available
+                    </Td>
+                  </Tr>
+                ) : loading ? (
+                  <Tr>
+                    <Td colSpan={10} style={{ textAlign: "center" }}>
+                      <Spinner />
                     </Td>
                   </Tr>
                 ) : (
                   Object.keys(data).map((agentKey, index) => {
                     const key = `agent-${index}`;
                     const isVisible = visibleRows[key];
+                    const totals = data[agentKey].totals;
+                    const totalsInPrimaryCurrency =
+                      data[agentKey].totalsInPrimaryCurrency;
+                    const totalsKeys = Object.keys(totals);
+                    const firstKey = totalsKeys[0];
+                    const firstValue = totals[firstKey];
+
                     return (
                       <>
                         <Tr key={key}>
-                          <Td>
+                          <Td rowSpan={totalsKeys.length + 1}>
                             <button
                               onClick={() => toggleVisibility(key)}
                               className="focus:outline-none"
@@ -246,56 +258,110 @@ const Index = () => {
                             </button>
                             {agentKey}
                           </Td>
-                          {Object.keys(data[agentKey].totals).length ? (
-                            Object.keys(data[agentKey].totals).map(
-                              (currency) => (
-                                <>
-                                  <Td>{currency}</Td>
-                                  <Td>
-                                    {
-                                      data[agentKey].totals[currency]
-                                        .numberOfBets
-                                    }
-                                  </Td>
-                                  <Td>
-                                    {
-                                      data[agentKey].totals[currency]
-                                        .totalOpenPayout
-                                    }
-                                  </Td>
-                                  <Td>
-                                    {
-                                      data[agentKey].totals[currency]
-                                        .totalClosedPayout
-                                    }
-                                  </Td>
-                                  <Td>
-                                    {data[agentKey].totals[currency].totalStake}
-                                  </Td>
-                                  <Td>
-                                    {
-                                      data[agentKey].totals[currency]
-                                        .totalWinnings
-                                    }
-                                  </Td>
-                                  <Td>
-                                    {data[agentKey].totals[currency].profit}
-                                  </Td>
-                                </>
-                              )
-                            )
-                          ) : (
-                            <>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                              <Td>--</Td>
-                            </>
-                          )}
+                          <Td>{firstKey}</Td>
+                          <Td>
+                            {firstValue.numberOfBets.toLocaleString("en")}
+                          </Td>
+                          <Td>{firstValue.totalStake.toLocaleString("en")}</Td>
+                          <Td>
+                            {firstValue.totalWinnings.toLocaleString("en")}
+                          </Td>
+                          <Td>
+                            {firstValue.totalOpenPayout.toLocaleString("en")}
+                          </Td>
+                          <Td>0.00</Td>
+                          <Td>0.00</Td>
+                          <Td>0.00</Td>
+                          <Td>
+                            {firstValue.totalClosedPayout.toLocaleString("en")}
+                          </Td>
+
+                          <Td>{firstValue.profit.toLocaleString("en")}</Td>
                         </Tr>
+                        {totalsKeys.slice(1).map((currency) => {
+                          const currencyData = totals[currency];
+                          return (
+                            <Tr key={`${key}-${currency}`}>
+                              <Td>{currency}</Td>
+                              <Td>
+                                {currencyData.numberOfBets.toLocaleString("en")}
+                              </Td>
+                              <Td>
+                                {currencyData.totalStake.toLocaleString("en")}
+                              </Td>
+                              <Td>
+                                {currencyData.totalWinnings.toLocaleString(
+                                  "en"
+                                )}
+                              </Td>
+
+                              <Td>
+                                {currencyData.totalOpenPayout.toLocaleString(
+                                  "en"
+                                )}
+                              </Td>
+                              <Td>0.00</Td>
+                              <Td>0.00</Td>
+                              <Td>0.00</Td>
+                              <Td>
+                                {currencyData.totalClosedPayout.toLocaleString(
+                                  "en"
+                                )}
+                              </Td>
+
+                              <Td>
+                                {currencyData.profit.toLocaleString("en")}
+                              </Td>
+                            </Tr>
+                          );
+                        })}
+
+                        {Object.keys(totalsInPrimaryCurrency).map(
+                          (currency) => {
+                            const currencyData =
+                              totalsInPrimaryCurrency[currency];
+                            return (
+                              <Tr key={`${key}-${currency}`}>
+                                <Td className="font-bold">{currency}</Td>
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.numberOfBets
+                                  ).toLocaleString("en")}
+                                </Td>
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.totalStake
+                                  ).toLocaleString("en")}
+                                </Td>
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.totalWinnings
+                                  ).toLocaleString("en")}
+                                </Td>
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.totalOpenPayout
+                                  ).toLocaleString("en")}
+                                </Td>
+                                <Td>0.00</Td>
+                                <Td>0.00</Td>
+                                <Td>0.00</Td>
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.totalClosedPayout
+                                  ).toLocaleString("en")}
+                                </Td>
+
+                                <Td className="font-bold">
+                                  {parseFloat(
+                                    currencyData.profit
+                                  ).toLocaleString("en")}
+                                </Td>
+                              </Tr>
+                            );
+                          }
+                        )}
+
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>
                     );
