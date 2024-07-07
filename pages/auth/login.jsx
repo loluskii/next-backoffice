@@ -4,7 +4,7 @@ import { React, useState } from "react";
 import { loginUser } from "services/auth.service";
 
 export default function Login() {
-  const [email, setEmail] = useState("lorem@gmail.com");
+  const [username, setUsername] = useState("superuser");
   const [password, setPassword] = useState("SiEBef0H821");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -12,7 +12,7 @@ export default function Login() {
   async function doLogin(e) {
     e.preventDefault();
     setIsLoading(true);
-    const response = await loginUser(email, password);
+    const response = await loginUser(username, password);
     setIsLoading(false);
     if (response) {
       router.push("/wallet/accounts");
@@ -21,7 +21,6 @@ export default function Login() {
       console.error(response);
     }
   }
-  
 
   return (
     <>
@@ -36,15 +35,15 @@ export default function Login() {
                       className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                       htmlFor="grid-password"
                     >
-                      Email
+                      Username
                     </label>
                     <input
                       type="email"
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      name="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
 
