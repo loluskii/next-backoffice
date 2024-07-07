@@ -2,7 +2,10 @@ import axios from "axios";
 
 // Create an instance of axios with a base URL
 export const apiClient = axios.create({
-  baseURL: "https://aviata.sportsbookengine.com",
+  baseURL:
+    process.env.NEXT_PUBLIC_ENV === "development"
+      ? process.env.NEXT_PUBLIC_DEVELOPMENT_API
+      : process.env.NEXT_PUBLIC_PRODUCTION_API,
 });
 
 // Interceptor to add Authorization header to each request if token is present
@@ -22,7 +25,7 @@ let failedQueue = []; // Queue to hold requests that failed due to token expirat
 
 // Function to process the queued requests after refreshing the token
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error); // Reject the request if there's an error
     } else {
@@ -45,14 +48,16 @@ apiClient.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry && token) {
       // If a refresh token request is already in progress, add the request to the queue
       if (isRefreshing) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
-        }).then(token => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return apiClient(originalRequest);
-        }).catch(err => {
-          return Promise.reject(err);
-        });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
       // Mark the original request as retried
@@ -60,16 +65,19 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       // Make a request to refresh the token
-      return new Promise(function(resolve, reject) {
-        apiClient.post("/v1/auth/refresh-tokens", { refreshToken: refreshToken })
+      return new Promise(function (resolve, reject) {
+        apiClient
+          .post("/v1/auth/refresh-tokens", { refreshToken: refreshToken })
           .then(({ data }) => {
             // Update the tokens in localStorage
             localStorage.setItem("token", data.access.token);
             localStorage.setItem("refreshToken", data.refresh.token);
 
             // Update the default Authorization header and the original request's header
-            apiClient.defaults.headers['Authorization'] = 'Bearer ' + data.access.token;
-            originalRequest.headers['Authorization'] = 'Bearer ' + data.access.token;
+            apiClient.defaults.headers["Authorization"] =
+              "Bearer " + data.access.token;
+            originalRequest.headers["Authorization"] =
+              "Bearer " + data.access.token;
 
             // Process the queued requests with the new token
             processQueue(null, data.access.token);
@@ -87,7 +95,7 @@ apiClient.interceptors.response.use(
             localStorage.removeItem("currentUser");
 
             // Redirect the user to the login page
-            window.location.href = '/login';
+            window.location.href = "/login";
 
             reject(err);
           })

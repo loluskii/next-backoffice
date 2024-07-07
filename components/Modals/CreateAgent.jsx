@@ -14,6 +14,7 @@ import {
   Button,
   Text,
   Select,
+  Flex,
 } from "@chakra-ui/react";
 import { createCurrency, getCurrencies } from "services/tickets.service";
 import { createAgentOrCashier, getUser } from "services/account.service";
@@ -22,6 +23,7 @@ import { FaCheckCircle } from "react-icons/fa";
 const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
     mobile: "",
     password: "",
@@ -93,6 +95,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
       setUserData(res.data);
     } catch (error) {
       setErrorMessage(error.data.message);
+      setIsCreating(false);
     }
   };
 
@@ -154,53 +157,68 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                   className="w-full pb-2"
                   value={accountType}
                   onChange={(e) => setAccountType(e.target.value)}
-                  placeholder={"select a type"}
+                  placeholder={"Select a type"}
                 >
                   <option value="agent">Agent</option>
                   <option value="cashier">Cashier</option>
                 </Select>
               </FormControl>
 
-              <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input
-                  name="name"
-                  type="text"
-                  placeholder="Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
-              </FormControl>
+              <Flex>
+                <FormControl flex={1} mr={2}>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    name="name"
+                    type="text"
+                    placeholder="Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                </FormControl>
 
-              <FormControl mt={4}>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </FormControl>
+                <FormControl flex={1} ml={2}>
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    name="username"
+                    type="text"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+              </Flex>
 
-              <FormControl mt={4}>
+              <Flex mt={4}>
+                <FormControl flex={1} mr={2}>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+
+                <FormControl flex={1} ml={2}>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    name="password"
+                    type="password"
+                    placeholder="****"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+              </Flex>
+
+              <FormControl my={3}>
                 <FormLabel>Mobile</FormLabel>
                 <Input
                   name="mobile"
                   type="number"
-                  placeholder="12345"
+                  placeholder="1234"
                   value={formData.mobile}
-                  onChange={handleChange}
-                />
-              </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel>Password</FormLabel>
-                <Input
-                  name="password"
-                  type="password"
-                  placeholder="****"
-                  value={formData.password}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -213,14 +231,13 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                     className="w-full pb-2"
                     value={selectedCurrencyId}
                     onChange={(e) => setSelectedCurrencyId(e.target.value)}
-                    // placeholder={selectedCurrencyId}
                   >
                     <option>Select a currency</option>
                     {userWallets?.map(
                       (c, index) =>
                         c.currencyId && (
                           <option value={c?.currencyId?.id} key={index}>
-                            {`${c?.currencyId?.countryId}(${c?.currencyId?.exchangeRate})`}
+                            {`${c?.currencyId?.countryId} (${c?.currencyId?.exchangeRate})`}
                           </option>
                         )
                     )}
@@ -228,10 +245,8 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                 </FormControl>
               )}
 
-              {errorMessage ? (
+              {errorMessage && (
                 <p className="text-red-500 my-2">{errorMessage}</p>
-              ) : (
-                ""
               )}
             </ModalBody>
 
@@ -247,6 +262,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                 color="#fff"
                 fontWeight="400"
                 disabled={isCreating}
+                isLoading={isCreating}
               >
                 Create
               </Button>
