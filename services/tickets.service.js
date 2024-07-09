@@ -3,7 +3,7 @@ import { apiClient } from "./base";
 // Login function
 export const getTicketsHistory = async (data) => {
   try {
-    let url = `cashier/v1/bet/history?limit=25&page=${data.page}`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/bet/history?limit=25&page=${data.page}`;
 
     // Check if startDate exists in data before adding it to the URL
     if (data.startDate && data.endDate) {
@@ -38,7 +38,7 @@ export const getTicketsHistory = async (data) => {
 
 export const createCurrency = async (data) => {
   try {
-    let url = `cashier/v1/currency/`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/currency/`;
     const response = await apiClient.post(url, data);
     return response.data;
   } catch (error) {
@@ -49,7 +49,7 @@ export const createCurrency = async (data) => {
 
 export const updateCurrency = async (id, data) => {
   try {
-    let url = `cashier/v1/currency/${id}`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/currency/${id}`;
     const response = await apiClient.patch(url, data);
     return response.data;
   } catch (error) {
@@ -60,7 +60,7 @@ export const updateCurrency = async (id, data) => {
 
 export const getCurrencies = async (data) => {
   try {
-    let url = `cashier/v1/currency/`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/currency/`;
     const response = await apiClient.get(url);
     return response.data;
   } catch (error) {
@@ -71,7 +71,7 @@ export const getCurrencies = async (data) => {
 
 export const getFinancialReport = async (startDate, endDate, betType) => {
   try {
-    let url = `cashier/v1/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&betType=${betType}`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&betType=${betType}`;
     const response = await apiClient.get(url);
     return response.data;
   } catch (error) {

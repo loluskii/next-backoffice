@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import Admin from "layouts/Admin.jsx";
 import {
   FormControl,
@@ -25,6 +25,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [visibleRows, setVisibleRows] = useState({});
   const [data, setData] = useState({});
+  const [dateRange, setDateRange] = useState("today");
 
   const toggleVisibility = (key) => {
     setVisibleRows((prev) => ({
@@ -39,6 +40,61 @@ const Index = () => {
     setLoading(false);
     setData(res);
   }
+
+  useEffect(() => {
+    updateDateRange("today");
+  }, []);
+
+  const updateDateRange = (range) => {
+    const now = new Date();
+    let start, end;
+
+    switch (range) {
+      case "lastHour":
+        start = new Date(now.getTime() - 60 * 60 * 1000);
+        end = now;
+        break;
+      case "today":
+        start = new Date(now.setHours(0, 0, 0, 0));
+        end = new Date(now.setHours(23, 59, 59, 999));
+        break;
+      case "yesterday":
+        start = new Date(now.setDate(now.getDate() - 1));
+        start.setHours(0, 0, 0, 0);
+        end = new Date(start);
+        end.setHours(23, 59, 59, 999);
+        break;
+      case "currentWeek":
+        start = new Date(now.setDate(now.getDate() - now.getDay()));
+        start.setHours(0, 0, 0, 0);
+        end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        end.setHours(23, 59, 59, 999);
+        break;
+      case "lastWeek":
+        start = new Date(now.setDate(now.getDate() - now.getDay() - 7));
+        start.setHours(0, 0, 0, 0);
+        end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        end.setHours(23, 59, 59, 999);
+        break;
+      case "lastMonth":
+        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        end = new Date(now.getFullYear(), now.getMonth(), 0);
+        end.setHours(23, 59, 59, 999);
+        break;
+      case "currentYear":
+        start = new Date(now.getFullYear(), 0, 1);
+        end = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+        break;
+      default:
+        start = "";
+        end = "";
+    }
+
+    setStartDate(start ? start.toISOString().split("T")[0] : "");
+    setEndDate(end ? end.toISOString().split("T")[0] : "");
+  };
 
   const renderTableRows = (entity, depth = 1, parentKey = "") => {
     const indent = { paddingLeft: `${depth * 25}px` };
@@ -157,6 +213,27 @@ const Index = () => {
           <form action="">
             <div className="flex bg-white rounded p-4 gap-x-3 w-full items-end">
               <FormControl className="form-group mr-3">
+                <FormLabel htmlFor="">Date Range</FormLabel>
+                <Select
+                  name="date-range"
+                  className="w-full"
+                  id=""
+                  value={dateRange}
+                  onChange={(e) => {
+                    setDateRange(e.target.value);
+                    updateDateRange(e.target.value);
+                  }}
+                >
+                  <option value="lastHour">Last Hour</option>
+                  <option value="today">Today</option>
+                  <option value="yesterday">Yesterday</option>
+                  <option value="currentWeek">Current Week</option>
+                  <option value="lastWeek">Last Week</option>
+                  <option value="lastMonth">Last Month</option>
+                  <option value="currentYear">Current Year</option>
+                </Select>
+              </FormControl>
+              <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Bet Type</FormLabel>
                 <Select
                   name="bet-type"
@@ -173,6 +250,7 @@ const Index = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
@@ -182,6 +260,7 @@ const Index = () => {
                 <Input
                   type="date"
                   placeholder="Small Input"
+                  value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
@@ -245,7 +324,11 @@ const Index = () => {
                     return (
                       <>
                         <Tr key={key}>
-                          <Td rowSpan={totalsKeys.length + 1}>
+                          <Td
+                            rowSpan={
+                              totalsKeys.length > 0 ? totalsKeys.length + 1 : 2
+                            }
+                          >
                             <button
                               onClick={() => toggleVisibility(key)}
                               className="focus:outline-none"
@@ -260,23 +343,23 @@ const Index = () => {
                           </Td>
                           <Td>{firstKey}</Td>
                           <Td>
-                            {firstValue.numberOfBets.toLocaleString("en")}
+                            {firstValue?.numberOfBets.toLocaleString("en")}
                           </Td>
-                          <Td>{firstValue.totalStake.toLocaleString("en")}</Td>
+                          <Td>{firstValue?.totalStake.toLocaleString("en")}</Td>
                           <Td>
-                            {firstValue.totalWinnings.toLocaleString("en")}
+                            {firstValue?.totalWinnings.toLocaleString("en")}
                           </Td>
                           <Td>
-                            {firstValue.totalOpenPayout.toLocaleString("en")}
+                            {firstValue?.totalOpenPayout.toLocaleString("en")}
                           </Td>
                           <Td>0.00</Td>
                           <Td>0.00</Td>
                           <Td>0.00</Td>
                           <Td>
-                            {firstValue.totalClosedPayout.toLocaleString("en")}
+                            {firstValue?.totalClosedPayout.toLocaleString("en")}
                           </Td>
 
-                          <Td>{firstValue.profit.toLocaleString("en")}</Td>
+                          <Td>{firstValue?.profit.toLocaleString("en")}</Td>
                         </Tr>
                         {totalsKeys.slice(1).map((currency) => {
                           const currencyData = totals[currency];

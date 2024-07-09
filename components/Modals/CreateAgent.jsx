@@ -123,7 +123,7 @@ const CreateAgentCashier = ({ type, onClose, isOpen, agentId }) => {
                 </div>
                 <div className="flex justify-between mt-8">
                   <p>Username: </p>
-                  <b>{userData.email}</b>
+                  <b>{userData.username}</b>
                 </div>
                 <div className="flex justify-between mt-4">
                   <p>Password: </p>

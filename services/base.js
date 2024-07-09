@@ -2,10 +2,7 @@ import axios from "axios";
 
 // Create an instance of axios with a base URL
 export const apiClient = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_ENV === "development"
-      ? process.env.NEXT_PUBLIC_DEVELOPMENT_API
-      : process.env.NEXT_PUBLIC_PRODUCTION_API,
+  baseURL: process.env.NEXT_PUBLIC_BASE_API,
 });
 
 // Interceptor to add Authorization header to each request if token is present

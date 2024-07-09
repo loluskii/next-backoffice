@@ -18,6 +18,7 @@ import {
   Td,
   Button,
   Spinner,
+  Select,
 } from "@chakra-ui/react";
 import { getStructuredUsers } from "services/account.service";
 import { MdAddBox } from "react-icons/md";
@@ -74,6 +75,7 @@ export default function Dashboard() {
     roundWaitTimeValue: 5,
     timerCountdownValue: 30,
     roundBetsLimit: 10,
+    rtp: 60,
   });
 
   const fetchData = async () => {
@@ -147,7 +149,7 @@ export default function Dashboard() {
 
   const handleGameSettingsUpdate = async (e) => {
     e.preventDefault();
-    const res = await updateGameData(gameData, selectedUser);
+    const res = await updateGameData(gameSettings, selectedUser);
     if (res.status) {
       alert("Game settings updated successfully");
     } else {
@@ -243,7 +245,10 @@ export default function Dashboard() {
             </div>
           </div>
           <div style={{ flexBasis: "55%" }}>
-            <div className="card bg-white rounded w-full relative" style={{ minHeight: "500px" }}>
+            <div
+              className="card bg-white rounded w-full relative"
+              style={{ minHeight: "500px" }}
+            >
               <div className="px-4 py-3 border-b w-full">
                 <h2 className="font-bold">Details</h2>
               </div>
@@ -481,6 +486,25 @@ export default function Dashboard() {
                                   </FormControl>
                                 </div>
                               </div>
+                              {authUser?.role === "super" && (
+                                <div className="w-full">
+                                  <FormControl className="form-group mb-3">
+                                    <FormLabel htmlFor="roundBetsLimit">
+                                      RTP
+                                    </FormLabel>
+                                    <Select
+                                      name="rtp"
+                                      value={gameData.rtp}
+                                      onChange={handleChangeForGameData}
+                                    >
+                                      <option value="90">90</option>
+                                      <option value="95">95</option>
+                                      <option value="80">80</option>
+                                      <option value="65">65</option>
+                                    </Select>
+                                  </FormControl>
+                                </div>
+                              )}
                             </div>
                             <Button
                               type="submit"
@@ -596,14 +620,14 @@ export default function Dashboard() {
                                 <FormLabel htmlFor="payoutMode">
                                   Payout Mode
                                 </FormLabel>
-                                <Input
-                                  type="text"
-                                  placeholder=""
+                                <Select
                                   name="payoutMode"
-                                  value={gameSettings?.payoutMode}
+                                  value={gameSettings.payoutMode}
                                   onChange={handleChangeForGameSettings}
-                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                />
+                                >
+                                  <option value="Manual">Manual</option>
+                                  <option value="Automatic">Automatic</option>
+                                </Select>
                               </FormControl>
                             </div>
                             <Button

@@ -3,8 +3,8 @@ import { apiClient } from "./base";
 export const getGameSettings = async (id = null) => {
   try {
     let url = id
-      ? `cashier/v1/game/gameConfig/${id}`
-      : "cashier/v1/game/gameSettings";
+      ? `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameConfig/${id}`
+      : `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameSettings`;
 
     const response = await apiClient.get(url);
     return response.data;
@@ -16,7 +16,7 @@ export const getGameSettings = async (id = null) => {
 export const updateGameSettings = async (payload, id) => {
   try {
     const response = await apiClient.patch(
-      "cashier/v1/game/gameSettings/" + id,
+      `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameSettings/${id}`,
       payload
     );
     return { status: true, data: response.data };
@@ -33,7 +33,7 @@ export const updateGameData = async (payload, id) => {
     delete payload.id;
     delete payload.agentId;
     const response = await apiClient.patch(
-      "cashier/v1/game/gameData/" + id,
+      `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameData/${id}`,
       payload
     );
     return { status: true, data: response.data };
@@ -47,7 +47,10 @@ export const updateGameData = async (payload, id) => {
 
 export const createWallet = async (payload) => {
   try {
-    const response = await apiClient.post("cashier/v1/wallet", payload);
+    const response = await apiClient.post(
+      `${process.env.NEXT_PUBLIC_CASHIER_URL}/wallet`,
+      payload
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -57,7 +60,10 @@ export const createWallet = async (payload) => {
 
 export const fundOrDeductWallet = async (payload) => {
   try {
-    const response = await apiClient.post("cashier/v1/wallet/fund", payload);
+    const response = await apiClient.post(
+      `${process.env.NEXT_PUBLIC_CASHIER_URL}/wallet/fund`,
+      payload
+    );
     return response;
   } catch (error) {
     console.error(error);
