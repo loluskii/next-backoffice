@@ -4,7 +4,7 @@ import { apiClient } from "./base";
 export const loginUser = async (username, password) => {
   try {
     const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_AUTH_URL}/login/`,
+      `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/login/`,
       {
         username,
         password,
@@ -25,7 +25,7 @@ export const loginUser = async (username, password) => {
 export const resetPassword = async (payload) => {
   try {
     const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_AUTH_URL}/forgot-password/`,
+      `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/forgot-password/`,
       payload
     );
     return { status: true, data: response.data };
