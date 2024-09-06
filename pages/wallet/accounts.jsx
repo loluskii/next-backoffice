@@ -84,15 +84,16 @@ export default function Dashboard() {
       setUserWallets(authData.wallets);
       setUserRole(authUser.role);
 
-      console.log(selectedUser);
     } catch (error) {
       // console.error("Error fetching data:", error);
       alert("An error occurred");
     }
   };
-
+  
   useEffect(() => {
+    console.log('fetching...')
     fetchData();
+    console.log(selectedUser);
     setAdminSection((prev) => !prev);
   }, []);
 
