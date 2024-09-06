@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  Grid,
+  Stack,
   Spinner,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
   TabPanel,
   FormControl,
   FormLabel,
@@ -73,28 +69,21 @@ function GameSettings({ selectedUser, authUser, loading }) {
     <>
       <TabPanel px={"0px"}>
         <div className="container">
-          <Tabs>
-            <TabList>
-              <Tab
-                className="text-left focus:outline-none focus:border-none focus:ring-0"
-                onClick={() => updateGameType("aviata")}
-              >
-                Aviata
-              </Tab>
-              <Tab
-                className="text-left focus:outline-none focus:border-none focus:ring-0"
-                onClick={() => updateGameType("shootout")}
-              >
-                Shootout
-              </Tab>
-            </TabList>
-          </Tabs>
+          <Stack direction="row" align="center">
+            <Button size="xs" onClick={() => updateGameType("aviata")}>
+              Aviata
+            </Button>
+            <Button size="xs" onClick={() => updateGameType("shootout")}>
+              Shoot Out
+            </Button>
+          </Stack>
+
           {isLoading ? (
             <div className="p-4 flex flex-col items-center w-full h-full justify-center">
               <Spinner size="xl" />
             </div>
           ) : (
-            <form onSubmit={handleGameSettingsUpdate}>
+            <form className="mt-4" onSubmit={handleGameSettingsUpdate}>
               <div className="container">
                 <div className="flex md:flex-row flex-col">
                   <div className="md:w-1/2">

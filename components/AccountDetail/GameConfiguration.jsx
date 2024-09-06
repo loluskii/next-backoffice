@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  Grid,
+  Stack,
   Spinner,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
   TabPanel,
   FormControl,
   FormLabel,
@@ -16,7 +12,7 @@ import {
 import { updateGameData, getGameSettings } from "services/settings.service";
 
 function Configuration({ selectedUser, authUser, loading }) {
-  const [activeGame, setActiveGame] = useState("aviata");
+  const [activeGame, setActiveGame] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [gameData, setGameData] = useState({
@@ -46,6 +42,7 @@ function Configuration({ selectedUser, authUser, loading }) {
   };
 
   const updateGameType = (type) => {
+    console.log(type);
     setActiveGame(type);
     fetchGameData();
   };
@@ -72,29 +69,21 @@ function Configuration({ selectedUser, authUser, loading }) {
     <>
       <TabPanel px={"0px"}>
         <div className="container">
-          <Tabs>
-            <TabList>
-              <Tab
-                className="text-left focus:outline-none focus:border-none focus:ring-0"
-                onClick={() => updateGameType("aviata")}
-              >
-                Aviata
-              </Tab>
-              <Tab
-                className="text-left focus:outline-none focus:border-none focus:ring-0"
-                onClick={() => updateGameType("shootout")}
-              >
-                Shootout
-              </Tab>
-            </TabList>
-          </Tabs>
+          <Stack direction="row" align="center">
+            <Button size="xs" onClick={() => updateGameType("aviata")}>
+              Aviata
+            </Button>
+            <Button size="xs" onClick={() => updateGameType("shootout")}>
+              Shoot Out
+            </Button>
+          </Stack>
 
           {isLoading ? (
             <div className="p-4 flex flex-col items-center w-full h-full justify-center">
               <Spinner size="xl" />
             </div>
           ) : (
-            <form onSubmit={handleGameDataUpdate}>
+            <form className="mt-4" onSubmit={handleGameDataUpdate}>
               <div className="container">
                 <div className="flex md:flex-row flex-col">
                   <div className="md:w-1/3 w-full">
