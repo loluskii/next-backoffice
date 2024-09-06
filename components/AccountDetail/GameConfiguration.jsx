@@ -12,7 +12,7 @@ import {
 import { updateGameData, getGameSettings } from "services/settings.service";
 
 function Configuration({ selectedUser, authUser, loading }) {
-  const [activeGame, setActiveGame] = useState("");
+  const [activeGame, setActiveGame] = useState("aviata");
   const [isLoading, setIsLoading] = useState(false);
 
   const [gameData, setGameData] = useState({
