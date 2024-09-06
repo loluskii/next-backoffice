@@ -182,7 +182,6 @@ export default function Dashboard() {
                     setUserWallets={setUserWallets}
                     setUserRole={setUserRole}
                     setSelectedData={setSelectedData}
-                    setSelectedUser={setSelectedUser}
                     setActiveAgentId={setActiveAgentId}
                     data={data}
                     activeAgentId={activeAgentId}
