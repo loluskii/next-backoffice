@@ -406,18 +406,24 @@ export default function Dashboard() {
 
                       {selectedUser &&
                         (userRole === "agent" || userRole === "super") && (
-                          <>
+                          <TabPanel px={"0px"}>
                             <GameConfiguration
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
                             />
+                          </TabPanel>
+                        )}
+
+                      {selectedUser &&
+                        (userRole === "agent" || userRole === "super") && (
+                          <TabPanel px={"0px"}>
                             <GameSettings
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
                             />
-                          </>
+                          </TabPanel>
                         )}
                     </TabPanels>
                   </Tabs>
