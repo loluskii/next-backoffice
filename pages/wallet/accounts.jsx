@@ -83,6 +83,8 @@ export default function Dashboard() {
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
       setUserRole(authUser.role);
+
+      console.log(selectedUser);
     } catch (error) {
       // console.error("Error fetching data:", error);
       alert("An error occurred");
