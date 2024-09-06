@@ -41,7 +41,7 @@ import Admin from "layouts/Admin.jsx";
 import { resetPassword } from "services/auth.service";
 
 export default function Dashboard() {
-  const [selectedUser, setSelectedUser] = useState({});
+  const [selectedUser, setSelectedUser] = useState(null);
   const [adminSection, setAdminSection] = useState(false);
 
   const [data, setData] = useState({});
