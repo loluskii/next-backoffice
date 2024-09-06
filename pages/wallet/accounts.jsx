@@ -80,6 +80,7 @@ export default function Dashboard() {
       setData(userData.data);
       setSelectedData(userData.data);
       setAuthUser(authData);
+      console.log(authData.id)
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
       setUserRole(authUser.role);
@@ -93,7 +94,6 @@ export default function Dashboard() {
   useEffect(() => {
     console.log('fetching...')
     fetchData();
-    console.log(selectedUser);
     setAdminSection((prev) => !prev);
   }, []);
 
@@ -182,6 +182,7 @@ export default function Dashboard() {
                     setUserWallets={setUserWallets}
                     setUserRole={setUserRole}
                     setSelectedData={setSelectedData}
+                    setSelectedUser={setSelectedUser}
                     setActiveAgentId={setActiveAgentId}
                     data={data}
                     activeAgentId={activeAgentId}
