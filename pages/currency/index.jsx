@@ -91,7 +91,7 @@ const Currency = () => {
                   </tr>
                 ) : (
                   <>
-                    {currencies.length ? (
+                    {currencies?.length ? (
                       <>
                         {currencies.map((res, index) => (
                           <>

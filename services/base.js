@@ -3,6 +3,8 @@ import axios from "axios";
 // Create an instance of axios with a base URL
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_API,
+  headers: { "X-Requested-With": "XMLHttpRequest" },
+  withCredentials: false, // Enable sending credentials (cookies, headers)
 });
 
 // Interceptor to add Authorization header to each request if token is present

@@ -21,6 +21,8 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { getStructuredUsers } from "services/account.service";
+import GameConfiguration from "components/AccountDetail/GameConfiguration";
+import GameSetting from "components/AccountDetail/GameSetting";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { PiEmptyBold } from "react-icons/pi";
@@ -452,214 +454,22 @@ export default function Dashboard() {
                           </Button>
                         </form>
                       </TabPanel>
-                      <TabPanel px={"0px"}>
-                        <div className="container">
-                          <h6 className="text-xl font-normal leading-normal mt-0 mb-3 text-blueGray-800">
-                            Game Configurations
-                          </h6>
-                          <form onSubmit={handleGameDataUpdate}>
-                            <div className="container">
-                              <div className="flex md:flex-row flex-col">
-                                <div className="md:w-1/3 w-full">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="roundWaitTimeValue">
-                                      Round Wait Time
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="roundWaitTimeValue"
-                                      value={gameData?.roundWaitTimeValue}
-                                      onChange={handleChangeForGameData}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                                <div className="md:w-1/3 w-full px-2">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="timerCountdownValue">
-                                      Timer Countdown
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="timerCountdownValue"
-                                      value={gameData?.timerCountdownValue}
-                                      onChange={handleChangeForGameData}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                                <div className="md:w-1/3 w-full">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="roundBetsLimit">
-                                      Round Bets Limit
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="roundBetsLimit"
-                                      value={gameData?.roundBetsLimit}
-                                      onChange={handleChangeForGameData}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                              </div>
-                              {authUser?.role === "super" && (
-                                <div className="w-full">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="roundBetsLimit">
-                                      RTP
-                                    </FormLabel>
-                                    <Select
-                                      name="rtp"
-                                      value={gameData.rtp}
-                                      onChange={handleChangeForGameData}
-                                    >
-                                      <option value="90">90</option>
-                                      <option value="95">95</option>
-                                      <option value="80">80</option>
-                                      <option value="65">65</option>
-                                    </Select>
-                                  </FormControl>
-                                </div>
-                              )}
-                            </div>
-                            <Button
-                              type="submit"
-                              className="bg-black text-white"
-                              isLoading={loading}
-                            >
-                              Update
-                            </Button>
-                          </form>
-                        </div>
-                      </TabPanel>
-                      <TabPanel px={"0px"}>
-                        <div className="container">
-                          <form onSubmit={handleGameSettingsUpdate}>
-                            <div className="container">
-                              <div className="flex md:flex-row flex-col">
-                                <div className="md:w-1/2">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="ticketStakeMin">
-                                      Min Ticket Stake
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="ticketStakeMin"
-                                      value={gameSettings?.ticketStakeMin}
-                                      onChange={handleChangeForGameSettings}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                                <div className="md:w-1/2 md:px-2">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="ticketStakeMax">
-                                      Max Ticket Stake
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="ticketStakeMax"
-                                      value={gameSettings?.ticketStakeMax}
-                                      onChange={handleChangeForGameSettings}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                              </div>
-                              <div className="flex md:flex-row flex-col">
-                                <div className="md:w-1/2">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="ticketSizeMin">
-                                      Min Ticket Size
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="ticketSizeMin"
-                                      value={gameSettings?.ticketSizeMin}
-                                      onChange={handleChangeForGameSettings}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                                <div className="md:w-1/2 md:px-2">
-                                  <FormControl className="form-group mb-3">
-                                    <FormLabel htmlFor="ticketSizeMax">
-                                      Max Ticket Size
-                                    </FormLabel>
-                                    <Input
-                                      type="text"
-                                      placeholder=""
-                                      name="ticketSizeMax"
-                                      value={gameSettings?.ticketSizeMax}
-                                      onChange={handleChangeForGameSettings}
-                                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                    />
-                                  </FormControl>
-                                </div>
-                              </div>
-                              <div className="flex md:flex-row flex-col">
-                                {gameSettings?.quickPick.length &&
-                                  gameSettings?.quickPick.map((q, index) => (
-                                    <div className="w-1/4" key={index}>
-                                      <FormControl className="form-group mb-3">
-                                        <FormLabel
-                                          htmlFor={`quickPick-${index}`}
-                                        >
-                                          Quick Stake {index + 1}
-                                        </FormLabel>
-                                        <Input
-                                          type="text"
-                                          placeholder=""
-                                          name={`quickPick-${index}`}
-                                          value={q}
-                                          onChange={(e) => {
-                                            const newQuickPick = [
-                                              ...gameSettings?.quickPick,
-                                            ];
-                                            newQuickPick[index] =
-                                              e.target.value;
-                                            setGameSettings((prev) => ({
-                                              ...prev,
-                                              quickPick: newQuickPick,
-                                            }));
-                                          }}
-                                          className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                        />
-                                      </FormControl>
-                                    </div>
-                                  ))}
-                              </div>
-                              <FormControl className="form-group mb-3">
-                                <FormLabel htmlFor="payoutMode">
-                                  Payout Mode
-                                </FormLabel>
-                                <Select
-                                  name="payoutMode"
-                                  value={gameSettings.payoutMode}
-                                  onChange={handleChangeForGameSettings}
-                                >
-                                  <option value="Manual">Manual</option>
-                                  <option value="Automatic">Automatic</option>
-                                </Select>
-                              </FormControl>
-                            </div>
-                            <Button
-                              type="submit"
-                              isLoading={loading}
-                              className="bg-black text-white"
-                            >
-                              Update
-                            </Button>
-                          </form>
-                        </div>
-                      </TabPanel>
+                      <GameConfiguration
+                        handleGameDataUpdate={handleGameDataUpdate}
+                        gameData={gameData}
+                        handleChangeForGameData={handleChangeForGameData}
+                        loading={loading}
+                        authUser={authUser}
+                      />
+
+                      <GameSetting
+                        loading={loading}
+                        gameSettings={gameSettings}
+                        setGameSettings={setGameSettings}
+                        handleChangeForGameSettings={
+                          handleChangeForGameSettings
+                        }
+                      />
                     </TabPanels>
                   </Tabs>
                 </div>
