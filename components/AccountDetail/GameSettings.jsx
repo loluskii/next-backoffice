@@ -8,6 +8,11 @@ import {
   Input,
   Button,
   Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { updateGameData, getGameSettings } from "services/settings.service";
 
@@ -22,6 +27,7 @@ function GameSettings({ selectedUser, authUser, loading }) {
     ticketSizeMax: 10,
     quickPick: [100, 300, 500, 1000],
     payoutMode: "manual",
+    depositBonus: 0,
   });
 
   const handleChangeForGameSettings = (e) => {
@@ -47,159 +53,170 @@ function GameSettings({ selectedUser, authUser, loading }) {
     fetchGameData();
   };
 
-  const fetchGameData = async () => {
+  const fetchGameData = async (gametype) => {
     if (isLoading) return;
     try {
       setIsLoading(true);
+      setActiveGame(gametype);
       const [gameData] = await Promise.all([
-        getGameSettings(selectedUser, activeGame),
+        getGameSettings(selectedUser, gametype),
       ]);
       setIsLoading(false);
-      setGameSettings(gameData.data.gameConfig);
+      setGameSettings(gameData.data?.gameConfig);
     } catch (error) {
       alert("An error occurred");
     }
   };
 
   useEffect(() => {
-    fetchGameData();
+    fetchGameData("aviata");
   }, []);
 
   return (
-    <>
-      <TabPanel px={"0px"}>
-        <div className="container">
-          <Stack direction="row" align="center">
-            <Button size="xs" onClick={() => updateGameType("aviata")}>
-              Aviata
-            </Button>
-            <Button size="xs" onClick={() => updateGameType("shootout")}>
-              Shoot Out
-            </Button>
-          </Stack>
+    <div className="container">
+      <Stack direction="row" align="center">
+        <Button
+          size="xs"
+          colorScheme={activeGame === "aviata" ? "blue" : "gray"}
+          onClick={() => fetchGameData("aviata")}
+        >
+          Aviata
+        </Button>
+        <Button
+          size="xs"
+          colorScheme={activeGame === "shootout" ? "blue" : "gray"}
+          onClick={() => fetchGameData("shootout")}
+        >
+          Shoot Out
+        </Button>
+      </Stack>
 
-          {isLoading ? (
-            <div className="p-4 flex flex-col items-center w-full h-full justify-center">
-              <Spinner size="xl" />
-            </div>
-          ) : (
-            <form className="mt-4" onSubmit={handleGameSettingsUpdate}>
-              <div className="container">
-                <div className="flex md:flex-row flex-col">
-                  <div className="md:w-1/2">
-                    <FormControl className="form-group mb-3">
-                      <FormLabel htmlFor="ticketStakeMin">
-                        Min Ticket Stake
-                      </FormLabel>
-                      <Input
-                        type="text"
-                        placeholder=""
-                        name="ticketStakeMin"
-                        value={gameSettings?.ticketStakeMin}
-                        onChange={handleChangeForGameSettings}
-                        className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                      />
-                    </FormControl>
-                  </div>
-                  <div className="md:w-1/2 md:px-2">
-                    <FormControl className="form-group mb-3">
-                      <FormLabel htmlFor="ticketStakeMax">
-                        Max Ticket Stake
-                      </FormLabel>
-                      <Input
-                        type="text"
-                        placeholder=""
-                        name="ticketStakeMax"
-                        value={gameSettings?.ticketStakeMax}
-                        onChange={handleChangeForGameSettings}
-                        className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                      />
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="flex md:flex-row flex-col">
-                  <div className="md:w-1/2">
-                    <FormControl className="form-group mb-3">
-                      <FormLabel htmlFor="ticketSizeMin">
-                        Min Ticket Size
-                      </FormLabel>
-                      <Input
-                        type="text"
-                        placeholder=""
-                        name="ticketSizeMin"
-                        value={gameSettings?.ticketSizeMin}
-                        onChange={handleChangeForGameSettings}
-                        className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                      />
-                    </FormControl>
-                  </div>
-                  <div className="md:w-1/2 md:px-2">
-                    <FormControl className="form-group mb-3">
-                      <FormLabel htmlFor="ticketSizeMax">
-                        Max Ticket Size
-                      </FormLabel>
-                      <Input
-                        type="text"
-                        placeholder=""
-                        name="ticketSizeMax"
-                        value={gameSettings?.ticketSizeMax}
-                        onChange={handleChangeForGameSettings}
-                        className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                      />
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="flex md:flex-row flex-col">
-                  {gameSettings?.quickPick.length &&
-                    gameSettings?.quickPick.map((q, index) => (
-                      <div className="w-1/4" key={index}>
-                        <FormControl className="form-group mb-3">
-                          <FormLabel htmlFor={`quickPick-${index}`}>
-                            Quick Stake {index + 1}
-                          </FormLabel>
-                          <Input
-                            type="text"
-                            placeholder=""
-                            name={`quickPick-${index}`}
-                            value={q}
-                            onChange={(e) => {
-                              const newQuickPick = [...gameSettings?.quickPick];
-                              newQuickPick[index] = e.target.value;
-                              setGameSettings((prev) => ({
-                                ...prev,
-                                quickPick: newQuickPick,
-                              }));
-                            }}
-                            className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                          />
-                        </FormControl>
-                      </div>
-                    ))}
-                </div>
-                <FormControl className="form-group mb-3">
-                  <FormLabel htmlFor="payoutMode">Payout Mode</FormLabel>
-                  <Select
+      {isLoading ? (
+        <div className="p-4 flex flex-col items-center w-full h-full justify-center">
+          <Spinner size="xl" />
+        </div>
+      ) : (
+        <form className="mt-4" onSubmit={handleGameSettingsUpdate}>
+          <div className="container">
+            <Stack direction="row" align="center">
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="ticketStakeMin">Min Ticket Stake</FormLabel>
+                <Input
+                  type="text"
+                  placeholder=""
+                  name="ticketStakeMin"
+                  value={gameSettings?.ticketStakeMin}
+                  onChange={handleChangeForGameSettings}
+                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline w-full"
+                />
+              </FormControl>
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="ticketStakeMax">Max Ticket Stake</FormLabel>
+                <Input
+                  type="text"
+                  placeholder=""
+                  name="ticketStakeMax"
+                  value={gameSettings?.ticketStakeMax}
+                  onChange={handleChangeForGameSettings}
+                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline w-full"
+                />
+              </FormControl>
+            </Stack>
+
+            <Stack direction="row" align="center">
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="ticketSizeMin">Min Ticket Size</FormLabel>
+                <Input
+                  type="text"
+                  placeholder=""
+                  name="ticketSizeMin"
+                  value={gameSettings?.ticketSizeMin}
+                  onChange={handleChangeForGameSettings}
+                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline w-full"
+                />
+              </FormControl>
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="ticketSizeMax">Max Ticket Size</FormLabel>
+                <Input
+                  type="text"
+                  placeholder=""
+                  name="ticketSizeMax"
+                  value={gameSettings?.ticketSizeMax}
+                  onChange={handleChangeForGameSettings}
+                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline w-full"
+                />
+              </FormControl>
+            </Stack>
+            <Stack direction="row" align="center">
+              {gameSettings?.quickPick.length &&
+                gameSettings?.quickPick.map((q, index) => (
+                  <FormControl className="form-group mb-3">
+                    <FormLabel htmlFor={`quickPick-${index}`}>
+                      Quick Stake {index + 1}
+                    </FormLabel>
+                    <Input
+                      type="text"
+                      placeholder=""
+                      name={`quickPick-${index}`}
+                      value={q}
+                      onChange={(e) => {
+                        const newQuickPick = [...gameSettings?.quickPick];
+                        newQuickPick[index] = e.target.value;
+                        setGameSettings((prev) => ({
+                          ...prev,
+                          quickPick: newQuickPick,
+                        }));
+                      }}
+                      className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline w-full"
+                    />
+                  </FormControl>
+                ))}
+            </Stack>
+
+            <Stack direction="row" align="center">
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="payoutMode">Payout Mode</FormLabel>
+                <Select
+                  name="payoutMode"
+                  value={gameSettings.payoutMode}
+                  onChange={handleChangeForGameSettings}
+                >
+                  <option value="Manual">Manual</option>
+                  <option value="Automatic">Automatic</option>
+                </Select>
+              </FormControl>
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="payoutMode">Charge Share %</FormLabel>
+                {/* <Select
                     name="payoutMode"
                     value={gameSettings.payoutMode}
                     onChange={handleChangeForGameSettings}
                   >
                     <option value="Manual">Manual</option>
                     <option value="Automatic">Automatic</option>
-                  </Select>
-                </FormControl>
-              </div>
-              <Button
-                type="submit"
-                isLoading={loading}
-                className="bg-black text-white"
-              >
-                Update
-              </Button>
-            </form>
-          )}
-        </div>
-      </TabPanel>
-    </>
+                  </Select> */}
+                <NumberInput
+                  defaultValue={gameSettings.depositBonus}
+                  name="depositBonus"
+                  min={10}
+                  max={100}
+                  onChange={handleChangeForGameSettings}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            </Stack>
+          </div>
+          <Button
+            type="submit"
+            isLoading={loading}
+            className="bg-black text-white"
+          >
+            Update
+          </Button>
+        </form>
+      )}
+    </div>
   );
 }
 

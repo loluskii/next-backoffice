@@ -1,3 +1,7 @@
+* {
+  font-size: 14px;
+}
+
 .directory {
   font-family: monospace;
   line-height: 2em;
