@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { getStructuredUsers } from "services/account.service";
 import GameConfiguration from "components/AccountDetail/GameConfiguration";
-import GameSetting from "components/AccountDetail/GameSetting";
+import GameSettings from "components/AccountDetail/GameSettings";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import { PiEmptyBold } from "react-icons/pi";
@@ -462,7 +462,7 @@ export default function Dashboard() {
                         authUser={authUser}
                       />
 
-                      <GameSetting
+                      <GameSettings
                         loading={loading}
                         gameSettings={gameSettings}
                         setGameSettings={setGameSettings}
