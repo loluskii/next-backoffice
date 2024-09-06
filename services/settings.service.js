@@ -1,10 +1,8 @@
 import { apiClient } from "./base";
 
-export const getGameSettings = async (id = null) => {
+export const getGameSettings = async (id = null, gameType = null) => {
   try {
-    let url = id
-      ? `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameConfig/${id}`
-      : `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameSettings`;
+    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameConfig/${id}/${gameType}`
 
     const response = await apiClient.get(url);
     return response.data;

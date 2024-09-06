@@ -15,7 +15,6 @@ const NestedAccordion = ({
   setSelectedData,
   setSelectedUser,
   setGameData,
-  setGameSettings,
   setActiveAgentId,
   data,
   activeAgentId,
@@ -47,10 +46,8 @@ const NestedAccordion = ({
     const [res, user, gameSettings] = await Promise.all([
       getStructuredUsers(id),
       getUser(id),
-      getGameSettings(id),
     ]);
     setDetailLoading(false);
-
     setActiveAgentId(user);
     setUserWallets(user.wallets);
     setParentAgentId(id);
@@ -59,11 +56,6 @@ const NestedAccordion = ({
     setUserRole(type);
     setFetchedData((prevData) => ({ ...prevData, [id]: res.data }));
     setLoading((prev) => ({ ...prev, [id]: false }));
-
-    if (type === "agent") {
-      setGameData(gameSettings.data.game[0]);
-      setGameSettings(gameSettings.data.gameConfig[0]);
-    }
   };
 
   const handleMainClick = async (data, type) => {
@@ -171,7 +163,6 @@ const NestedAccordion = ({
                   setSelectedData={setSelectedData}
                   setSelectedUser={setSelectedUser}
                   setGameData={setGameData}
-                  setGameSettings={setGameSettings}
                   setActiveAgentId={setActiveAgentId}
                   data={fetchedData[agentData.id]}
                   activeAgentId={activeAgentId}

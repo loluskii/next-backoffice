@@ -64,22 +64,6 @@ export default function Dashboard() {
     JSON.parse(localStorage.getItem("currentUser"))
   );
 
-  const [gameSettings, setGameSettings] = useState({
-    ticketStakeMin: 100,
-    ticketStakeMax: 10000,
-    ticketSizeMin: 1,
-    ticketSizeMax: 10,
-    quickPick: [100, 300, 500, 1000],
-    payoutMode: "manual",
-  });
-
-  const [gameData, setGameData] = useState({
-    roundWaitTimeValue: 5,
-    timerCountdownValue: 30,
-    roundBetsLimit: 10,
-    rtp: 60,
-  });
-
   const fetchData = async () => {
     if (loading) return;
     try {
@@ -87,17 +71,14 @@ export default function Dashboard() {
       const currentUser = localStorage.getItem("currentUser");
       let storedUser = currentUser ? JSON.parse(currentUser) : null;
       setActiveAgentId(storedUser);
-      const [authData, userData, gameData] = await Promise.all([
+      const [authData, userData] = await Promise.all([
         getUser(storedUser.id),
         getStructuredUsers(),
-        getGameSettings(storedUser.id),
       ]);
       setLoading(false);
       // setAdminSection((prev) => !prev);
       setData(userData.data);
       setSelectedData(userData.data);
-      setGameData(gameData.data.game[0]);
-      setGameSettings(gameData.data.gameConfig[0]);
       setAuthUser(authData);
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
@@ -147,43 +128,6 @@ export default function Dashboard() {
     } catch (error) {
       alert(error.response.data.message || "An error occurred");
     }
-  };
-
-  const handleGameSettingsUpdate = async (e) => {
-    e.preventDefault();
-    const res = await updateGameData(gameSettings, selectedUser);
-    if (res.status) {
-      alert("Game settings updated successfully");
-    } else {
-      alert(res.data.message);
-    }
-  };
-
-  const handleGameDataUpdate = async (e) => {
-    e.preventDefault();
-    gameData.rtp = Number(gameData.rtp);
-    const res = await updateGameData(gameData, selectedUser);
-    if (res.status) {
-      alert("Game data updated successfully");
-    } else {
-      alert(res.data.message);
-    }
-  };
-
-  const handleChangeForGameSettings = (e) => {
-    const { name, value } = e.target;
-    setGameSettings((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleChangeForGameData = (e) => {
-    const { name, value } = e.target;
-    setGameData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
   };
 
   return (
@@ -236,8 +180,6 @@ export default function Dashboard() {
                     setUserRole={setUserRole}
                     setSelectedData={setSelectedData}
                     setSelectedUser={setSelectedUser}
-                    setGameData={setGameData}
-                    setGameSettings={setGameSettings}
                     setActiveAgentId={setActiveAgentId}
                     data={data}
                     activeAgentId={activeAgentId}
@@ -289,12 +231,17 @@ export default function Dashboard() {
                       <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
                         Password
                       </Tab>
-                      <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
-                        Game Config.
-                      </Tab>
-                      <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
-                        Game Settings
-                      </Tab>
+                      {selectedUser &&
+                        (userRole === "agent" || userRole === "super") && (
+                          <>
+                            <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                              Game Config.
+                            </Tab>
+                            <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                              Game Settings
+                            </Tab>
+                          </>
+                        )}
                     </TabList>
 
                     <TabPanels>
@@ -454,22 +401,17 @@ export default function Dashboard() {
                           </Button>
                         </form>
                       </TabPanel>
-                      <GameConfiguration
-                        handleGameDataUpdate={handleGameDataUpdate}
-                        gameData={gameData}
-                        handleChangeForGameData={handleChangeForGameData}
-                        loading={loading}
-                        authUser={authUser}
-                      />
 
-                      <GameSettings
-                        loading={loading}
-                        gameSettings={gameSettings}
-                        setGameSettings={setGameSettings}
-                        handleChangeForGameSettings={
-                          handleChangeForGameSettings
-                        }
-                      />
+                      {selectedUser &&
+                        (userRole === "agent" || userRole === "super") && (
+                          <>
+                            <GameConfiguration
+                              loading={loading}
+                              authUser={authUser}
+                              selectedUser={selectedUser}
+                            />
+                          </>
+                        )}
                     </TabPanels>
                   </Tabs>
                 </div>
