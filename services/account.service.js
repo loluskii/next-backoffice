@@ -37,7 +37,7 @@ export const createAgentOrCashier = async (type, payload) => {
     if (type === "agent") {
       url = `${process.env.NEXT_PUBLIC_AUTH_URL}/users/agents`;
     } else {
-      url = `${process.env.NEXT_PUBLIC_AUTH_URL}/v1/users`;
+      url = `${process.env.NEXT_PUBLIC_AUTH_URL}/users`;
     }
     const response = await apiClient.post(url, payload);
     return response;

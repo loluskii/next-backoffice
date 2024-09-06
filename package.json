@@ -31,7 +31,7 @@
     "tailwindcss": "2.0.4"
   },
   "scripts": {
-    "start": "next start",
+    "start": "next start -p 3001",
     "build": "next build",
     "dev": "next dev",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm run dev",

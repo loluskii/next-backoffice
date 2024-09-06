@@ -22,12 +22,12 @@ export const loginUser = async (username, password) => {
 };
 
 // Login function
-export const resetPassword = async (payload) => {
+export const resetPassword = async (type, payload) => {
+  const endpoint = type === "agent" ? "forgot-password" : "reset-password";
+  const url = `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/${endpoint}/`;
+
   try {
-    const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/forgot-password/`,
-      payload
-    );
+    const response = await apiClient.post(url, payload);
     return { status: true, data: response.data };
   } catch (error) {
     console.error(error);

@@ -231,7 +231,7 @@ const TicketSearch = () => {
                             {res.roundHasEnded ? "Ended" : "Ongoing"}
                           </Td>
                           <Td className="text-center">
-                            {res.payout ? "Paid Out" : "Awaiting Payout"}
+                            {res.payout ? "Paid Out" : "Pending"}
                           </Td>
                         </Tr>
                       ))

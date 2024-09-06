@@ -15,10 +15,10 @@ export default function Admin({ children }) {
   }
   const auth = localStorage.getItem("token");
 
-  if (!auth) {
-    router.push("/auth/login");
-    return;
-  }
+  // if (!auth) {
+  //   router.push("/auth/login");
+  //   return;
+  // }
   return (
     <>
       <Sidebar />

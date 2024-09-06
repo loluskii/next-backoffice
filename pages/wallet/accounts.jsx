@@ -126,24 +126,24 @@ export default function Dashboard() {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    let payload;
-    if (authUser.id === activeAgentId.id) {
-      payload = {
-        oldPassword: oldPassword,
-        password: newPassword,
-      };
-    } else {
-      payload = {
-        password: newPassword,
-        agentId: activeAgentId.id,
-      };
-    }
 
-    const res = await resetPassword(payload);
-    if (res.status) {
-      alert("Password changed successfully");
-    } else {
-      alert(res.data.message);
+    const isSuperUser = authUser.id === activeAgentId.id;
+    const type = isSuperUser ? "super" : "agent";
+    const payload = isSuperUser
+      ? { oldPassword, password: newPassword }
+      : { password: newPassword, email: activeAgentId.email };
+
+    try {
+      const res = await resetPassword(type, payload);
+      if (res.status) {
+        alert("Password changed successfully");
+        setOldPassword("");
+        setNewPassword("");
+      } else {
+        throw Error(res);
+      }
+    } catch (error) {
+      alert(error.response.data.message || "An error occurred");
     }
   };
 
@@ -159,6 +159,7 @@ export default function Dashboard() {
 
   const handleGameDataUpdate = async (e) => {
     e.preventDefault();
+    gameData.rtp = Number(gameData.rtp);
     const res = await updateGameData(gameData, selectedUser);
     if (res.status) {
       alert("Game data updated successfully");
@@ -331,27 +332,7 @@ export default function Dashboard() {
                                           {wallet.balance}
                                         </Td>
                                         <Td className="text-center">
-                                          <span
-                                            onClick={() => {
-                                              setShowWalletActions(true);
-                                              setWalletAction("deduct");
-                                              setWalletActionCurrency(wallet);
-                                            }}
-                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
-                                          >
-                                            <BiSolidMinusSquare />
-                                          </span>
-                                          <span
-                                            onClick={() => {
-                                              setShowWalletActions(true);
-                                              setWalletAction("add");
-                                              setWalletActionCurrency(wallet);
-                                            }}
-                                            className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
-                                          >
-                                            <MdAddBox />
-                                          </span>
-                                          {authUser.id === selectedUser && (
+                                          {authUser.id === selectedUser ? (
                                             <span
                                               onClick={() => {
                                                 setShowWalletActions(true);
@@ -362,6 +343,45 @@ export default function Dashboard() {
                                             >
                                               <BiTransfer />
                                             </span>
+                                          ) : (
+                                            <>
+                                              <span
+                                                onClick={() => {
+                                                  setShowWalletActions(true);
+                                                  setWalletAction("deduct");
+                                                  setWalletActionCurrency(
+                                                    wallet
+                                                  );
+                                                }}
+                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
+                                              >
+                                                <BiSolidMinusSquare />
+                                              </span>
+                                              <span
+                                                onClick={() => {
+                                                  setShowWalletActions(true);
+                                                  setWalletAction("add");
+                                                  setWalletActionCurrency(
+                                                    wallet
+                                                  );
+                                                }}
+                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                              >
+                                                <MdAddBox />
+                                              </span>
+                                              <span
+                                                onClick={() => {
+                                                  setShowWalletActions(true);
+                                                  setWalletAction("transfer");
+                                                  setWalletActionCurrency(
+                                                    wallet
+                                                  );
+                                                }}
+                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                              >
+                                                <BiTransfer />
+                                              </span>
+                                            </>
                                           )}
                                         </Td>
                                       </Tr>
