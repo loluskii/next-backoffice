@@ -80,19 +80,18 @@ export default function Dashboard() {
       setData(userData.data);
       setSelectedData(userData.data);
       setAuthUser(authData);
-      console.log(authData.id)
+      console.log(authData.id);
       setSelectedUser(authData.id);
       setUserWallets(authData.wallets);
       setUserRole(authUser.role);
-
     } catch (error) {
       // console.error("Error fetching data:", error);
       alert("An error occurred");
     }
   };
-  
+
   useEffect(() => {
-    console.log('fetching...')
+    console.log("fetching...");
     fetchData();
     setAdminSection((prev) => !prev);
   }, []);
@@ -409,6 +408,11 @@ export default function Dashboard() {
                         (userRole === "agent" || userRole === "super") && (
                           <>
                             <GameConfiguration
+                              loading={loading}
+                              authUser={authUser}
+                              selectedUser={selectedUser}
+                            />
+                            <GameSettings
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
