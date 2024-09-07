@@ -79,12 +79,16 @@ const Jackpot = ({ activeAgentId }) => {
     setSubmitting(true);
     let payload = jackpot[index];
     if (payload) {
+      payload.jackpotId = jackpot[index]._id;
       delete payload._id;
       delete payload.__v;
+      delete payload.agentId;
+      delete payload.gameType;
     }
     const res = await updateJackpot(payload);
     if (res.status) {
       alert("Jackpot updated successfully");
+      jackpot[index] = { ...jackpot[index], ...res.data };
     } else {
       alert("An error occured");
     }
