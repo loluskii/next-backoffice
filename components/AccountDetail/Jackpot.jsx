@@ -61,24 +61,34 @@ const Jackpot = ({ activeAgentId }) => {
 
   const fetchJackpot = async (gametype) => {
     setLoading(true);
-    // let payload = {
-    //   agentId: activeAgentId.id,
-    //   gameType: gametype,
-    // };
-    // const res = await getJackpots(payload);
+    setGameType(gametype);
+    let payload = {
+      agentId: activeAgentId.id,
+      gameType: gametype,
+    };
+    const res = await getJackpots(payload);
     setLoading(false);
-    // setJackpot(res.data);
+    if (res) {
+      setJackpot(res);
+    } else {
+      setJackpot([]);
+    }
   };
 
   const submitJackpotUpdate = async (index) => {
-    // setSubmitting(true);
-    // const res = await updateJackpot(jackpot[index]);
-    // if (res.status) {
-    //   alert("Jackpot updated successfully");
-    // } else {
-    //   alert(res.data.message);
-    // }
-    // setSubmitting(false);
+    setSubmitting(true);
+    let payload = jackpot[index];
+    if (payload) {
+      delete payload._id;
+      delete payload.__v;
+    }
+    const res = await updateJackpot(payload);
+    if (res.status) {
+      alert("Jackpot updated successfully");
+    } else {
+      alert("An error occured");
+    }
+    setSubmitting(false);
   };
 
   const handleChangeForJackpot = (e, index) => {
@@ -89,7 +99,7 @@ const Jackpot = ({ activeAgentId }) => {
   };
 
   useEffect(() => {
-    // fetchJackpot(gameType);
+    fetchJackpot(gameType);
   }, []);
   return (
     <>

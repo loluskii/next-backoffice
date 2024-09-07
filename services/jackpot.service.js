@@ -3,9 +3,7 @@ import { apiClient } from "./base";
 // Login function
 export const getJackpots = async (payload) =>
   apiClient
-    .get(`${process.env.NEXT_PUBLIC_CASHIER_URL}/game/jackpot`, {
-      params: payload,
-    })
+    .post(`${process.env.NEXT_PUBLIC_CASHIER_URL}/game/jackpot`, payload)
     .then((res) => res.data)
     .catch((err) => ({
       status: false,
