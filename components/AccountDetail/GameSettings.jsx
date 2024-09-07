@@ -21,11 +21,11 @@ function GameSettings({ selectedUser, authUser, loading }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [gameSettings, setGameSettings] = useState({
-    ticketStakeMin: 100,
-    ticketStakeMax: 10000,
-    ticketSizeMin: 1,
-    ticketSizeMax: 10,
-    quickPick: [100, 300, 500, 1000],
+    ticketStakeMin: 0,
+    ticketStakeMax: 0,
+    ticketSizeMin: 0,
+    ticketSizeMax: 0,
+    quickPick: [0, 0, 0, 0],
     payoutMode: "manual",
     depositBonus: 0,
   });
@@ -62,7 +62,9 @@ function GameSettings({ selectedUser, authUser, loading }) {
         getGameSettings(selectedUser, gametype),
       ]);
       setIsLoading(false);
-      setGameSettings(gameData.data?.gameConfig);
+      if (gameData.data.game) {
+        setGameSettings(gameData.data?.gameConfig);
+      }
     } catch (error) {
       alert("An error occurred");
     }

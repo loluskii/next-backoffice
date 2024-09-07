@@ -19,44 +19,7 @@ import { getJackpots, updateJackpot } from "services/jackpot.service";
 const Jackpot = ({ activeAgentId }) => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [jackpot, setJackpot] = useState([
-    {
-      percentageContributions: 1,
-      lowLimitAmount: 1000,
-      highLimitAmount: 2000,
-      minDisplayAmount: 800,
-      minStakeToWin: 100,
-      gameType: "aviata",
-      _id: "66dae598ccdab3cae738c94b",
-      agentId: "665bc43de04161df7a9c27ca",
-      jackpotName: "Silver",
-      __v: 0,
-    },
-    {
-      percentageContributions: 1,
-      lowLimitAmount: 1000,
-      highLimitAmount: 2000,
-      minDisplayAmount: 800,
-      minStakeToWin: 100,
-      gameType: "aviata",
-      _id: "66dae5a3ccdab3cae738c94c",
-      agentId: "665bc43de04161df7a9c27ca",
-      jackpotName: "Gold",
-      __v: 0,
-    },
-    {
-      percentageContributions: 1,
-      lowLimitAmount: 1000,
-      highLimitAmount: 2000,
-      minDisplayAmount: 800,
-      minStakeToWin: 100,
-      gameType: "aviata",
-      _id: "66daed7cccdab3cae738c952",
-      agentId: "665bc43de04161df7a9c27ca",
-      jackpotName: "Bronze",
-      __v: 0,
-    },
-  ]);
+  const [jackpot, setJackpot] = useState([]);
   const [gameType, setGameType] = useState("aviata");
 
   const fetchJackpot = async (gametype) => {
@@ -84,6 +47,7 @@ const Jackpot = ({ activeAgentId }) => {
       delete payload.__v;
       delete payload.agentId;
       delete payload.gameType;
+      delete payload.jackpotName;
     }
     const res = await updateJackpot(payload);
     if (res.status) {

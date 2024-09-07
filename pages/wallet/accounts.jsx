@@ -244,7 +244,7 @@ export default function Dashboard() {
                             </Tab>
                           </>
                         )}
-                      {activeAgentId.role === "super" && (
+                      {authUser.role === "super" && selectedUser && (
                         <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
                           Jackpot
                         </Tab>
@@ -417,6 +417,7 @@ export default function Dashboard() {
                         (userRole === "agent" || userRole === "super") && (
                           <TabPanel px={"0px"}>
                             <GameConfiguration
+                              key={`game-configuration-${selectedUser.id}`} // Ensure a unique key
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
@@ -428,6 +429,7 @@ export default function Dashboard() {
                         (userRole === "agent" || userRole === "super") && (
                           <TabPanel px={"0px"}>
                             <GameSettings
+                              key={`game-settings-${selectedUser.id}`} // Ensure a unique key
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
@@ -435,9 +437,10 @@ export default function Dashboard() {
                           </TabPanel>
                         )}
 
-                      {activeAgentId.role === "super" && (
+                      {authUser.role === "super" && selectedUser && (
                         <TabPanel px={"0px"}>
                           <Jackpot
+                            key={`jackpot-${selectedUser.id}`} // Ensure a unique key
                             loading={loading}
                             authUser={authUser}
                             selectedUser={selectedUser}

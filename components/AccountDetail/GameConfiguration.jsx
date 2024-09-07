@@ -16,10 +16,10 @@ function Configuration({ selectedUser, authUser, loading }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [gameData, setGameData] = useState({
-    roundWaitTimeValue: 5,
-    timerCountdownValue: 30,
-    roundBetsLimit: 10,
-    rtp: 60,
+    roundWaitTimeValue: 0,
+    timerCountdownValue: 0,
+    roundBetsLimit: 0,
+    rtp: 0,
   });
 
   const handleChangeForGameData = (e) => {
@@ -50,7 +50,9 @@ function Configuration({ selectedUser, authUser, loading }) {
         getGameSettings(selectedUser, gametype),
       ]);
       setIsLoading(false);
-      setGameData(gameData.data?.game);
+      if (gameData.data.game) {
+        setGameData(gameData.data?.game);
+      }
     } catch (error) {
       alert("An error occurred");
     }
