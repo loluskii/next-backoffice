@@ -16,40 +16,8 @@ import {
   Button,
   Spinner,
 } from "@chakra-ui/react";
-import { getTicketsHistory } from "services/tickets.service";
-
-// Pagination control component
-const Pagination = ({ totalPages, currentPage, onPageChange }) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  return (
-    <Box display="flex" justifyContent="center" mt="4">
-      <Button
-        onClick={() => onPageChange(currentPage - 1)}
-        isDisabled={currentPage === 1}
-        mr="2"
-      >
-        Previous
-      </Button>
-      {pages.map((page) => (
-        <Button
-          key={page}
-          onClick={() => onPageChange(page)}
-          colorScheme={page === currentPage ? "blue" : "gray"}
-          mx="1"
-        >
-          {page}
-        </Button>
-      ))}
-      <Button
-        onClick={() => onPageChange(currentPage + 1)}
-        isDisabled={currentPage === totalPages}
-        ml="2"
-      >
-        Next
-      </Button>
-    </Box>
-  );
-};
+import { getTicketsHistory, getUsers } from "services/tickets.service";
+import Pagination from "components/Pagination";
 
 const getDefaultDates = () => {
   const today = new Date();
@@ -69,6 +37,8 @@ const TicketSearch = () => {
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
   const [betType, setBetType] = useState("");
+  const [gameType, setGameType] = useState("");
+  const [cashier, setCashier] = useState([]);
   const [payout, setPayout] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -82,6 +52,7 @@ const TicketSearch = () => {
       betType,
       payout,
       page,
+      gameType,
     };
     setLoading(true);
     const res = await getTicketsHistory(payload);
@@ -90,8 +61,14 @@ const TicketSearch = () => {
     setTotalPages(res.totalPages); // Assuming `totalPages` is part of the response
   };
 
+  const getCashiersList = async () => {
+    const res = await getUsers('cashier');
+    setCashier(res.results);
+  };
+
   useEffect(() => {
     getFilteredData(currentPage);
+    getCashiersList()
   }, [currentPage]);
 
   return (
@@ -136,6 +113,30 @@ const TicketSearch = () => {
                   <option value="single">Single</option>
                 </Select>
               </FormControl>
+              <FormControl className="form-group mr-3">
+                <FormLabel htmlFor="">Game Type</FormLabel>
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setGameType(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="aviata">Aviata</option>
+                  <option value="shootout">ShootOut</option>
+                </Select>
+              </FormControl>
+              {/* <FormControl className="form-group mr-3">
+                <FormLabel htmlFor="">Cashier</FormLabel>
+                <Select
+                  name="bet-type"
+                  className="w-full"
+                  id=""
+                  onChange={(e) => setGameType(e.target.value)}
+                >
+                  <option value="">All</option>
+                </Select>
+              </FormControl> */}
               <FormControl className="form-group mr-3">
                 <FormLabel htmlFor="">Payout Status</FormLabel>
                 <Select

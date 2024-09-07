@@ -24,6 +24,10 @@ export const getTicketsHistory = async (data) => {
       if (data.payout) {
         url += `&payout=${data.payout}`;
       }
+
+      if (data.gameType) {
+        url += `&gameType=${data.gameType}`;
+      }
       const response = await apiClient.get(url);
       return response.data;
     } else {
@@ -77,5 +81,16 @@ export const getFinancialReport = async (startDate, endDate, betType) => {
   } catch (error) {
     console.error(error);
     return false;
+  }
+};
+
+export const getUsers = async (type) => {
+  const url = `${process.env.NEXT_PUBLIC_AUTH_URL}/users?role=${type}`;
+  try {
+    const response = await apiClient.get(url);
+    return { status: true, data: response.data };
+  } catch (error) {
+    console.error(error);
+    return { status: false, data: error.response.data };
   }
 };
