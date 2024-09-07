@@ -324,11 +324,7 @@ const Index = () => {
                     return (
                       <>
                         <Tr key={key}>
-                          <Td
-                            rowSpan={
-                              totalsKeys.length > 0 ? totalsKeys.length + 1 : 2
-                            }
-                          >
+                          <Td rowSpan={totalsKeys.length + 1}>
                             <button
                               onClick={() => toggleVisibility(key)}
                               className="focus:outline-none"
@@ -399,7 +395,7 @@ const Index = () => {
                           );
                         })}
 
-                        {Object.keys(totalsInPrimaryCurrency).map(
+                        {/* {Object.keys(totalsInPrimaryCurrency).map(
                           (currency) => {
                             const currencyData =
                               totalsInPrimaryCurrency[currency];
@@ -443,7 +439,7 @@ const Index = () => {
                               </Tr>
                             );
                           }
-                        )}
+                        )} */}
 
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>

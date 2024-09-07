@@ -25,7 +25,7 @@ import GameConfiguration from "components/AccountDetail/GameConfiguration";
 import GameSettings from "components/AccountDetail/GameSettings";
 import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
-import { PiEmptyBold } from "react-icons/pi";
+import Jackpot from "components/AccountDetail/Jackpot";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
 import {
@@ -244,6 +244,11 @@ export default function Dashboard() {
                             </Tab>
                           </>
                         )}
+                      {activeAgentId.role === "super" && (
+                        <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                          Jackpot
+                        </Tab>
+                      )}
                     </TabList>
 
                     <TabPanels>
@@ -320,18 +325,22 @@ export default function Dashboard() {
                                               >
                                                 <MdAddBox />
                                               </span>
-                                              <span
-                                                onClick={() => {
-                                                  setShowWalletActions(true);
-                                                  setWalletAction("transfer");
-                                                  setWalletActionCurrency(
-                                                    wallet
-                                                  );
-                                                }}
-                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
-                                              >
-                                                <BiTransfer />
-                                              </span>
+
+                                              {activeAgentId.role !==
+                                                "cashier" && (
+                                                <span
+                                                  onClick={() => {
+                                                    setShowWalletActions(true);
+                                                    setWalletAction("transfer");
+                                                    setWalletActionCurrency(
+                                                      wallet
+                                                    );
+                                                  }}
+                                                  className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                                >
+                                                  <BiTransfer />
+                                                </span>
+                                              )}
                                             </>
                                           )}
                                         </Td>
@@ -425,6 +434,17 @@ export default function Dashboard() {
                             />
                           </TabPanel>
                         )}
+
+                      {activeAgentId.role === "super" && (
+                        <TabPanel px={"0px"}>
+                          <Jackpot
+                            loading={loading}
+                            authUser={authUser}
+                            selectedUser={selectedUser}
+                            activeAgentId={activeAgentId}
+                          />
+                        </TabPanel>
+                      )}
                     </TabPanels>
                   </Tabs>
                 </div>
