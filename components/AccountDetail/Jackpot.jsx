@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
+
 import {
   Tabs,
   TabList,
@@ -13,8 +16,11 @@ import {
   Button,
   Stack,
   Divider,
+  NumberInput,
+  NumberInputField,
 } from "@chakra-ui/react";
 import { getJackpots, updateJackpot } from "services/jackpot.service";
+import moment from "moment-timezone";
 
 const Jackpot = ({ activeAgentId }) => {
   const [loading, setLoading] = useState(false);
@@ -54,7 +60,7 @@ const Jackpot = ({ activeAgentId }) => {
       alert("Jackpot updated successfully");
       jackpot[index] = { ...jackpot[index], ...res.data };
     } else {
-      alert("An error occured");
+      alert("An error occurred");
     }
     setSubmitting(false);
   };
@@ -66,9 +72,20 @@ const Jackpot = ({ activeAgentId }) => {
     setJackpot(newJackpot);
   };
 
+  const handleChangeForJackpotPeriod = (date, name, index) => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (date instanceof moment) {
+      const localDate = moment(date).tz(tz).format();
+      const newJackpot = [...jackpot];
+      newJackpot[index][name] = localDate;
+      setJackpot(newJackpot);
+    }
+  };
+
   useEffect(() => {
     fetchJackpot(gameType);
-  }, []);
+  }, [gameType]);
+
   return (
     <>
       {loading ? (
@@ -164,13 +181,56 @@ const Jackpot = ({ activeAgentId }) => {
                     </Stack>
                     <FormControl className="mb-5">
                       <FormLabel>Percentage Contribution</FormLabel>
-                      <Input
-                        type="number"
-                        name="percentageContributions"
-                        value={item.percentageContributions}
-                        onChange={(e) => handleChangeForJackpot(e, index)}
-                      />
+                      <NumberInput
+                        defaultValue={item.percentageContributions}
+                        min={0}
+                        max={1}
+                      >
+                        <NumberInputField
+                          name="percentageContributions"
+                          type="number"
+                          onChange={(e) => handleChangeForJackpot(e, index)}
+                        />
+                      </NumberInput>
                     </FormControl>
+                    <Stack direction="row" align="center" className="mb-5">
+                      <FormControl>
+                        <FormLabel>Start Time</FormLabel>
+                        <Datetime
+                          value={moment(item.startTime).toDate()}
+                          onChange={(date) =>
+                            handleChangeForJackpotPeriod(
+                              date,
+                              "startTime",
+                              index
+                            )
+                          }
+                          dateFormat="MMMM D, YYYY" // Format for the date
+                          timeFormat="hh:mm A" // Format for the time
+                          inputProps={{
+                            placeholder: "Select date and time",
+                            className: "w-full focus:outline-none rounded",
+                            name: "startTime",
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>End Time</FormLabel>
+                        <Datetime
+                          value={moment(item.endTime).toDate()}
+                          onChange={(date) =>
+                            handleChangeForJackpotPeriod(date, "endTime", index)
+                          }
+                          dateFormat="MMMM D, YYYY" // Format for the date
+                          timeFormat="hh:mm A" // Format for the time
+                          inputProps={{
+                            placeholder: "Select date and time",
+                            className: "w-full focus:outline-none rounded",
+                            name: "endTime",
+                          }}
+                        />
+                      </FormControl>
+                    </Stack>
                     <Button
                       type="submit"
                       isLoading={submitting}

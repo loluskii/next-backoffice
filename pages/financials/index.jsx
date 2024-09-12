@@ -38,7 +38,8 @@ const Index = () => {
     setLoading(true);
     const res = await getFinancialReport(startDate, endDate, gameType);
     setLoading(false);
-    setData(res);
+    setData(res.hierarchy);
+    // setData(res.heirachy);
   }
 
   useEffect(() => {
@@ -144,9 +145,42 @@ const Index = () => {
                               .totalOpenPayout
                           }
                         </Td>
-                        <Td>0.00</Td>
-                        <Td>0.00</Td>
-                        <Td>0.00</Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot1Payout
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot1Contributions
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot2Payout
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot2Contributions
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot3Payout
+                          }
+                        </Td>
+                        <Td>
+                          {
+                            entity.agents[subAgent].totals[currency]
+                              .jackpot3Contributions
+                          }
+                        </Td>
                         <Td>
                           {
                             entity.agents[subAgent].totals[currency]
@@ -157,11 +191,16 @@ const Index = () => {
                         <Td>
                           {entity.agents[subAgent].totals[currency].profit}
                         </Td>
+                        <Td></Td>
                       </>
                     )
                   )
                 ) : (
                   <>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
+                    <Td>--</Td>
                     <Td>--</Td>
                     <Td>--</Td>
                     <Td>--</Td>
@@ -192,11 +231,15 @@ const Index = () => {
               <Td>{cashierData.totalStake}</Td>
               <Td>{cashierData.totalWinnings}</Td>
               <Td>{cashierData.totalOpenPayout}</Td>
-              <Td>0.00</Td>
-              <Td>0.00</Td>
-              <Td>0.00</Td>
+              <Td>{cashierData.jackpot1Payout}</Td>
+              <Td>{cashierData.jackpot1Contributions}</Td>
+              <Td>{cashierData.jackpot2Payout}</Td>
+              <Td>{cashierData.jackpot2Contributions}</Td>
+              <Td>{cashierData.jackpot3Payout}</Td>
+              <Td>{cashierData.jackpot3Contributions}</Td>
               <Td>{cashierData.totalClosedPayout}</Td>
               <Td>{cashierData.profit}</Td>
+              <Td></Td>
             </Tr>
           );
         })}
@@ -205,7 +248,7 @@ const Index = () => {
   };
   return (
     <>
-      <div className="h-full">
+      <div className="h-full pb-5">
         <div className="title mb-5">
           <h3 className="text-2xl">Financials</h3>
         </div>
@@ -284,29 +327,51 @@ const Index = () => {
             <Table className="table table-striped table-bordered" size={"sm"}>
               <Thead className="bg-gray-500">
                 <Tr>
-                  <Th className="whitespace-break-spaces ">Name</Th>
-                  <Th className="whitespace-break-spaces ">Currency</Th>
-                  <Th className="whitespace-break-spaces ">tickets count</Th>
-                  <Th className="whitespace-break-spaces ">Total In</Th>
-                  <Th className="whitespace-break-spaces ">Total Out</Th>
-                  <Th className="whitespace-break-spaces ">Open Payouts</Th>
-                  <Th className="whitespace-break-spaces ">jackpot 1 Payout</Th>
-                  <Th className="whitespace-break-spaces ">jackpot 2 Payout</Th>
-                  <Th className="whitespace-break-spaces ">jackpot 3 Payout</Th>
-                  <Th className="whitespace-break-spaces ">Closed Payout</Th>
-                  <Th className="">Profit</Th>
+                  <Th className="whitespace-break-spaces border">Name</Th>
+                  <Th className="whitespace-break-spaces border">Currency</Th>
+                  <Th className="whitespace-break-spaces border">
+                    tickets count
+                  </Th>
+                  <Th className="whitespace-break-spaces border">Total In</Th>
+                  <Th className="whitespace-break-spaces border">Total Out</Th>
+                  <Th className="whitespace-break-spaces border">
+                    Open Payouts
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 1 Payout
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 1 Contribution
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 2 Payout
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 2 Contribution
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 3 Payout
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    jackpot 3 Contribution
+                  </Th>
+                  <Th className="whitespace-break-spaces border">
+                    Closed Payout
+                  </Th>
+                  <Th className="border">Profit</Th>
+                  <Th>Profit usd</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {!Object.keys(data).length && !loading ? (
                   <Tr>
-                    <Td colSpan={10} style={{ textAlign: "center" }}>
+                    <Td colSpan={14} style={{ textAlign: "center" }}>
                       No Data Available
                     </Td>
                   </Tr>
                 ) : loading ? (
                   <Tr>
-                    <Td colSpan={10} style={{ textAlign: "center" }}>
+                    <Td colSpan={14} style={{ textAlign: "center" }}>
                       <Spinner />
                     </Td>
                   </Tr>
@@ -315,8 +380,7 @@ const Index = () => {
                     const key = `agent-${index}`;
                     const isVisible = visibleRows[key];
                     const totals = data[agentKey].totals;
-                    const totalsInPrimaryCurrency =
-                      data[agentKey].totalsInPrimaryCurrency;
+
                     const totalsKeys = Object.keys(totals);
                     const firstKey = totalsKeys[0];
                     const firstValue = totals[firstKey];
@@ -324,7 +388,12 @@ const Index = () => {
                     return (
                       <>
                         <Tr key={key}>
-                          <Td rowSpan={totalsKeys.length + 1}>
+                          <Td
+                            className="border"
+                            rowSpan={
+                              totalsKeys.length > 0 ? totalsKeys.length : 1
+                            }
+                          >
                             <button
                               onClick={() => toggleVisibility(key)}
                               className="focus:outline-none"
@@ -337,25 +406,45 @@ const Index = () => {
                             </button>
                             {agentKey}
                           </Td>
-                          <Td>{firstKey}</Td>
-                          <Td>
+                          <Td className="border">{firstKey}</Td>
+                          <Td className="border">
                             {firstValue?.numberOfBets.toLocaleString("en")}
                           </Td>
-                          <Td>{firstValue?.totalStake.toLocaleString("en")}</Td>
-                          <Td>
+                          <Td className="border">
+                            {firstValue?.totalStake.toLocaleString("en")}
+                          </Td>
+                          <Td className="border">
                             {firstValue?.totalWinnings.toLocaleString("en")}
                           </Td>
-                          <Td>
+                          <Td className="border">
                             {firstValue?.totalOpenPayout.toLocaleString("en")}
                           </Td>
-                          <Td>0.00</Td>
-                          <Td>0.00</Td>
-                          <Td>0.00</Td>
-                          <Td>
+                          <Td className="border">
+                            {firstValue?.jackpot1Payout}
+                          </Td>
+                          <Td className="border">
+                            {firstValue?.jackpot1Contributions}
+                          </Td>
+                          <Td className="border">
+                            {firstValue?.jackpot2Payout}
+                          </Td>
+                          <Td className="border">
+                            {firstValue?.jackpot2Contributions}
+                          </Td>
+                          <Td className="border">
+                            {firstValue?.jackpot3Payout}
+                          </Td>
+                          <Td className="border">
+                            {firstValue?.jackpot3Contributions}
+                          </Td>
+                          <Td className="border">
                             {firstValue?.totalClosedPayout.toLocaleString("en")}
                           </Td>
 
-                          <Td>{firstValue?.profit.toLocaleString("en")}</Td>
+                          <Td className="border">
+                            {firstValue?.profit.toLocaleString("en")}
+                          </Td>
+                          <Td></Td>
                         </Tr>
                         {totalsKeys.slice(1).map((currency) => {
                           const currencyData = totals[currency];
@@ -379,9 +468,24 @@ const Index = () => {
                                   "en"
                                 )}
                               </Td>
-                              <Td>0.00</Td>
-                              <Td>0.00</Td>
-                              <Td>0.00</Td>
+                              <Td className="border">
+                                {currencyData?.jackpot1Payout}
+                              </Td>
+                              <Td className="border">
+                                {currencyData?.jackpot1Contributions}
+                              </Td>
+                              <Td className="border">
+                                {currencyData?.jackpot2Payout}
+                              </Td>
+                              <Td className="border">
+                                {currencyData?.jackpot2Contributions}
+                              </Td>
+                              <Td className="border">
+                                {currencyData?.jackpot3Payout}
+                              </Td>
+                              <Td className="border">
+                                {currencyData?.jackpot3Contributions}
+                              </Td>
                               <Td>
                                 {currencyData.totalClosedPayout.toLocaleString(
                                   "en"
@@ -391,55 +495,10 @@ const Index = () => {
                               <Td>
                                 {currencyData.profit.toLocaleString("en")}
                               </Td>
+                              <Td></Td>
                             </Tr>
                           );
                         })}
-
-                        {/* {Object.keys(totalsInPrimaryCurrency).map(
-                          (currency) => {
-                            const currencyData =
-                              totalsInPrimaryCurrency[currency];
-                            return (
-                              <Tr key={`${key}-${currency}`}>
-                                <Td className="font-bold">{currency}</Td>
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.numberOfBets
-                                  ).toLocaleString("en")}
-                                </Td>
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.totalStake
-                                  ).toLocaleString("en")}
-                                </Td>
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.totalWinnings
-                                  ).toLocaleString("en")}
-                                </Td>
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.totalOpenPayout
-                                  ).toLocaleString("en")}
-                                </Td>
-                                <Td>0.00</Td>
-                                <Td>0.00</Td>
-                                <Td>0.00</Td>
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.totalClosedPayout
-                                  ).toLocaleString("en")}
-                                </Td>
-
-                                <Td className="font-bold">
-                                  {parseFloat(
-                                    currencyData.profit
-                                  ).toLocaleString("en")}
-                                </Td>
-                              </Tr>
-                            );
-                          }
-                        )} */}
 
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>
