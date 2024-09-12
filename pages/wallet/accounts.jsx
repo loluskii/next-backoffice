@@ -159,7 +159,7 @@ export default function Dashboard() {
                     onClick={handleAdminDetails}
                     style={{ flexBasis: "90%" }}
                   >
-                    <h4 className="text-xl font-semibold">{authUser.name}</h4>
+                    <h4 className="text-xl">{authUser.name}</h4>
                   </div>
                   <span
                     className="p-2 px-8"

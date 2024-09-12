@@ -21,7 +21,7 @@ import { getFinancialReport } from "services/tickets.service";
 const Index = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [betType, setBetType] = useState("multiple");
+  const [gameType, setGameType] = useState("multiple");
   const [loading, setLoading] = useState(false);
   const [visibleRows, setVisibleRows] = useState({});
   const [data, setData] = useState({});
@@ -36,7 +36,7 @@ const Index = () => {
 
   async function handleSubmit() {
     setLoading(true);
-    const res = await getFinancialReport(startDate, endDate, betType);
+    const res = await getFinancialReport(startDate, endDate, gameType);
     setLoading(false);
     setData(res);
   }
@@ -234,15 +234,15 @@ const Index = () => {
                 </Select>
               </FormControl>
               <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Bet Type</FormLabel>
+                <FormLabel htmlFor="">Game Type</FormLabel>
                 <Select
-                  name="bet-type"
+                  name="gameType"
                   className="w-full"
                   id=""
-                  onChange={(e) => setBetType(e.target.value)}
+                  onChange={(e) => setGameType(e.target.value)}
                 >
-                  <option value="multiple">Multiple</option>
-                  <option value="single">Single</option>
+                  <option value="aviata">Aviata</option>
+                  <option value="shootout">Shootout</option>
                 </Select>
               </FormControl>
               <FormControl className="form-group mr-3">

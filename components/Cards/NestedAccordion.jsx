@@ -125,7 +125,7 @@ const NestedAccordion = ({
                   {agentData.state ? <FaRegSquareMinus /> : <FaRegSquarePlus />}
                 </span>
                 <IoIosPeople fontSize={20} />
-                <h4 className="font-semibold">{agentData.name}</h4>
+                <h4 className="">{agentData.name}</h4>
               </div>
 
               {loading[agentData.id] && (
