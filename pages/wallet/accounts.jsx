@@ -413,17 +413,16 @@ export default function Dashboard() {
                         </form>
                       </TabPanel>
 
-                      {selectedUser &&
-                        (userRole === "agent" || userRole === "super") && (
-                          <TabPanel px={"0px"}>
-                            <GameConfiguration
-                              key={`game-configuration-${selectedUser.id}`} // Ensure a unique key
-                              loading={loading}
-                              authUser={authUser}
-                              selectedUser={selectedUser}
-                            />
-                          </TabPanel>
-                        )}
+                      {selectedUser && userRole === "super" && (
+                        <TabPanel px={"0px"}>
+                          <GameConfiguration
+                            key={`game-configuration-${selectedUser.id}`} // Ensure a unique key
+                            loading={loading}
+                            authUser={authUser}
+                            selectedUser={selectedUser}
+                          />
+                        </TabPanel>
+                      )}
 
                       {selectedUser &&
                         (userRole === "agent" || userRole === "super") && (
