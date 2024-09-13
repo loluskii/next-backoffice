@@ -39,8 +39,16 @@ function GameSettings({ selectedUser, authUser, loading }) {
   };
 
   const handleGameSettingsUpdate = async (e) => {
+    console.log(gameSettings);
     e.preventDefault();
-    const res = await updateGameData(gameSettings, selectedUser, activeGame);
+    let payload = {...gameSettings}
+    delete payload.__v
+    delete payload._id
+    delete payload.agentId
+    delete payload.gameType
+    delete payload.payoutMode
+    
+    const res = await updateGameData(payload, selectedUser, activeGame);
     if (res.status) {
       alert("Game settings updated successfully");
     } else {
