@@ -27,7 +27,7 @@ import { MdAddBox } from "react-icons/md";
 import { BiSolidMinusSquare, BiTransfer } from "react-icons/bi";
 import Jackpot from "components/AccountDetail/Jackpot";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 import {
   getGameData,
   getGameSettings,
@@ -138,8 +138,22 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row w-full h-full gap-6">
           <div style={{ flexBasis: "45%" }}>
             <div className="card  rounded w-full relative">
-              <div className="px-4 py-3 border-b w-full mb-2 sticky bg-white">
+              <div className="flex items-center justify-between px-4 py-3 border-b w-full mb-2 sticky bg-white">
                 <h2 className="font-bold">System List</h2>
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Search user..."
+                    className=" placeholder-blueGray-300 mr-3 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline"
+                    style={{ width: "200px" }}
+                  />
+                  <Button
+                    type="submit"
+                    colorScheme={"blue"}
+                  >
+                    <FaSearch />
+                  </Button>
+                </div>
               </div>
               <div className="content">
                 <div

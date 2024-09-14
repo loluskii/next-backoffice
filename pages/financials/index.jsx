@@ -48,41 +48,53 @@ const Index = () => {
 
   const updateDateRange = (range) => {
     const now = new Date();
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const endOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+
     let start, end;
 
     switch (range) {
       case "lastHour":
-        start = new Date(now.getTime() - 60 * 60 * 1000);
+        start = new Date(now.getTime() - 1000 * 60 * 60);
         end = now;
         break;
       case "today":
-        start = new Date(now.setHours(0, 0, 0, 0));
-        end = new Date(now.setHours(23, 59, 59, 999));
+        start = new Date();
+        end = new Date();
         break;
       case "yesterday":
-        start = new Date(now.setDate(now.getDate() - 1));
-        start.setHours(0, 0, 0, 0);
-        end = new Date(start);
-        end.setHours(23, 59, 59, 999);
+        start = new Date(startOfToday.getTime() - 1000 * 60 * 60 * 24);
+        end = new Date(endOfToday.getTime() - 1000 * 60 * 60 * 24);
         break;
       case "currentWeek":
-        start = new Date(now.setDate(now.getDate() - now.getDay()));
-        start.setHours(0, 0, 0, 0);
-        end = new Date(start);
-        end.setDate(end.getDate() + 6);
-        end.setHours(23, 59, 59, 999);
+        start = new Date(
+          startOfToday.getTime() - 1000 * 60 * 60 * 24 * now.getDay()
+        );
+        end = endOfToday;
         break;
       case "lastWeek":
-        start = new Date(now.setDate(now.getDate() - now.getDay() - 7));
-        start.setHours(0, 0, 0, 0);
-        end = new Date(start);
-        end.setDate(end.getDate() + 6);
-        end.setHours(23, 59, 59, 999);
+        start = new Date(
+          startOfToday.getTime() - 1000 * 60 * 60 * 24 * (now.getDay() + 7)
+        );
+        end = new Date(
+          endOfToday.getTime() - 1000 * 60 * 60 * 24 * now.getDay() - 1
+        );
         break;
       case "lastMonth":
         start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        end = new Date(now.getFullYear(), now.getMonth(), 0);
-        end.setHours(23, 59, 59, 999);
+        end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
         break;
       case "currentYear":
         start = new Date(now.getFullYear(), 0, 1);
