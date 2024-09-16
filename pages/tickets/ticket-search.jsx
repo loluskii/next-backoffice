@@ -175,6 +175,9 @@ const TicketSearch = () => {
                     Bet Type
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                    Game Type
+                  </Th>
+                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
                     Selections
                   </Th>
                   <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
@@ -214,6 +217,7 @@ const TicketSearch = () => {
                         <Tr key={index}>
                           <Td className="text-center">{res.ticketId}</Td>
                           <Td className="text-center">{res.betType}</Td>
+                          <Td className="text-center">{res.gameType}</Td>
                           <Td className="text-center">
                             {res.selections.length}
                           </Td>
