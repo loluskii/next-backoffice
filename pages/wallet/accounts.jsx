@@ -210,8 +210,9 @@ export default function Dashboard() {
               className="card bg-white rounded w-full relative"
               style={{ minHeight: "500px" }}
             >
-              <div className="px-4 py-3 border-b w-full">
+              <div className="px-4 py-3 flex justify-between border-b w-full">
                 <h2 className="font-bold">Details</h2>
+                <p>{activeAgentId ? activeAgentId.name : "..."}</p>
               </div>
               {!detailLoading && activeAgentId ? (
                 <div className="card p-4">
