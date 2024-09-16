@@ -21,7 +21,7 @@ import { getFinancialReport } from "services/tickets.service";
 const Index = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [gameType, setGameType] = useState("multiple");
+  const [gameType, setGameType] = useState("");
   const [loading, setLoading] = useState(false);
   const [visibleRows, setVisibleRows] = useState({});
   const [data, setData] = useState({});
@@ -113,6 +113,7 @@ const Index = () => {
     const indent = { paddingLeft: `${depth * 25}px` };
     const cashierKeys = Object.keys(entity.cashiers || {});
     const agentKeys = Object.keys(entity.agents || {});
+    const totalsInPrimaryCurrency = entity.totalsInPrimaryCurrency;
 
     return (
       <>
@@ -137,73 +138,71 @@ const Index = () => {
                       <>
                         <Td>{currency}</Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .numberOfBets
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].numberOfBets.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {entity.agents[subAgent].totals[currency].totalStake}
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].totalStake.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .totalWinnings
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].totalWinnings.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .totalOpenPayout
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].totalOpenPayout.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot1Payout
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot1Payout.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot1Contributions
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot1Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot2Payout
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot2Payout.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot2Contributions
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot2Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot3Payout
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot3Payout.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .jackpot3Contributions
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].jackpot3Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
-                          {
-                            entity.agents[subAgent].totals[currency]
-                              .totalClosedPayout
-                          }
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].totalClosedPayout.toLocaleString("en")}
                         </Td>
 
                         <Td>
-                          {entity.agents[subAgent].totals[currency].profit}
+                          {entity.agents[subAgent].totals[
+                            currency
+                          ].profit.toLocaleString("en")}
                         </Td>
-                        <Td></Td>
+                        <Td>
+                          {parseFloat(
+                            totalsInPrimaryCurrency["USA"].profit
+                          ).toLocaleString("en")}
+                        </Td>
                       </>
                     )
                   )
@@ -240,18 +239,22 @@ const Index = () => {
               <Td style={indent}>{cashier}</Td>
               <Td>{currency}</Td>
               <Td>{cashierData.numberOfBets}</Td>
-              <Td>{cashierData.totalStake}</Td>
-              <Td>{cashierData.totalWinnings}</Td>
-              <Td>{cashierData.totalOpenPayout}</Td>
-              <Td>{cashierData.jackpot1Payout}</Td>
-              <Td>{cashierData.jackpot1Contributions}</Td>
-              <Td>{cashierData.jackpot2Payout}</Td>
-              <Td>{cashierData.jackpot2Contributions}</Td>
-              <Td>{cashierData.jackpot3Payout}</Td>
-              <Td>{cashierData.jackpot3Contributions}</Td>
-              <Td>{cashierData.totalClosedPayout}</Td>
-              <Td>{cashierData.profit}</Td>
-              <Td></Td>
+              <Td>{cashierData.totalStake.toLocaleString("en")}</Td>
+              <Td>{cashierData.totalWinnings.toLocaleString("en")}</Td>
+              <Td>{cashierData.totalOpenPayout.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot1Payout.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot1Contributions.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot2Payout.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot2Contributions.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot3Payout.toLocaleString("en")}</Td>
+              <Td>{cashierData.jackpot3Contributions.toLocaleString("en")}</Td>
+              <Td>{cashierData.totalClosedPayout.toLocaleString("en")}</Td>
+              <Td>{cashierData.profit.toLocaleString("en")}</Td>
+              <Td>
+                {parseFloat(
+                  totalsInPrimaryCurrency["USA"].profit
+                ).toLocaleString("en")}
+              </Td>
             </Tr>
           );
         })}
@@ -296,6 +299,7 @@ const Index = () => {
                   id=""
                   onChange={(e) => setGameType(e.target.value)}
                 >
+                  <option value="">All</option>
                   <option value="aviata">Aviata</option>
                   <option value="shootout">Shootout</option>
                 </Select>
@@ -392,8 +396,10 @@ const Index = () => {
                     const key = `agent-${index}`;
                     const isVisible = visibleRows[key];
                     const totals = data[agentKey].totals;
+                    const totalsInPC = data[agentKey].totalsInPrimaryCurrency;
 
                     const totalsKeys = Object.keys(totals);
+                    const totalsInPCKeys = Object.keys(totalsInPC);
                     const firstKey = totalsKeys[0];
                     const firstValue = totals[firstKey];
 
@@ -432,22 +438,28 @@ const Index = () => {
                             {firstValue?.totalOpenPayout.toLocaleString("en")}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot1Payout}
+                            {firstValue?.jackpot1Payout.toLocaleString("en")}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot1Contributions}
+                            {firstValue?.jackpot1Contributions.toLocaleString(
+                              "en"
+                            )}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot2Payout}
+                            {firstValue?.jackpot2Payout.toLocaleString("en")}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot2Contributions}
+                            {firstValue?.jackpot2Contributions.toLocaleString(
+                              "en"
+                            )}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot3Payout}
+                            {firstValue?.jackpot3Payout.toLocaleString("en")}
                           </Td>
                           <Td className="border">
-                            {firstValue?.jackpot3Contributions}
+                            {firstValue?.jackpot3Contributions.toLocaleString(
+                              "en"
+                            )}
                           </Td>
                           <Td className="border">
                             {firstValue?.totalClosedPayout.toLocaleString("en")}
@@ -456,7 +468,11 @@ const Index = () => {
                           <Td className="border">
                             {firstValue?.profit.toLocaleString("en")}
                           </Td>
-                          <Td></Td>
+                          <Td>
+                            {parseFloat(
+                              totalsInPC["USA"].profit
+                            ).toLocaleString("en")}
+                          </Td>
                         </Tr>
                         {totalsKeys.slice(1).map((currency) => {
                           const currencyData = totals[currency];
@@ -481,22 +497,34 @@ const Index = () => {
                                 )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot1Payout}
+                                {currencyData?.jackpot1Payout.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot1Contributions}
+                                {currencyData?.jackpot1Contributions.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot2Payout}
+                                {currencyData?.jackpot2Payout.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot2Contributions}
+                                {currencyData?.jackpot2Contributions.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot3Payout}
+                                {currencyData?.jackpot3Payout.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td className="border">
-                                {currencyData?.jackpot3Contributions}
+                                {currencyData?.jackpot3Contributions.toLocaleString(
+                                  "en"
+                                )}
                               </Td>
                               <Td>
                                 {currencyData.totalClosedPayout.toLocaleString(
@@ -507,7 +535,9 @@ const Index = () => {
                               <Td>
                                 {currencyData.profit.toLocaleString("en")}
                               </Td>
-                              <Td></Td>
+                              <Td>
+                                {JSON.stringify(totalsInPCKeys.splice(1))}
+                              </Td>
                             </Tr>
                           );
                         })}

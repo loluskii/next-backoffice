@@ -212,7 +212,7 @@ export default function Dashboard() {
             >
               <div className="px-4 py-3 flex justify-between border-b w-full">
                 <h2 className="font-bold">Details</h2>
-                <p className="font-bold">{activeAgentId ? activeAgentId.username : "..."}</p>
+                <p className="font-bold text-xl">{activeAgentId ? activeAgentId.username : "..."}</p>
               </div>
               {!detailLoading && activeAgentId ? (
                 <div className="card p-4">

@@ -73,9 +73,19 @@ export const getCurrencies = async (data) => {
   }
 };
 
-export const getFinancialReport = async (startDate, endDate, gameType, limit = 50) => {
+export const getFinancialReport = async (
+  startDate,
+  endDate,
+  gameType,
+  limit = 50
+) => {
   try {
-    let url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&gameType=${gameType}&limit=${limit}`;
+    let url;
+    if (gameType === "") {
+      url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&limit=${limit}`;
+    } else {
+      url = `${process.env.NEXT_PUBLIC_CASHIER_URL}/bet/financial-reports?startDate=${startDate}&endDate=${endDate}&gameType=${gameType}&limit=${limit}`;
+    }
     const response = await apiClient.get(url);
     return response.data;
   } catch (error) {
