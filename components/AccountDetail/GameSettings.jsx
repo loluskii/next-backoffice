@@ -80,7 +80,7 @@ function GameSettings({ selectedUser, authUser, loading }) {
 
   useEffect(() => {
     fetchGameData("aviata");
-  }, []);
+  }, [selectedUser]);
 
   return (
     <div className="container">

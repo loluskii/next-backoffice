@@ -147,10 +147,7 @@ export default function Dashboard() {
                     className=" placeholder-blueGray-300 mr-3 text-blueGray-600 relative  bg-white rounded text-sm outline-none focus:outline-none focus:shadow-outline"
                     style={{ width: "200px" }}
                   />
-                  <Button
-                    type="submit"
-                    colorScheme={"blue"}
-                  >
+                  <Button type="submit" colorScheme={"blue"}>
                     <FaSearch />
                   </Button>
                 </div>
@@ -212,7 +209,9 @@ export default function Dashboard() {
             >
               <div className="px-4 py-3 flex justify-between border-b w-full">
                 <h2 className="font-bold">Details</h2>
-                <p className="font-bold text-xl">{activeAgentId ? activeAgentId.username : "..."}</p>
+                <p className="font-bold text-xl">
+                  {activeAgentId ? activeAgentId.username : "..."}
+                </p>
               </div>
               {!detailLoading && activeAgentId ? (
                 <div className="card p-4">
@@ -248,16 +247,16 @@ export default function Dashboard() {
                       <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
                         Password
                       </Tab>
+                      {selectedUser && authUser.role === "super" && (
+                        <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                          Game Config.
+                        </Tab>
+                      )}
                       {selectedUser &&
                         (userRole === "agent" || userRole === "super") && (
-                          <>
-                            <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
-                              Game Config.
-                            </Tab>
-                            <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
-                              Game Settings
-                            </Tab>
-                          </>
+                          <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                            Game Settings
+                          </Tab>
                         )}
                       {authUser.role === "super" && selectedUser && (
                         <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
@@ -428,7 +427,7 @@ export default function Dashboard() {
                         </form>
                       </TabPanel>
 
-                      {selectedUser && userRole === "super" && (
+                      {selectedUser && authUser.role === "super" && (
                         <TabPanel px={"0px"}>
                           <GameConfiguration
                             key={`game-configuration-${selectedUser.id}`} // Ensure a unique key

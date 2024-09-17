@@ -60,7 +60,7 @@ function Configuration({ selectedUser, authUser, loading }) {
 
   useEffect(() => {
     fetchGameData("aviata");
-  }, []);
+  }, [selectedUser]);
 
   return (
     <div className="container">
@@ -135,23 +135,22 @@ function Configuration({ selectedUser, authUser, loading }) {
                 </FormControl>
               </div>
             </div>
-            {authUser?.role === "super" && (
-              <div className="w-full">
-                <FormControl className="form-group mb-3">
-                  <FormLabel htmlFor="roundBetsLimit">RTP</FormLabel>
-                  <Select
-                    name="rtp"
-                    value={gameData.rtp}
-                    onChange={handleChangeForGameData}
-                  >
-                    <option value="90">90</option>
-                    <option value="95">95</option>
-                    <option value="80">80</option>
-                    <option value="65">65</option>
-                  </Select>
-                </FormControl>
-              </div>
-            )}
+
+            <div className="w-full">
+              <FormControl className="form-group mb-3">
+                <FormLabel htmlFor="roundBetsLimit">RTP</FormLabel>
+                <Select
+                  name="rtp"
+                  value={gameData.rtp}
+                  onChange={handleChangeForGameData}
+                >
+                  <option value="90">90</option>
+                  <option value="95">95</option>
+                  <option value="80">80</option>
+                  <option value="65">65</option>
+                </Select>
+              </FormControl>
+            </div>
           </div>
           <Button
             type="submit"

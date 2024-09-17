@@ -403,7 +403,7 @@ const Index = () => {
                     const firstKey = totalsKeys[0];
                     const firstValue = totals[firstKey];
 
-                    return (
+                    return totalsKeys.length > 0 && (
                       <>
                         <Tr key={key}>
                           <Td
@@ -544,7 +544,7 @@ const Index = () => {
 
                         {isVisible && renderTableRows(data[agentKey], 1, key)}
                       </>
-                    );
+                    )
                   })
                 )}
               </Tbody>

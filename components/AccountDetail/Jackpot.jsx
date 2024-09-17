@@ -22,7 +22,7 @@ import {
 import { getJackpots, updateJackpot } from "services/jackpot.service";
 import moment from "moment-timezone";
 
-const Jackpot = ({ activeAgentId }) => {
+const Jackpot = ({ activeAgentId, selectedUser }) => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [jackpot, setJackpot] = useState([]);
@@ -84,7 +84,7 @@ const Jackpot = ({ activeAgentId }) => {
 
   useEffect(() => {
     fetchJackpot(gameType);
-  }, [gameType]);
+  }, [selectedUser]);
 
   return (
     <>
