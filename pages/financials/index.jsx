@@ -36,9 +36,21 @@ const Index = () => {
 
   async function handleSubmit() {
     setLoading(true);
-    const res = await getFinancialReport(startDate, endDate, gameType);
-    setLoading(false);
-    setData(res.hierarchy);
+    let filteredHierarchy = {};
+    try {
+      const res = await getFinancialReport(startDate, endDate, gameType);
+      Object.entries(res.hierarchy).forEach(([key, value]) => {
+        if (Object.keys(value.totals).length > 0) {
+          filteredHierarchy[key] = value;
+        }
+      });
+
+      setLoading(false);
+      setData(filteredHierarchy);
+    } catch (error) {
+      setData({});
+      setLoading(false);
+    }
     // setData(res.heirachy);
   }
 
@@ -109,8 +121,16 @@ const Index = () => {
     setEndDate(end ? end.toISOString().split("T")[0] : "");
   };
 
+  const sumNumberOfBets = (totals) => {
+    let totalNumberOfBets = 0;
+    Object.values(totals).forEach((currencyData) => {
+      totalNumberOfBets += currencyData.numberOfBets;
+    });
+    return totalNumberOfBets;
+  };
+
   const renderTableRows = (entity, depth = 1, parentKey = "") => {
-    const indent = { paddingLeft: `${depth * 25}px` };
+    const indent = { paddingLeft: `${depth * 30}px` };
     const cashierKeys = Object.keys(entity.cashiers || {});
     const agentKeys = Object.keys(entity.agents || {});
     const totalsInPrimaryCurrency = entity.totalsInPrimaryCurrency;
@@ -121,113 +141,109 @@ const Index = () => {
           const key = `${parentKey}-agent-${index}`;
           const isVisible = visibleRows[key];
           return (
-            <>
-              <Tr key={key}>
-                <Td style={indent}>
-                  <button
-                    onClick={() => toggleVisibility(key)}
-                    className="focus:outline-none"
-                  >
-                    {isVisible ? <IoCaretDown /> : <AiFillCaretRight />}
-                  </button>
-                  {subAgent}
-                </Td>
-                {Object.keys(entity.agents[subAgent].totals).length ? (
-                  Object.keys(entity.agents[subAgent].totals).map(
+            Object.keys(entity.agents[subAgent].totals).length > 0 && (
+              <>
+                <Tr key={key}>
+                  <Td style={indent}>
+                    <button
+                      onClick={() => toggleVisibility(key)}
+                      className="focus:outline-none"
+                    >
+                      {isVisible ? <IoCaretDown /> : <AiFillCaretRight />}
+                    </button>
+                    {subAgent}
+                  </Td>
+
+                  {Object.keys(entity.agents[subAgent].totals).map(
                     (currency) => (
                       <>
-                        <Td>{currency}</Td>
+                        {/* <Td>{currency}</Td> */}
                         <Td>
                           {entity.agents[subAgent].totals[
                             currency
                           ].numberOfBets.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].totalStake.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].totalWinnings.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].totalOpenPayout.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot1Payout.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot1Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot2Payout.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot2Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot3Payout.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].jackpot3Contributions.toLocaleString("en")}
                         </Td>
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].totalClosedPayout.toLocaleString("en")}
                         </Td>
 
                         <Td>
+                          {currency}{" "}
                           {entity.agents[subAgent].totals[
                             currency
                           ].profit.toLocaleString("en")}
                         </Td>
                         <Td>
+                          USA{" "}
                           {parseFloat(
                             totalsInPrimaryCurrency["USA"].profit
                           ).toLocaleString("en")}
                         </Td>
                       </>
                     )
-                  )
-                ) : (
-                  <>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                    <Td>--</Td>
-                  </>
-                )}
-              </Tr>
-              {isVisible &&
-                renderTableRows(entity.agents[subAgent], depth + 1, key)}
-            </>
+                  )}
+                </Tr>
+                {isVisible &&
+                  renderTableRows(entity.agents[subAgent], depth + 1, key)}
+              </>
+            )
           );
         })}
 
@@ -237,20 +253,46 @@ const Index = () => {
           return (
             <Tr key={`${parentKey}-cashier-${index}`}>
               <Td style={indent}>{cashier}</Td>
-              <Td>{currency}</Td>
+              {/* <Td>{currency}</Td> */}
               <Td>{cashierData.numberOfBets}</Td>
-              <Td>{cashierData.totalStake.toLocaleString("en")}</Td>
-              <Td>{cashierData.totalWinnings.toLocaleString("en")}</Td>
-              <Td>{cashierData.totalOpenPayout.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot1Payout.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot1Contributions.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot2Payout.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot2Contributions.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot3Payout.toLocaleString("en")}</Td>
-              <Td>{cashierData.jackpot3Contributions.toLocaleString("en")}</Td>
-              <Td>{cashierData.totalClosedPayout.toLocaleString("en")}</Td>
-              <Td>{cashierData.profit.toLocaleString("en")}</Td>
               <Td>
+                {currency} {cashierData.totalStake.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.totalWinnings.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.totalOpenPayout.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.jackpot1Payout.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency}{" "}
+                {cashierData.jackpot1Contributions.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.jackpot2Payout.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency}{" "}
+                {cashierData.jackpot2Contributions.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.jackpot3Payout.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency}{" "}
+                {cashierData.jackpot3Contributions.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.totalClosedPayout.toLocaleString("en")}
+              </Td>
+              <Td>
+                {currency} {cashierData.profit.toLocaleString("en")}
+              </Td>
+              <Td>
+                USD
                 {parseFloat(
                   totalsInPrimaryCurrency["USA"].profit
                 ).toLocaleString("en")}
@@ -344,7 +386,7 @@ const Index = () => {
               <Thead className="bg-gray-500">
                 <Tr>
                   <Th className="whitespace-break-spaces border">Name</Th>
-                  <Th className="whitespace-break-spaces border">Currency</Th>
+                  {/* <Th className="whitespace-break-spaces border">Currency</Th> */}
                   <Th className="whitespace-break-spaces border">
                     tickets count
                   </Th>
@@ -403,148 +445,179 @@ const Index = () => {
                     const firstKey = totalsKeys[0];
                     const firstValue = totals[firstKey];
 
-                    return totalsKeys.length > 0 && (
-                      <>
-                        <Tr key={key}>
-                          <Td
-                            className="border"
-                            rowSpan={
-                              totalsKeys.length > 0 ? totalsKeys.length : 1
-                            }
-                          >
-                            <button
-                              onClick={() => toggleVisibility(key)}
-                              className="focus:outline-none"
+                    return (
+                      totalsKeys.length > 0 && (
+                        <>
+                          <Tr key={key}>
+                            <Td
+                              className="border"
+                              rowSpan={
+                                totalsKeys.length > 0 ? totalsKeys.length : 1
+                              }
                             >
-                              {isVisible ? (
-                                <IoCaretDown />
-                              ) : (
-                                <AiFillCaretRight />
+                              <button
+                                onClick={() => toggleVisibility(key)}
+                                className="focus:outline-none"
+                              >
+                                {isVisible ? (
+                                  <IoCaretDown />
+                                ) : (
+                                  <AiFillCaretRight />
+                                )}
+                              </button>
+                              {agentKey}
+                            </Td>
+                            {/* <Td>{firstKey}</Td> */}
+                            <Td
+                              className="border"
+                              rowSpan={
+                                totalsKeys.length > 0 ? totalsKeys.length : 1
+                              }
+                            >
+                              {sumNumberOfBets(totals)}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.totalStake.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.totalWinnings.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.totalOpenPayout.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot1Payout.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot1Contributions.toLocaleString(
+                                "en"
                               )}
-                            </button>
-                            {agentKey}
-                          </Td>
-                          <Td className="border">{firstKey}</Td>
-                          <Td className="border">
-                            {firstValue?.numberOfBets.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.totalStake.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.totalWinnings.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.totalOpenPayout.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot1Payout.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot1Contributions.toLocaleString(
-                              "en"
-                            )}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot2Payout.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot2Contributions.toLocaleString(
-                              "en"
-                            )}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot3Payout.toLocaleString("en")}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.jackpot3Contributions.toLocaleString(
-                              "en"
-                            )}
-                          </Td>
-                          <Td className="border">
-                            {firstValue?.totalClosedPayout.toLocaleString("en")}
-                          </Td>
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot2Payout.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot2Contributions.toLocaleString(
+                                "en"
+                              )}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot3Payout.toLocaleString("en")}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.jackpot3Contributions.toLocaleString(
+                                "en"
+                              )}
+                            </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.totalClosedPayout.toLocaleString(
+                                "en"
+                              )}
+                            </Td>
 
-                          <Td className="border">
-                            {firstValue?.profit.toLocaleString("en")}
-                          </Td>
-                          <Td>
-                            {parseFloat(
-                              totalsInPC["USA"].profit
-                            ).toLocaleString("en")}
-                          </Td>
-                        </Tr>
-                        {totalsKeys.slice(1).map((currency) => {
-                          const currencyData = totals[currency];
-                          return (
-                            <Tr key={`${key}-${currency}`}>
-                              <Td>{currency}</Td>
-                              <Td>
-                                {currencyData.numberOfBets.toLocaleString("en")}
-                              </Td>
-                              <Td>
-                                {currencyData.totalStake.toLocaleString("en")}
-                              </Td>
-                              <Td>
-                                {currencyData.totalWinnings.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
+                            <Td>
+                              {firstKey}{" "}
+                              {firstValue?.profit.toLocaleString("en")}
+                            </Td>
+                            <Td
+                              className="border"
+                              rowSpan={
+                                totalsKeys.length > 0 ? totalsKeys.length : 1
+                              }
+                            >
+                              USD
+                              {parseFloat(
+                                totalsInPC["USA"].profit
+                              ).toLocaleString("en")}
+                            </Td>
+                          </Tr>
 
-                              <Td>
-                                {currencyData.totalOpenPayout.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot1Payout.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot1Contributions.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot2Payout.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot2Contributions.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot3Payout.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td className="border">
-                                {currencyData?.jackpot3Contributions.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
-                              <Td>
-                                {currencyData.totalClosedPayout.toLocaleString(
-                                  "en"
-                                )}
-                              </Td>
+                          {totalsKeys.slice(1).map((currency) => {
+                            const currencyData = totals[currency];
+                            return (
+                              <Tr key={`${key}-${currency}`}>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData.totalStake.toLocaleString("en")}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData.totalWinnings.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
 
-                              <Td>
-                                {currencyData.profit.toLocaleString("en")}
-                              </Td>
-                              <Td>
-                                {JSON.stringify(totalsInPCKeys.splice(1))}
-                              </Td>
-                            </Tr>
-                          );
-                        })}
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData.totalOpenPayout.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot1Payout.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot1Contributions.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot2Payout.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot2Contributions.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot3Payout.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData?.jackpot3Contributions.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData.totalClosedPayout.toLocaleString(
+                                    "en"
+                                  )}
+                                </Td>
 
-                        {isVisible && renderTableRows(data[agentKey], 1, key)}
-                      </>
-                    )
+                                <Td>
+                                  {currency}{" "}
+                                  {currencyData.profit.toLocaleString("en")}
+                                </Td>
+                              </Tr>
+                            );
+                          })}
+
+                          {isVisible && renderTableRows(data[agentKey], 1, key)}
+                        </>
+                      )
+                    );
                   })
                 )}
               </Tbody>
