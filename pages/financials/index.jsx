@@ -40,7 +40,17 @@ const Index = () => {
     try {
       const res = await getFinancialReport(startDate, endDate, gameType);
       Object.entries(res.hierarchy).forEach(([key, value]) => {
-        if (Object.keys(value.totals).length > 0) {
+        const hasTotals = Object.keys(value.totals).length > 0;
+
+        // Check if at least one value in totals is either < 0 or > 0
+        const isTotalsNonZero = Object.values(value.totals).some((totalsObj) =>
+          Object.values(totalsObj).some(
+            (val) => typeof val === "number" && val !== 0
+          )
+        );
+
+        // Add to filteredHierarchy only if totals exist and are not all zeros
+        if (hasTotals && isTotalsNonZero) {
           filteredHierarchy[key] = value;
         }
       });
