@@ -82,8 +82,8 @@ const TicketSearch = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full items-end">
-              <FormControl className="form-group md:mr-3 mb-2">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-3 w-full items-end">
+              <FormControl className="form-group">
                 <FormLabel htmlFor="">Start</FormLabel>
                 <Datetime
                   value={moment(startDate).toDate()}
@@ -98,7 +98,7 @@ const TicketSearch = () => {
                   }}
                 />
               </FormControl>
-              <FormControl className="form-group md:mr-3 mb-2">
+              <FormControl className="form-group">
                 <FormLabel htmlFor="">End</FormLabel>
                 <Datetime
                   value={moment(endDate).toDate()}
@@ -113,7 +113,7 @@ const TicketSearch = () => {
                   }}
                 />
               </FormControl>
-              {/* <FormControl className="form-group md:mr-3 mb-2">
+              {/* <FormControl className="form-group">
                 <FormLabel htmlFor="">Bet Type</FormLabel>
                 <Select
                   name="bet-type"
@@ -126,7 +126,7 @@ const TicketSearch = () => {
                   <option value="single">Single</option>
                 </Select>
               </FormControl> */}
-              <FormControl className="form-group md:mr-3 mb-2">
+              <FormControl className="form-group">
                 <FormLabel htmlFor="">Game Type</FormLabel>
                 <Select
                   name="bet-type"
@@ -139,7 +139,7 @@ const TicketSearch = () => {
                   <option value="shootout">ShootOut</option>
                 </Select>
               </FormControl>
-              <FormControl className="form-group md:mr-3 mb-2">
+              <FormControl className="form-group">
                 <FormLabel htmlFor="">Payout Status</FormLabel>
                 <Select
                   name="bet-type"

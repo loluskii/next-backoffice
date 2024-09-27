@@ -23,7 +23,7 @@ const TransferSearch = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-3 w-full">
               <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Agent</FormLabel>
                 <Select className="w-full" id="">

@@ -324,8 +324,8 @@ const Index = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full items-end">
-              <FormControl className="form-group md:mr-3 mb-2 basis-1/2">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-3 w-full items-end">
+              <FormControl className="form-group ">
                 <FormLabel htmlFor="">Date Range</FormLabel>
                 <Select
                   name="date-range"
@@ -346,7 +346,7 @@ const Index = () => {
                   <option value="currentYear">Current Year</option>
                 </Select>
               </FormControl>
-              <FormControl className="form-group md:mr-3 mb-2 basis">
+              <FormControl className="form-group ">
                 <FormLabel htmlFor="">Game Type</FormLabel>
                 <Select
                   name="gameType"
@@ -360,7 +360,7 @@ const Index = () => {
                 </Select>
               </FormControl>
 
-              <FormControl className="form-group md:mr-3 mb-2">
+              <FormControl className="form-group ">
                 <FormLabel htmlFor="">Start</FormLabel>
                 <Datetime
                   value={moment(startDate).toDate()}
@@ -374,7 +374,7 @@ const Index = () => {
                   }}
                 />
               </FormControl>
-              <FormControl className="form-group md:mr-3 mb-2">
+              <FormControl className="form-group ">
                 <FormLabel htmlFor="">End</FormLabel>
                 <Datetime
                   value={moment(endDate).toDate()}
