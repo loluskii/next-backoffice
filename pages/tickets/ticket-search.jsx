@@ -102,14 +102,14 @@ const TicketSearch = () => {
                 <FormLabel htmlFor="">End</FormLabel>
                 <Datetime
                   value={moment(endDate).toDate()}
-                  onChange={(date) => setStartDate(date)}
+                  onChange={(date) => setEndDate(date)}
                   dateFormat="DD/MM/YYYY" // Format for the date
                   timeFormat={false}
                   inputProps={{
                     placeholder: "Select date",
                     className:
                       "w-full focus:outline-none rounded border-gray-200",
-                    name: "startDate",
+                    name: "endDate",
                   }}
                 />
               </FormControl>
