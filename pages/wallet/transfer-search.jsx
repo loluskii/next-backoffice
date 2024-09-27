@@ -23,14 +23,14 @@ const TransferSearch = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex bg-white rounded p-4 gap-x-3 w-full">
-              <FormControl className="form-group mr-3">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Agent</FormLabel>
                 <Select className="w-full" id="">
                   <option value="">Select Agent</option>
                 </Select>
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Target</FormLabel>
                 <Input
                   type="text"
@@ -38,7 +38,7 @@ const TransferSearch = () => {
                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Start</FormLabel>
                 <Input
                   type="date"
@@ -46,7 +46,7 @@ const TransferSearch = () => {
                   className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">End</FormLabel>
                 <Input
                   type="date"
@@ -55,7 +55,7 @@ const TransferSearch = () => {
                 />
               </FormControl>
 
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Currency</FormLabel>
                 <Select name="bet-type" className="w-full" id="">
                   <option value="">All</option>

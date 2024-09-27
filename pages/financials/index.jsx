@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import Admin from "layouts/Admin.jsx";
+import moment from "moment-timezone";
 import {
   FormControl,
   FormLabel,
@@ -17,6 +18,8 @@ import {
 import { IoCaretDown } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
 import { getFinancialReport } from "services/tickets.service";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 
 const Index = () => {
   const [startDate, setStartDate] = useState("");
@@ -321,8 +324,8 @@ const Index = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex bg-white rounded p-4 gap-x-3 w-full items-end">
-              <FormControl className="form-group mr-3">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full items-end">
+              <FormControl className="form-group md:mr-3 mb-2 basis-1/2">
                 <FormLabel htmlFor="">Date Range</FormLabel>
                 <Select
                   name="date-range"
@@ -343,7 +346,7 @@ const Index = () => {
                   <option value="currentYear">Current Year</option>
                 </Select>
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2 basis">
                 <FormLabel htmlFor="">Game Type</FormLabel>
                 <Select
                   name="gameType"
@@ -356,24 +359,33 @@ const Index = () => {
                   <option value="shootout">Shootout</option>
                 </Select>
               </FormControl>
-              <FormControl className="form-group mr-3">
+
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Start</FormLabel>
-                <Input
-                  type="date"
-                  placeholder="Small Input"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                <Datetime
+                  value={moment(startDate).toDate()}
+                  onChange={(date) => setStartDate(date)}
+                  dateFormat="DD/MM/YYYY"
+                  timeFormat={false} // Format for the date
+                  inputProps={{
+                    placeholder: "Select date",
+                    className: "w-full focus:outline-none rounded border-gray-200",
+                    name: "startDate",
+                  }}
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">End</FormLabel>
-                <Input
-                  type="date"
-                  placeholder="Small Input"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                <Datetime
+                  value={moment(endDate).toDate()}
+                  onChange={(date) => setEndDate(date)}
+                  dateFormat="DD/MM/YYYY" // Format for the date
+                  timeFormat={false}
+                  inputProps={{
+                    placeholder: "Select date",
+                    className: "w-full focus:outline-none rounded border-gray-200",
+                    name: "endDate",
+                  }}
                 />
               </FormControl>
               <button
@@ -390,10 +402,10 @@ const Index = () => {
             </div>
           </form>
         </div>
-        <div className="bg-white mt-3 pb-5">
+        <div className="bg-white mt-3 pb-5 shadow">
           <TableContainer>
             <Table className="table table-striped table-bordered" size={"sm"}>
-              <Thead className="bg-gray-500">
+              <Thead className="">
                 <Tr>
                   <Th className="whitespace-break-spaces border">Name</Th>
                   {/* <Th className="whitespace-break-spaces border">Currency</Th> */}
@@ -458,7 +470,10 @@ const Index = () => {
                     return (
                       totalsKeys.length > 0 && (
                         <>
-                          <Tr key={key}>
+                          <Tr
+                            key={key}
+                            className={index % 2 === 1 ? "bg-blueGray-50" : ""}
+                          >
                             <Td
                               className="border"
                               rowSpan={

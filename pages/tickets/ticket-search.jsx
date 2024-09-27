@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Admin from "layouts/Admin.jsx";
+import moment from "moment-timezone";
 import {
   FormControl,
   FormLabel,
@@ -18,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { getTicketsHistory, getUsers } from "services/tickets.service";
 import Pagination from "components/Pagination";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 
 const getDefaultDates = () => {
   const today = new Date();
@@ -62,13 +65,13 @@ const TicketSearch = () => {
   };
 
   const getCashiersList = async () => {
-    const res = await getUsers('cashier');
+    const res = await getUsers("cashier");
     setCashier(res.results);
   };
 
   useEffect(() => {
     getFilteredData(currentPage);
-    getCashiersList()
+    getCashiersList();
   }, [currentPage]);
 
   return (
@@ -79,28 +82,38 @@ const TicketSearch = () => {
         </div>
         <div className="form">
           <form action="">
-            <div className="flex bg-white rounded p-4 gap-x-3 w-full items-end">
-              <FormControl className="form-group mr-3">
+            <div className="flex md:flex-row flex-col bg-white rounded p-4 gap-x-3 w-full items-end">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Start</FormLabel>
-                <Input
-                  type="date"
-                  placeholder="Small Input"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                <Datetime
+                  value={moment(startDate).toDate()}
+                  onChange={(date) => setStartDate(date)}
+                  dateFormat="DD/MM/YYYY" // Format for the date
+                  timeFormat={false}
+                  inputProps={{
+                    placeholder: "Select date",
+                    className:
+                      "w-full focus:outline-none rounded border-gray-200",
+                    name: "startDate",
+                  }}
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">End</FormLabel>
-                <Input
-                  type="date"
-                  placeholder="Small Input"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className=" placeholder-blueGray-300 text-blueGray-600 relative bg-white  rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                <Datetime
+                  value={moment(endDate).toDate()}
+                  onChange={(date) => setStartDate(date)}
+                  dateFormat="DD/MM/YYYY" // Format for the date
+                  timeFormat={false}
+                  inputProps={{
+                    placeholder: "Select date",
+                    className:
+                      "w-full focus:outline-none rounded border-gray-200",
+                    name: "startDate",
+                  }}
                 />
               </FormControl>
-              <FormControl className="form-group mr-3">
+              {/* <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Bet Type</FormLabel>
                 <Select
                   name="bet-type"
@@ -112,8 +125,8 @@ const TicketSearch = () => {
                   <option value="multiple">Multiple</option>
                   <option value="single">Single</option>
                 </Select>
-              </FormControl>
-              <FormControl className="form-group mr-3">
+              </FormControl> */}
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Game Type</FormLabel>
                 <Select
                   name="bet-type"
@@ -126,18 +139,7 @@ const TicketSearch = () => {
                   <option value="shootout">ShootOut</option>
                 </Select>
               </FormControl>
-              {/* <FormControl className="form-group mr-3">
-                <FormLabel htmlFor="">Cashier</FormLabel>
-                <Select
-                  name="bet-type"
-                  className="w-full"
-                  id=""
-                  onChange={(e) => setGameType(e.target.value)}
-                >
-                  <option value="">All</option>
-                </Select>
-              </FormControl> */}
-              <FormControl className="form-group mr-3">
+              <FormControl className="form-group md:mr-3 mb-2">
                 <FormLabel htmlFor="">Payout Status</FormLabel>
                 <Select
                   name="bet-type"
@@ -214,28 +216,33 @@ const TicketSearch = () => {
                   <>
                     {results.length ? (
                       results.map((res, index) => (
-                        <Tr key={index}>
-                          <Td className="text-center">{res.ticketId}</Td>
-                          <Td className="text-center">{res.betType}</Td>
-                          <Td className="text-center">{res.gameType}</Td>
-                          <Td className="text-center">
+                        <Tr
+                          key={index}
+                          className={index % 2 === 1 ? "bg-blueGray-50" : ""}
+                        >
+                          <Td className="text-center border">{res.ticketId}</Td>
+                          <Td className="text-center border">{res.betType}</Td>
+                          <Td className="text-center border">{res.gameType}</Td>
+                          <Td className="text-center border">
                             {res.selections.length}
                           </Td>
-                          <Td className="text-center">
+                          <Td className="text-center border">
                             {res.stake.toLocaleString("en")}
                           </Td>
-                          <Td className="text-center">{res.result}</Td>
-                          <Td className="text-center">
+                          <Td className="text-center border">{res.result}</Td>
+                          <Td className="text-center border">
                             {res.potentialWinnings.toLocaleString("en")}
                           </Td>
-                          <Td className="text-center">{res.gameOutcome}</Td>
-                          <Td className="text-center">
+                          <Td className="text-center border">
+                            {res.gameOutcome}
+                          </Td>
+                          <Td className="text-center border">
                             {res.winnings.toLocaleString("en")}
                           </Td>
-                          <Td className="text-center">
+                          <Td className="text-center border">
                             {res.roundHasEnded ? "Ended" : "Ongoing"}
                           </Td>
-                          <Td className="text-center">
+                          <Td className="text-center border">
                             {res.payout ? "Paid Out" : "Pending"}
                           </Td>
                         </Tr>

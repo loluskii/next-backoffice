@@ -239,8 +239,8 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="overflow-auto">
-                    <Tabs>
+                  <Tabs>
+                    <div className="overflow-auto">
                       <TabList>
                         <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
                           Summary
@@ -249,172 +249,152 @@ export default function Dashboard() {
                           Password
                         </Tab>
                         {selectedUser && authUser.role === "super" && (
-                          <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                          <Tab className="text-left whitespace-nowrap focus:outline-none focus:border-none focus:ring-0">
                             Game Config.
                           </Tab>
                         )}
                         {selectedUser &&
                           (userRole === "agent" || userRole === "super") && (
-                            <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                            <Tab className="text-left whitespace-nowrap focus:outline-none focus:border-none focus:ring-0">
                               Game Settings
                             </Tab>
                           )}
                         {authUser.role === "super" && selectedUser && (
-                          <Tab className="text-left focus:outline-none focus:border-none focus:ring-0">
+                          <Tab className="text-left whitespace-nowrap focus:outline-none focus:border-none focus:ring-0">
                             Jackpot
                           </Tab>
                         )}
                       </TabList>
+                    </div>
 
-                      <TabPanels>
-                        <TabPanel px="0px">
-                          <div className="bg-white mt-3">
-                            {/* <TableContainer> */}
-                            <Table className="table table-striped table-bordered">
-                              <Thead className="bg-gray-500">
-                                <Tr>
-                                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                    Currency
-                                  </Th>
-                                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                    Balance
-                                  </Th>
-                                  <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
-                                    Action
-                                  </Th>
-                                </Tr>
-                              </Thead>
-                              <Tbody>
-                                {userWallets.length ? (
-                                  userWallets.map(
-                                    (wallet, index) =>
-                                      wallet.currencyId &&
-                                      wallet.currencyId.status === "active" && (
-                                        <Tr key={index}>
-                                          <Td className="text-center">
-                                            {wallet?.currencyId?.countryId}
-                                            {wallet.primaryWallet && (
-                                              <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
-                                                Primary
-                                              </span>
-                                            )}
-                                          </Td>
-                                          <Td className="text-center">
-                                            {wallet.balance}
-                                          </Td>
-                                          <Td className="text-center">
-                                            {authUser.id === selectedUser ? (
+                    <TabPanels>
+                      <TabPanel px="0px">
+                        <div className="bg-white mt-3">
+                          {/* <TableContainer> */}
+                          <Table className="table table-striped table-bordered">
+                            <Thead className="bg-gray-500">
+                              <Tr>
+                                <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                                  Currency
+                                </Th>
+                                <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                                  Balance
+                                </Th>
+                                <Th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 border-blueGray-100">
+                                  Action
+                                </Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {userWallets.length ? (
+                                userWallets.map(
+                                  (wallet, index) =>
+                                    wallet.currencyId &&
+                                    wallet.currencyId.status === "active" && (
+                                      <Tr key={index}>
+                                        <Td className="text-center">
+                                          {wallet?.currencyId?.countryId}
+                                          {wallet.primaryWallet && (
+                                            <span className="ml-1 text-xs font-semibold inline-block py-1 px-2 rounded text-blueGray-600 bg-blueGray-200 uppercase last:mr-0 mr-1">
+                                              Primary
+                                            </span>
+                                          )}
+                                        </Td>
+                                        <Td className="text-center">
+                                          {wallet.balance}
+                                        </Td>
+                                        <Td className="text-center">
+                                          {authUser.id === selectedUser ? (
+                                            <span
+                                              onClick={() => {
+                                                setShowWalletActions(true);
+                                                setWalletAction("transfer");
+                                                setWalletActionCurrency(wallet);
+                                              }}
+                                              className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                            >
+                                              <BiTransfer />
+                                            </span>
+                                          ) : (
+                                            <>
                                               <span
                                                 onClick={() => {
                                                   setShowWalletActions(true);
-                                                  setWalletAction("transfer");
+                                                  setWalletAction("deduct");
                                                   setWalletActionCurrency(
                                                     wallet
                                                   );
                                                 }}
-                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
                                               >
-                                                <BiTransfer />
+                                                <BiSolidMinusSquare />
                                               </span>
-                                            ) : (
-                                              <>
-                                                <span
-                                                  onClick={() => {
-                                                    setShowWalletActions(true);
-                                                    setWalletAction("deduct");
-                                                    setWalletActionCurrency(
-                                                      wallet
-                                                    );
-                                                  }}
-                                                  className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-red-600  last:mr-0 mr-1"
-                                                >
-                                                  <BiSolidMinusSquare />
-                                                </span>
-                                                <span
-                                                  onClick={() => {
-                                                    setShowWalletActions(true);
-                                                    setWalletAction("add");
-                                                    setWalletActionCurrency(
-                                                      wallet
-                                                    );
-                                                  }}
-                                                  className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
-                                                >
-                                                  <MdAddBox />
-                                                </span>
+                                              <span
+                                                onClick={() => {
+                                                  setShowWalletActions(true);
+                                                  setWalletAction("add");
+                                                  setWalletActionCurrency(
+                                                    wallet
+                                                  );
+                                                }}
+                                                className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-emerald-500 last:mr-0 mr-1"
+                                              >
+                                                <MdAddBox />
+                                              </span>
 
-                                                {activeAgentId.role !==
-                                                  "cashier" && (
-                                                  <span
-                                                    onClick={() => {
-                                                      setShowWalletActions(
-                                                        true
-                                                      );
-                                                      setWalletAction(
-                                                        "transfer"
-                                                      );
-                                                      setWalletActionCurrency(
-                                                        wallet
-                                                      );
-                                                    }}
-                                                    className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
-                                                  >
-                                                    <BiTransfer />
-                                                  </span>
-                                                )}
-                                              </>
-                                            )}
-                                          </Td>
-                                        </Tr>
-                                      )
-                                  )
-                                ) : (
-                                  <Tr>
-                                    <Td className="text-center" colSpan="10">
-                                      No Data Available.
-                                    </Td>
-                                  </Tr>
-                                )}
-                              </Tbody>
-                            </Table>
-                            {/* </TableContainer> */}
-                          </div>
-                        </TabPanel>
-                        <TabPanel px={"0px"}>
-                          <form onSubmit={handlePasswordChange}>
-                            {activeAgentId.id === authUser?.id ? (
-                              <>
-                                <FormControl className="form-group mb-3">
-                                  <FormLabel htmlFor="oldPassword">
-                                    Old Password
-                                  </FormLabel>
-                                  <Input
-                                    type="password"
-                                    placeholder="Enter old password"
-                                    onChange={(e) =>
-                                      setOldPassword(e.target.value)
-                                    }
-                                    className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                  />
-                                </FormControl>
-                                <FormControl className="form-group mb-3">
-                                  <FormLabel htmlFor="newPassword">
-                                    New Password
-                                  </FormLabel>
-                                  <Input
-                                    type="password"
-                                    placeholder="Enter new password"
-                                    onChange={(e) =>
-                                      setNewPassword(e.target.value)
-                                    }
-                                    className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
-                                  />
-                                </FormControl>
-                              </>
-                            ) : (
+                                              {activeAgentId.role !==
+                                                "cashier" && (
+                                                <span
+                                                  onClick={() => {
+                                                    setShowWalletActions(true);
+                                                    setWalletAction("transfer");
+                                                    setWalletActionCurrency(
+                                                      wallet
+                                                    );
+                                                  }}
+                                                  className="text-xs cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded text-white bg-lightBlue-600  last:mr-0 mr-1"
+                                                >
+                                                  <BiTransfer />
+                                                </span>
+                                              )}
+                                            </>
+                                          )}
+                                        </Td>
+                                      </Tr>
+                                    )
+                                )
+                              ) : (
+                                <Tr>
+                                  <Td className="text-center" colSpan="10">
+                                    No Data Available.
+                                  </Td>
+                                </Tr>
+                              )}
+                            </Tbody>
+                          </Table>
+                          {/* </TableContainer> */}
+                        </div>
+                      </TabPanel>
+                      <TabPanel px={"0px"}>
+                        <form onSubmit={handlePasswordChange}>
+                          {activeAgentId.id === authUser?.id ? (
+                            <>
+                              <FormControl className="form-group mb-3">
+                                <FormLabel htmlFor="oldPassword">
+                                  Old Password
+                                </FormLabel>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter old password"
+                                  onChange={(e) =>
+                                    setOldPassword(e.target.value)
+                                  }
+                                  className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                                />
+                              </FormControl>
                               <FormControl className="form-group mb-3">
                                 <FormLabel htmlFor="newPassword">
-                                  Password
+                                  New Password
                                 </FormLabel>
                                 <Input
                                   type="password"
@@ -425,54 +405,66 @@ export default function Dashboard() {
                                   className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                                 />
                               </FormControl>
-                            )}
-                            <Button
-                              type="submit"
-                              isLoading={loading}
-                              className="bg-black text-white"
-                            >
-                              Update
-                            </Button>
-                          </form>
-                        </TabPanel>
-
-                        {selectedUser && authUser.role === "super" && (
-                          <TabPanel px={"0px"}>
-                            <GameConfiguration
-                              key={`game-configuration-${selectedUser.id}`} // Ensure a unique key
-                              loading={loading}
-                              authUser={authUser}
-                              selectedUser={selectedUser}
-                            />
-                          </TabPanel>
-                        )}
-
-                        {selectedUser &&
-                          (userRole === "agent" || userRole === "super") && (
-                            <TabPanel px={"0px"}>
-                              <GameSettings
-                                key={`game-settings-${selectedUser.id}`} // Ensure a unique key
-                                loading={loading}
-                                authUser={authUser}
-                                selectedUser={selectedUser}
+                            </>
+                          ) : (
+                            <FormControl className="form-group mb-3">
+                              <FormLabel htmlFor="newPassword">
+                                Password
+                              </FormLabel>
+                              <Input
+                                type="password"
+                                placeholder="Enter new password"
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className=" placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
                               />
-                            </TabPanel>
+                            </FormControl>
                           )}
+                          <Button
+                            type="submit"
+                            isLoading={loading}
+                            className="bg-black text-white"
+                          >
+                            Update
+                          </Button>
+                        </form>
+                      </TabPanel>
 
-                        {authUser.role === "super" && selectedUser && (
+                      {selectedUser && authUser.role === "super" && (
+                        <TabPanel px={"0px"}>
+                          <GameConfiguration
+                            key={`game-configuration-${selectedUser.id}`} // Ensure a unique key
+                            loading={loading}
+                            authUser={authUser}
+                            selectedUser={selectedUser}
+                          />
+                        </TabPanel>
+                      )}
+
+                      {selectedUser &&
+                        (userRole === "agent" || userRole === "super") && (
                           <TabPanel px={"0px"}>
-                            <Jackpot
-                              key={`jackpot-${selectedUser.id}`} // Ensure a unique key
+                            <GameSettings
+                              key={`game-settings-${selectedUser.id}`} // Ensure a unique key
                               loading={loading}
                               authUser={authUser}
                               selectedUser={selectedUser}
-                              activeAgentId={activeAgentId}
                             />
                           </TabPanel>
                         )}
-                      </TabPanels>
-                    </Tabs>
-                  </div>
+
+                      {authUser.role === "super" && selectedUser && (
+                        <TabPanel px={"0px"}>
+                          <Jackpot
+                            key={`jackpot-${selectedUser.id}`} // Ensure a unique key
+                            loading={loading}
+                            authUser={authUser}
+                            selectedUser={selectedUser}
+                            activeAgentId={activeAgentId}
+                          />
+                        </TabPanel>
+                      )}
+                    </TabPanels>
+                  </Tabs>
                 </div>
               ) : (
                 <div className="p-4 flex flex-col items-center w-full h-full justify-center">

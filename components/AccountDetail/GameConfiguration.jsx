@@ -9,7 +9,7 @@ import {
   Button,
   Select,
 } from "@chakra-ui/react";
-import { updateGameData, getGameSettings } from "services/settings.service";
+import { updateGameConfig, getGameSettings } from "services/settings.service";
 
 function Configuration({ selectedUser, authUser, loading }) {
   const [activeGame, setActiveGame] = useState("aviata");
@@ -33,7 +33,7 @@ function Configuration({ selectedUser, authUser, loading }) {
   const handleGameDataUpdate = async (e) => {
     e.preventDefault();
     gameData.rtp = Number(gameData.rtp);
-    const res = await updateGameData(gameData, selectedUser, activeGame);
+    const res = await updateGameConfig(gameData, selectedUser, activeGame);
     if (res.status) {
       alert("Game data updated successfully");
     } else {

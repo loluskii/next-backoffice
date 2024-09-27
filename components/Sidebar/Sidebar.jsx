@@ -23,7 +23,7 @@ export default function Sidebar() {
         <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
           {/* Toggler */}
           <button
-            className="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
+            className="cursor-pointer text-white opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
             type="button"
             onClick={() => setCollapseShow("bg-white m-2 py-3 px-6")}
           >
@@ -55,13 +55,13 @@ export default function Sidebar() {
             }
           >
             {/* Collapse header */}
-            <div className="md:min-w-full md:hidden block pb-4 mb-4 border-b border-solid border-blueGray-200">
+            <div className="md:min-w-full md:hidden block md:pb-4 md:mb-4 md:border-b md:border-solid md:border-blueGray-200">
               <div className="flex flex-wrap">
                 <div className="w-6/12">
                   <Link legacyBehavior href="/">
                     <a
                       href="#pablo"
-                      className="md:block text-left md:pb-2 text-white mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+                      className="md:block text-left md:pb-2 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
                     >
                       Backoffice
                     </a>
@@ -96,7 +96,7 @@ export default function Sidebar() {
                       "text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/wallet/accounts") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-white hover:text-white")
+                        : "")
                     }
                   >
                     <i
@@ -120,7 +120,7 @@ export default function Sidebar() {
                       "text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/wallet/web-players") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-white hover:text-white")
+                        : "text-blueGray-500")
                     }
                   >
                     <i
@@ -144,7 +144,7 @@ export default function Sidebar() {
                       "text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/wallet/transfer-search") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-white hover:text-white")
+                        : "text-blueGray-500")
                     }
                   >
                     <i
@@ -161,7 +161,7 @@ export default function Sidebar() {
                 </Link>
               </li>
             </ul>
-
+            <br className="md:hidden" />
             {/* Heading */}
             <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Ticket Management
@@ -177,7 +177,7 @@ export default function Sidebar() {
                       "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/tickets/ticket-search") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-white hover:text-white")
+                        : "text-blueGray-500")
                     }
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
@@ -186,6 +186,8 @@ export default function Sidebar() {
                 </Link>
               </li>
             </ul>
+
+            <br className="md:hidden" />
 
             {/* Heading */}
             <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
@@ -202,7 +204,7 @@ export default function Sidebar() {
                       "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                       (router.pathname.indexOf("/financials") !== -1
                         ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-white hover:text-white")
+                        : "text-blueGray-500")
                     }
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
@@ -211,6 +213,8 @@ export default function Sidebar() {
                 </Link>
               </li>
             </ul>
+
+            <br className="md:hidden" />
 
             {isSuperUser && (
               <>
@@ -229,7 +233,7 @@ export default function Sidebar() {
                           "text-white hover:text-white text-xs uppercase py-3 font-bold block " +
                           (router.pathname.indexOf("/currency") !== -1
                             ? "text-lightBlue-500 hover:text-lightBlue-600"
-                            : "text-white hover:text-white")
+                            : "text-blueGray-500")
                         }
                       >
                         <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}

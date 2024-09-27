@@ -28,6 +28,23 @@ export const updateGameData = async (payload, id, gameType) => {
   }
 };
 
+export const updateGameConfig = async (payload, id, gameType) => {
+  try {
+    delete payload.id;
+    delete payload.agentId;
+    const response = await apiClient.patch(
+     `${process.env.NEXT_PUBLIC_CASHIER_URL}/game/gameData/${id}/${gameType}`,
+      payload
+    );
+    return { status: true, data: response.data };
+  } catch (error) {
+    return {
+      status: false,
+      data: error.response ? error.response.data : error.message,
+    };
+  }
+};
+
 export const createWallet = async (payload) => {
   try {
     const response = await apiClient.post(
