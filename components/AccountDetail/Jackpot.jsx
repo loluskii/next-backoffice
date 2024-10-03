@@ -205,7 +205,7 @@ const Jackpot = ({ activeAgentId, selectedUser }) => {
                               index
                             )
                           }
-                          dateFormat="MMMM D, YYYY" // Format for the date
+                          dateFormat={false} // Format for the date
                           timeFormat="hh:mm A" // Format for the time
                           inputProps={{
                             placeholder: "Select date and time",
@@ -221,7 +221,7 @@ const Jackpot = ({ activeAgentId, selectedUser }) => {
                           onChange={(date) =>
                             handleChangeForJackpotPeriod(date, "endTime", index)
                           }
-                          dateFormat="MMMM D, YYYY" // Format for the date
+                          dateFormat={false} // Format for the date
                           timeFormat="hh:mm A" // Format for the time
                           inputProps={{
                             placeholder: "Select date and time",
